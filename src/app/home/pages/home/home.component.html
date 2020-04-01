@@ -1,7 +1,12 @@
-<header>
-    <app-header></app-header>
-</header>
-<p>home works!</p>
-<footer>
-    <app-footer></app-footer>
-</footer>
+<head></head>
+<body>
+    <header>
+        <app-header></app-header>
+    </header>
+    <p>home works!</p>
+    <button mat-button (click)="openDialog()">Pick one</button>
+    <p *ngIf='false'>Your are logged in!</p>
+    <footer>
+        <app-footer></app-footer>
+    </footer>
+</body>

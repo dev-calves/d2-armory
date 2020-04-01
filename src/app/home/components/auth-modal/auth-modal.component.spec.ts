@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PassportComponent } from './passport.component';
+import { AuthModalComponent } from './auth-modal.component';
 
 describe('PassportComponent', () => {
-  let component: PassportComponent;
-  let fixture: ComponentFixture<PassportComponent>;
+  let component: AuthModalComponent;
+  let fixture: ComponentFixture<AuthModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PassportComponent ]
+      declarations: [ AuthModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PassportComponent);
+    fixture = TestBed.createComponent(AuthModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
