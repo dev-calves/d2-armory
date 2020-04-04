@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthModalComponent } from '../../components/auth-modal/auth-modal.component';
 
 
@@ -10,9 +10,9 @@ import { AuthModalComponent } from '../../components/auth-modal/auth-modal.compo
 })
 export class HomeComponent {
 
-  constructor(public dialog: MatDialog) { }
+  constructor(private dialog: MatDialog) { }
 
-  openDialog(): void {
+  public openDialog(): void {
     const dialogRef = this.dialog.open(AuthModalComponent, {
       width: '400px'
     });

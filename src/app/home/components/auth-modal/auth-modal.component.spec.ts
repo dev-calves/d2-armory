@@ -1,14 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AuthModalComponent } from './auth-modal.component';
 
-describe('PassportComponent', () => {
+describe('AuthModalComponent', () => {
   let component: AuthModalComponent;
   let fixture: ComponentFixture<AuthModalComponent>;
 
+  class MockMatDialogRef<AuthModalComponent> {
+    close(): void {}
+  }
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AuthModalComponent ]
+      declarations: [ AuthModalComponent ],
+      providers: [ {provide: MatDialogRef, useClass: MockMatDialogRef} ]
     })
     .compileComponents();
   }));

@@ -11,7 +11,7 @@ export class AuthModalComponent {
   constructor(public dialogRef: MatDialogRef<AuthModalComponent>) { }
 
   onClick(): void {
-    this.dialogRef.close();
+    this.dialogRef?.close();
   }
 
 }

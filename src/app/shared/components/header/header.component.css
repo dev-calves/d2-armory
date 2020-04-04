@@ -1,0 +1,20 @@
+.mat-toolbar-single-row {
+    height: auto;
+    width: auto;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 15px;
+}
+button {
+    padding: 2px;
+    margin-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+h2 {
+    margin-bottom: 10px;
+}
+section {
+    width: 100%;
+}

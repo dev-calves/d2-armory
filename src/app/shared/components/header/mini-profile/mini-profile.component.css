@@ -1,0 +1,51 @@
+.emblem-background {
+    z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 24rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+.emblem {
+    position: relative;
+    width: 7rem;
+    height: 6rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-color: gray;
+}
+.character-class {
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 0px black;
+}
+.character-race-gender {
+    font-size: 1rem;
+    font-weight: normal;
+    text-shadow: 1px 1px 0px black;
+}
+.light {
+    color: #DDCB59;
+    font-size: 1rem;
+    font-weight: normal;
+    padding-right: 10px;
+}
+.light:before {
+    display: inline-block;
+    padding-right: 0.1875rem;
+    content: "\2727";
+}
+.selectedCharacter {
+    color: #DDCB59;
+    font-size: 0.75rem;
+    font-weight: lighter;
+    margin-top: -7px;
+    margin-left: 5px;
+    margin-bottom: -10px;
+}

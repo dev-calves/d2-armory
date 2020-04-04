@@ -17,7 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule  } from '@angular/material/input';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -38,6 +38,7 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatSidenavModule,
     FormsModule,
     HomeRoutingModule
   ]

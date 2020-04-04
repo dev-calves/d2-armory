@@ -1,1 +1,11 @@
-<p>header works!</p>
+<mat-toolbar color="primary">
+    <section>
+        <h2>Characters</h2>
+        <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <button class="mat-button mat-elevation-z2" *ngFor="let character of characters">
+                <!-- TODO: Place log-in status into the if statement -->
+                <app-mini-profile [character]="character"></app-mini-profile>
+            </button>
+        </div>
+    </section>
+</mat-toolbar>
