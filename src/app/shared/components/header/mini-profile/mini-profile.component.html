@@ -1,0 +1,15 @@
+<div class="emblem-background" fxLayout="row" fxLayoutAlign="space-between center"
+    style="background: url({{character?.background}});">
+    <div style="width: 100%;" fxLayout="row">
+        <img class="emblem" [src]="character?.emblem" alt="">
+        <div fxLayout="column" fxLayoutAlign="center start" style="width: 100%; padding-left: 5px;">
+            <div class="character-class">{{character?.class}}</div>
+            <div style="width: 100%;" fxLayout="row" fxLayoutAlign="space-between">
+                <div class="character-race-gender">{{character?.race}} {{character?.gender}}</div>
+                <div fxLayout="column" fxLayoutAlign="end end">
+                    <div class="light">{{character?.light}}</div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
