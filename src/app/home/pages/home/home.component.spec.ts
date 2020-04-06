@@ -31,4 +31,10 @@ describe('HomeComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should launch the dialog box when openDialog is called', () => {
+    spyOn(matDialog, 'open');
+    component.openDialog();
+    expect(matDialog.open).toHaveBeenCalled();
+  });
 });

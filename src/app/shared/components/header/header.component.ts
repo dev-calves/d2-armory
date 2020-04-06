@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Character } from '../../../core/models/character.model';
-import { CharactersService } from '../../../core/services';
+import { Character, CharactersService } from '../../../core';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,7 +10,7 @@ import { Subscription } from 'rxjs';
 export class HeaderComponent implements OnInit, OnDestroy {
   // TODO: initialize this property with the number of characters
   // returned by the destiny/users api.
-  public charactersSub: Subscription;
+  private charactersSub: Subscription;
   private _characters: Character[] = [
     {
       class: "Class",

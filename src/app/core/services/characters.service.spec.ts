@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { CharactersService } from './characters.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClient } from '@angular/common/http';
+import { CharactersService } from './';
+import { Observable } from 'rxjs';
+import { Character } from '../models';
 
 describe('CharactersService', () => {
   let service: CharactersService;
   let httpClient: HttpClient;
-  let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -14,9 +15,16 @@ describe('CharactersService', () => {
       providers: [HttpClient]
     });
     service = TestBed.inject(CharactersService);
+    httpClient = TestBed.inject(HttpClient);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should return an observable after making an http call', () => {
+    spyOn(httpClient, 'get').and.returnValue(new Observable());
+    let response: Observable<Character[]> = service.getCharacters();
+    expect(response).toBeTruthy();
   });
 });

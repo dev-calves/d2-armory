@@ -1,6 +1,6 @@
-.mat-toolbar-single-row {
+.mat-toolbar-row {
     height: auto;
-    width: auto;
+    width: 100%;
     padding-top: 5px;
     padding-left: 10px;
     padding-right: 10px;

@@ -9,25 +9,25 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
-import { ErrorMessageService } from '../services/error-message.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class ErrorHandlerIntercept implements HttpInterceptor {
-    constructor(private _errorMessageService: ErrorMessageService) {}
+    constructor(private _snackBar: MatSnackBar) {}
 
     intercept( request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request)
-        .pipe(retry(2), catchError((error: HttpErrorResponse) => {
-            let errorMessage = '';
+        .pipe(retry(1), catchError((error: HttpErrorResponse) => {
+            let errorMessage = 'Error: |';
             if (error?.error instanceof ErrorEvent) {
                 // client-side error
-                errorMessage = `Message: ${error?.error?.message}`;
+                errorMessage = `${errorMessage} Message: ${error?.error?.message}`;
             } else {
                 // server-side error
-                errorMessage = `Status: ${error?.status} | Message: ${error?.message}`;
+                errorMessage = `${errorMessage} Status: ${error?.status} | Message: ${error?.message}`;
             }
             console.error(errorMessage);
-            this._errorMessageService.openSnackBar(errorMessage);
+            this._snackBar.open(errorMessage, 'Dismiss');
             return throwError(errorMessage);
         }));
     }

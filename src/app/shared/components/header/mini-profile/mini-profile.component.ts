@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Character } from '../../../../core/models/character.model';
+import { Character } from '../../../../core';
 
 @Component({
   selector: 'app-mini-profile',

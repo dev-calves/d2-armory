@@ -13,12 +13,8 @@ export class HomeComponent {
   constructor(private dialog: MatDialog) { }
 
   public openDialog(): void {
-    const dialogRef = this.dialog.open(AuthModalComponent, {
+    this.dialog.open(AuthModalComponent, {
       width: '400px'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 

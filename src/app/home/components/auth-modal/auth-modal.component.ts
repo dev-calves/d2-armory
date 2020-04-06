@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'auth-modal',
@@ -8,10 +8,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 })
 export class AuthModalComponent {
 
-  constructor(public dialogRef: MatDialogRef<AuthModalComponent>) { }
+  constructor(private dialogRef: MatDialogRef<AuthModalComponent>) { }
 
   onClick(): void {
-    this.dialogRef?.close();
+    this.dialogRef.close();
   }
 
 }

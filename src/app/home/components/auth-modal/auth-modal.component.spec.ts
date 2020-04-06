@@ -1,11 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { AuthModalComponent } from './auth-modal.component';
 
 describe('AuthModalComponent', () => {
   let component: AuthModalComponent;
   let fixture: ComponentFixture<AuthModalComponent>;
+  let matDialogRef: MatDialogRef<AuthModalComponent>;
 
   class MockMatDialogRef<AuthModalComponent> {
     close(): void {}
@@ -20,6 +21,7 @@ describe('AuthModalComponent', () => {
   }));
 
   beforeEach(() => {
+    matDialogRef = TestBed.inject(MatDialogRef);
     fixture = TestBed.createComponent(AuthModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -27,5 +29,11 @@ describe('AuthModalComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should close the dialog box when onClick is called', () => {
+    spyOn(matDialogRef, 'close');
+    component.onClick();
+    expect(matDialogRef.close).toHaveBeenCalled();
   });
 });

@@ -5,7 +5,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { ErrorHandlerIntercept } from './core/interceptors/error-handler.interceptor';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { ErrorHandlerIntercept } from './core';
 
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
@@ -20,6 +22,7 @@ import { CoreModule } from './core/core.module';
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
+    MatSnackBarModule,
     CoreModule,
     HomeModule,
     SharedModule,
