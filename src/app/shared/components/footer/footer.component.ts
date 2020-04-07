@@ -12,6 +12,9 @@ export class FooterComponent implements OnInit {
   private _userLoggedInLabel: string = environment.LOGGED_IN_USERNAME_LABEL;
   private _menuToggleLabel: string = environment.MENU_TOGGLE_LABEL;
   private _username: string = "Cedric401";
+  private _addMeLabel: string = environment.SHAMELESS_PLUG;
+  private _steamId: string = environment.SHAMELESS_PLUG_ID;
+  private _steamName: string = environment.SHAMELESS_PLUG_USERNAME;
 
   constructor() { }
 
@@ -34,8 +37,8 @@ export class FooterComponent implements OnInit {
     return this._userLoggedInLabel;
   }
 
-  public set menuToggleLabel(name: string) {
-    this._menuToggleLabel = name;
+  public set menuToggleLabel(label: string) {
+    this._menuToggleLabel = label;
   }
 
   public get menuToggleLabel(): string {
@@ -48,5 +51,29 @@ export class FooterComponent implements OnInit {
 
   public get username(): string {
     return this._username;
+  }
+
+  public set addMeLabel(label: string) {
+    this._addMeLabel = label;
+  }
+
+  public get addMeLabel(): string {
+    return this._addMeLabel;
+  }
+
+  public set steamId(id: string) {
+    this._steamId = id;
+  }
+
+  public get steamId(): string {
+    return this._steamId;
+  }
+
+  public set steamName(name: string) {
+    this._steamName = name;
+  }
+
+  public get steamName(): string {
+    return this._steamName;
   }
 }
