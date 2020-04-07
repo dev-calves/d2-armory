@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Log in</h1>
+<div mat-dialog-content>
+  <p>You will be taken to Bungie's authentication site.</p>
+  <p>If prompted by Bungie, please link "Destiny2 Armory" to your account.</p>
+</div>
+<a [href]="bungieAuthUrl">
+  <button mat-button (click)="onClick()" color="accent" cdkFocusInitial>Go</button>
+</a>
+<button style="margin-left: 5px;" mat-button color="accent" (click)="onClick()">No Thanks</button>

@@ -1,15 +1,52 @@
 import { Component, OnInit } from '@angular/core';
 
+import { environment } from '../../../../environments/environment';
+
 @Component({
   selector: 'footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit {
+  private _userLoggedOutLabel: string = environment.LOGGED_OUT_USERNAME_LABEL;
+  private _userLoggedInLabel: string = environment.LOGGED_IN_USERNAME_LABEL;
+  private _menuToggleLabel: string = environment.MENU_TOGGLE_LABEL;
+  private _username: string = "Cedric401";
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  public set userLoggedOutLabel(label: string) {
+    this._userLoggedOutLabel = label;
+  }
+
+  public get userLoggedOutLabel(): string {
+    return this._userLoggedOutLabel;
+  }
+
+  public set userLoggedInLabel(label: string) {
+    this._userLoggedInLabel = label;
+  }
+
+  public get userLoggedInLabel(): string {
+    return this._userLoggedInLabel;
+  }
+
+  public set menuToggleLabel(name: string) {
+    this._menuToggleLabel = name;
+  }
+
+  public get menuToggleLabel(): string {
+    return this._menuToggleLabel;
+  }
+
+  public set username(name: string) {
+    this._username = name;
+  }
+
+  public get username(): string {
+    return this._username;
+  }
 }

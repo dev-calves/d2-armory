@@ -1,0 +1,14 @@
+<!-- TODO: if condition for loggedIn status -->
+<div *ngIf="false; then logOutAction else logInAction"></div>
+
+<ng-template #logInAction>
+    <button class="menu-button mat-elevation-z6" mat-icon-button (click)="openDialog()">
+        <mat-icon [inline]="true" color="accent">face</mat-icon>
+    </button>
+</ng-template>
+<ng-template #logOutAction>
+    <!-- TODO: change make click event delete the user's login cookie. -->
+    <button class="menu-button mat-elevation-z6" mat-icon-button >
+        <mat-icon [inline]="true" color="accent">face</mat-icon>
+    </button>
+</ng-template>

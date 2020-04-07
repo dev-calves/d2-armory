@@ -4,7 +4,13 @@
 
 export const environment = {
   production: false,
-  CHARACTER_API_URL: 'http://localhost:3000/api/characters'
+  LOGGED_OUT_USERNAME_LABEL: 'Log in to save outfits.',
+  LOGGED_IN_USERNAME_LABEL: 'Logged in as ',
+  MENU_TOGGLE_LABEL: 'Unequipped items will be sent to the ',
+  BUNGIE_CLIENT_ID: '32372',
+  BUNGIE_AUTHORIZATION_RESPONSE_TYPE: 'code',
+  CHARACTER_API_URL: 'http://localhost:3000/api/characters',
+  BUNGIE_AUTHORIZATION_ENDPOINT: 'https://www.bungie.net/en/oauth/authorize'
 };
 
 /*
