@@ -13,6 +13,7 @@ export class CharactersService {
   constructor(private _http: HttpClient) { }
 
   public getCharacters(): Observable<Character[]> {
-    return this._http.get<Character[]>(environment.CHARACTER_API_URL);
+    
+    return this._http.get<Character[]>(environment.api.characters.ENDPOINT);
   }
 }

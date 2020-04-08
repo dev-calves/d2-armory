@@ -29,3 +29,9 @@ p {
     color: #DDCB59;
     font-style: italic;
 }
+
+.plug {
+    padding-left: 15px;
+    font-size: small;
+    font-style: italic;
+}

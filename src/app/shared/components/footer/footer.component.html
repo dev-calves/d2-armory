@@ -14,7 +14,10 @@
                         <app-menu-button #menuToggleButton></app-menu-button>
                     </div>
                 </span>
-                <p style="font-style:italic;">{{addMeLabel}} {{steamId}} or {{steamName}}</p>
+                <p class="plug">
+                    <span>{{addMeLabel}} </span>
+                    <a target="_blank" rel="external" href="{{steamProfileLink}}">{{steamId}} or {{steamName}}</a>
+                </p>
             </span>
         </section>
     </mat-toolbar-row>

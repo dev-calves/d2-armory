@@ -8,18 +8,18 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit {
-  private _userLoggedOutLabel: string = environment.LOGGED_OUT_USERNAME_LABEL;
-  private _userLoggedInLabel: string = environment.LOGGED_IN_USERNAME_LABEL;
-  private _menuToggleLabel: string = environment.MENU_TOGGLE_LABEL;
-  private _username: string = "Cedric401";
-  private _addMeLabel: string = environment.SHAMELESS_PLUG;
-  private _steamId: string = environment.SHAMELESS_PLUG_ID;
-  private _steamName: string = environment.SHAMELESS_PLUG_USERNAME;
+  private _userLoggedOutLabel: string = environment.page.home.LOGGED_OUT_USERNAME_LABEL;
+  private _userLoggedInLabel: string = environment.page.home.LOGGED_IN_USERNAME_LABEL;
+  private _menuToggleLabel: string = environment.page.home.MENU_TOGGLE_LABEL;
+  private _username: string = "Cedric401"; // TODO: init with service.
+  private _addMeLabel: string = environment.page.home.SHAMELESS_PLUG;
+  private _steamId: string = environment.page.home.SHAMELESS_PLUG_ID;
+  private _steamName: string = environment.page.home.SHAMELESS_PLUG_USERNAME;
+  private _steamProfileLink: string = environment.page.home.STEAM_PROFILE_LINK;
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   public set userLoggedOutLabel(label: string) {
     this._userLoggedOutLabel = label;
@@ -75,5 +75,13 @@ export class FooterComponent implements OnInit {
 
   public get steamName(): string {
     return this._steamName;
+  }
+
+  public set steamProfileLink(name: string) {
+    this._steamProfileLink = name;
+  }
+
+  public get steamProfileLink(): string {
+    return this._steamProfileLink;
   }
 }
