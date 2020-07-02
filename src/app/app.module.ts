@@ -5,9 +5,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
+import { CookieService } from 'ngx-cookie-service';
+
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { ErrorHandlerIntercept } from './core';
+import { ErrorHandlerIntercept, CredentialsInterceptor } from './core';
 
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
@@ -30,6 +32,12 @@ import { CoreModule } from './core/core.module';
     AppRoutingModule // must be imported last.
   ],
   providers: [
+    CookieService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CredentialsInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorHandlerIntercept,

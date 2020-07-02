@@ -1,64 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, DoCheck } from '@angular/core';
 
-import { environment } from '../../../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
-export class FooterComponent implements OnInit {
-  private _userLoggedOutLabel: string = environment.page.home.LOGGED_OUT_USERNAME_LABEL;
-  private _userLoggedInLabel: string = environment.page.home.LOGGED_IN_USERNAME_LABEL;
-  private _menuToggleLabel: string = environment.page.home.MENU_TOGGLE_LABEL;
-  private _username: string = "Cedric401"; // TODO: init with service.
-  private _addMeLabel: string = environment.page.home.SHAMELESS_PLUG;
-  private _steamId: string = environment.page.home.SHAMELESS_PLUG_ID;
-  private _steamName: string = environment.page.home.SHAMELESS_PLUG_USERNAME;
-  private _steamProfileLink: string = environment.page.home.STEAM_PROFILE_LINK;
+export class FooterComponent implements DoCheck {
+  private _displayName: string = "";
+  private _steamId: string = '76561198276048723';
+  private _steamName: string = 'cedric401';
+  private _steamProfileLink: string = 'https://steamcommunity.com/id/cedric401/';
+  private _storage: "vault" | "inventory" = "vault";
+  private _loggedIn: boolean = false;
 
   constructor() { }
 
-  ngOnInit(): void {}
-
-  public set userLoggedOutLabel(label: string) {
-    this._userLoggedOutLabel = label;
+  ngDoCheck(): void {
+    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === "vault" ||
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === "inventory") {
+      this.storage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) as "vault" | "inventory";
+    }
   }
 
-  public get userLoggedOutLabel(): string {
-    return this._userLoggedOutLabel;
+  @Input()
+  public set displayName(name: string) {
+    this._displayName = name;
   }
 
-  public set userLoggedInLabel(label: string) {
-    this._userLoggedInLabel = label;
-  }
-
-  public get userLoggedInLabel(): string {
-    return this._userLoggedInLabel;
-  }
-
-  public set menuToggleLabel(label: string) {
-    this._menuToggleLabel = label;
-  }
-
-  public get menuToggleLabel(): string {
-    return this._menuToggleLabel;
-  }
-
-  public set username(name: string) {
-    this._username = name;
-  }
-
-  public get username(): string {
-    return this._username;
-  }
-
-  public set addMeLabel(label: string) {
-    this._addMeLabel = label;
-  }
-
-  public get addMeLabel(): string {
-    return this._addMeLabel;
+  public get displayName(): string {
+    return this._displayName;
   }
 
   public set steamId(id: string) {
@@ -83,5 +56,22 @@ export class FooterComponent implements OnInit {
 
   public get steamProfileLink(): string {
     return this._steamProfileLink;
+  }
+
+  public set storage(storage: "vault" | "inventory") {
+    this._storage = storage;
+  }
+
+  public get storage(): "vault" | "inventory" {
+    return this._storage;
+  }
+
+  @Input()
+  public set loggedIn(loggedIn: boolean) {
+    this._loggedIn = loggedIn;
+  }
+
+  public get loggedIn(): boolean {
+    return this._loggedIn;
   }
 }

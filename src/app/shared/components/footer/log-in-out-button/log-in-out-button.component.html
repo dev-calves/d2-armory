@@ -1,14 +1,15 @@
-<!-- TODO: if condition for loggedIn status -->
-<div *ngIf="false; then logOutAction else logInAction"></div>
+<div *ngIf="loggedIn; then logOutAction else logInAction"></div>
 
+<!-- TODO: change the color of the button depending on the loggedIn status of the user. -->
+<!-- TODO: consider making the button a toggle button. -->
 <ng-template #logInAction>
-    <button class="menu-button mat-elevation-z6" mat-icon-button (click)="openDialog()">
+    <button class="menu-button mat-elevation-z6" mat-icon-button (click)="logOnClick()">
         <mat-icon [inline]="true" color="accent">face</mat-icon>
     </button>
 </ng-template>
 <ng-template #logOutAction>
-    <!-- TODO: change make click event delete the user's login cookie. -->
-    <button class="menu-button mat-elevation-z6" mat-icon-button >
-        <mat-icon [inline]="true" color="accent">face</mat-icon>
+    <button class="menu-button mat-elevation-z6" mat-icon-button (click)="logOutClick()">
+        <mat-icon [inline]="true" color="accent" (mouseover)="mouseOver()" (mouseout)="mouseOut()">{{mouseOverIcon}}
+        </mat-icon>
     </button>
 </ng-template>

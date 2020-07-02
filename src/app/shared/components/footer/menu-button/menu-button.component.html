@@ -5,7 +5,7 @@
 
 <!-- Item Menu -->
 <mat-menu #settings="matMenu">
-    <h3 class="menu-label">Unequip to</h3>
+    <h3 class="menu-label">Unequip gear to</h3>
     <mat-button-toggle-group value="{{toggleSelected}}" vertical #itemGroup="matButtonToggleGroup">
         <mat-button-toggle value="vault" aria-label="Sends uneqipped items to the vault">
             <button mat-menu-item (click)="onClick('vault')">

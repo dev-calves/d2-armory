@@ -4,7 +4,6 @@
             <h2>Characters</h2>
             <div fxLayout="row wrap" fxLayoutAlign="space-around center">
                 <button class="mat-button mat-elevation-z6" *ngFor="let character of characters">
-                    <!-- TODO: Place log-in status into the if statement -->
                     <app-mini-profile [character]="character"></app-mini-profile>
                 </button>
             </div>

@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
-import { ObservableInput, Observable, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { environment } from '../../../../environments/environment';
+import { ICharacter, HomeService } from 'src/app/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -12,44 +12,120 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private _code: string = "";
-  private _state: string = "";
-  private _service$: Observable<any>;
+  private _displayName: string = "";
+  private _loggedIn: boolean = false;
+  private _membershipId: string = "";
+  private _membershipType: number;
+  private _characters: ICharacter[] = [{
+    class: "Class",
+    race: "Race",
+    gender: "Gender",
+    light: "Light Level",
+    emblem: "",
+    background: ""
+  }];
+  private _queryParamsSub: Subscription;
+  private _getUserProfileSub: Subscription;
+  private _oauthServiceSub: Subscription;
+  private _currentUserMembershipSub: Subscription;
 
   constructor(
+    private homeService: HomeService,
     private route: ActivatedRoute,
-    private router: Router/*,
-    private service: add the service here after creation.*/) { }
+    private cookieService: CookieService
+  ) { }
 
   ngOnInit() {
-    // initialize /home:/:state route
-    this._service$ = this.route.paramMap.pipe(
-      switchMap((params: ParamMap): ObservableInput<any> => {
-        this.code = params.get('code');
-        this.state = params.get('state');
-        return null;
-      })
-    );
+    // initialize /home?:code:state route
+    this._queryParamsSub = this.route.queryParams.subscribe(params => {
+      if (params?.code && params?.state &&
+        params?.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) { // use these parameters received from bungie to store user authentication.
+        // prevent oauth requests from being made with a stale "code" after refresh.
+        localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
+
+        // request access token
+        this.homeService.oauthAndUserProfile(this, params?.code);
+      } else if (this.cookieService.get('access-token')) {
+        this.loggedIn = true;
+        
+        // retrieve user profile information.
+        this.homeService.userProfile(this);
+      }
+    });
+
+    // remove the stale state.
+    if (localStorage.state) localStorage.removeItem('state');
   }
 
-  public get code(): string {
-    return this._code;
+  public get displayName() {
+    return this._displayName;
   }
 
-  public set code(code: string) {
-    this._code = code;
+  public set displayName(displayName: string) {
+    this._displayName = displayName;
   }
 
-  public get state(): string {
-    return this._state;
+  public get loggedIn() {
+    return this._loggedIn;
   }
 
-  public set state(state: string) {
-    this._state = state;
+  public set loggedIn(loggedIn: boolean) {
+    this._loggedIn = loggedIn;
+  }
+
+  public get membershipId() {
+    return this._membershipId;
+  }
+
+  public set membershipId(membershipId: string) {
+    this._membershipId = membershipId;
+  }
+
+  public get membershipType() {
+    return this._membershipType;
+  }
+
+  public set membershipType(membershipType: number) {
+    this._membershipType = membershipType;
+  }
+
+  set characters(chars: ICharacter[]) {
+    this._characters = chars;
+  }
+
+  get characters(): ICharacter[] {
+    return this._characters;
+  }
+
+  set oauthServiceSub(sub: Subscription) {
+    this._oauthServiceSub = sub;
+  }
+
+  get oauthServiceSub(): Subscription {
+    return this._oauthServiceSub;
+  }
+
+  set getUserProfileSub(sub: Subscription) {
+    this._getUserProfileSub = sub;
+  }
+
+  get getUserProfileSub(): Subscription {
+    return this._getUserProfileSub;
+  }
+
+  set currentUserMembershipSub(sub: Subscription) {
+    this._currentUserMembershipSub = sub;
+  }
+
+  get currentUserMembershipSub(): Subscription {
+    return this._currentUserMembershipSub;
   }
 
   ngOnDestroy() {
-    //this._service$.unsubscribe();
+    this._queryParamsSub.unsubscribe();
+    this._getUserProfileSub.unsubscribe();
+    this._oauthServiceSub.unsubscribe();
+    this._currentUserMembershipSub.unsubscribe();
   }
 
 }

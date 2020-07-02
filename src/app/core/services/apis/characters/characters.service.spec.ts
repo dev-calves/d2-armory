@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClient } from '@angular/common/http';
-import { CharactersService } from './';
+import { CharactersService } from '../../'
 import { Observable } from 'rxjs';
-import { Character } from '../models';
+import { ICharacter } from '../../../models';
 
 describe('CharactersService', () => {
   let service: CharactersService;
@@ -24,7 +24,7 @@ describe('CharactersService', () => {
 
   it('should return an observable after making an http call', () => {
     spyOn(httpClient, 'get').and.returnValue(new Observable());
-    let response: Observable<Character[]> = service.getCharacters();
+    let response: Observable<ICharacter[]> = service.getCharacters('id123', 0);
     expect(response).toBeTruthy();
   });
 });

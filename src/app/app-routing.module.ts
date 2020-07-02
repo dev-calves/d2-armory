@@ -13,7 +13,7 @@ const routes: Routes = [
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, { enableTracing: true }) // enabled for debugging purposes.
+    RouterModule.forRoot(routes, { enableTracing: false }) // enabled for debugging purposes.
   ],
   exports: [RouterModule]
 })

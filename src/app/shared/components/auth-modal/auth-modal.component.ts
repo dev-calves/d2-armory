@@ -1,33 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { environment } from '../../../../environments/environment';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, OnDestroy, ViewChild, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+import { environment } from 'src/environments/environment';
+import { DialogData } from 'src/app/core';
 
 @Component({
   selector: 'auth-modal',
   templateUrl: './auth-modal.component.html',
   styleUrls: ['./auth-modal.component.css']
 })
-export class AuthModalComponent implements OnInit {
-  private _bungieAuthUrl: SafeUrl = null;
+export class AuthModalComponent implements OnInit, OnDestroy {
+  private _dismissCheckBox: any;
 
-  constructor(private dialogRef: MatDialogRef<AuthModalComponent>, private sanitizer: DomSanitizer) { }
+  constructor(
+   @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private dialogRef: MatDialogRef<AuthModalComponent>
+  ) { }
 
-  ngOnInit(): void {
-    this.bungieAuthUrl = this.sanitizer.bypassSecurityTrustResourceUrl(environment.page.home.BUNGIE_AUTHORIZATION_ENDPOINT + '?client_id=' + environment.page.home.BUNGIE_CLIENT_ID +
-    '&response_type=' + environment.page.home.BUNGIE_AUTHORIZATION_RESPONSE_TYPE);
+  ngOnInit(): void {}
+
+  @ViewChild('dismissCheckbox')
+  public set dismissCheckBox(element) {
+    this._dismissCheckBox = element;
   }
 
-  get bungieAuthUrl(): SafeUrl {
-    return this._bungieAuthUrl;
+  public get dismissCheckBox() {
+    return this._dismissCheckBox;
   }
 
-  set bungieAuthUrl(url: SafeUrl) {
-    this._bungieAuthUrl = url;
+  public logOnClick(): void {
+    // write or overwrite existing state item.
+    localStorage.setItem(environment.LOCAL_STORAGE_STATE, this.data.stateHex);
+    localStorage.setItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE, this.dismissCheckBox.checked);
   }
 
-  onClick(): void {
+  public closeClick(): void {
     this.dialogRef.close();
   }
+
+  ngOnDestroy() {}
 
 }

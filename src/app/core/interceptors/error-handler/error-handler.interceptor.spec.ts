@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ErrorHandlerIntercept } from './error-handler.interceptor';
-import { CharactersService } from '../services';
+import { CharactersService } from 'src/app/core/services';
 
 class handler extends HttpHandler {
     constructor() {
@@ -55,7 +55,7 @@ describe('ErrorHandlerIntercept', () => {
     });
 
     it('should intercept', () => {
-        service.getCharacters().subscribe(response => {
+        service.getCharacters('id123', 1).subscribe(response => {
             expect(response).toBeTruthy();
         });
     });
