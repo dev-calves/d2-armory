@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found.component';
 
 const routes: Routes = [
-  { path: '404', component: NotFoundComponent},
+  { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '404', pathMatch: 'full' }
 ];
 
@@ -13,7 +13,7 @@ const routes: Routes = [
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { enableTracing: false }) // enabled for debugging purposes.
   ],
   exports: [RouterModule]
 })

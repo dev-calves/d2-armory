@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
-import { SharedModule } from '../shared/shared.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 import { HomeComponent } from './pages/home/home.component';
-import { AuthModalComponent } from './components/auth-modal/auth-modal.component';
 import { CharacterModelComponent } from './components/character-display/character-model/character-model.component';
 import { CharacterEquipmentComponent } from './components/character-display/character-equipment/character-equipment.component';
 import { CreateComponent } from './components/wardrobe/create/create.component';
@@ -22,13 +21,11 @@ import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    HomeComponent, 
-    AuthModalComponent, 
+    HomeComponent,
     CharacterModelComponent, 
     CharacterEquipmentComponent, 
     CreateComponent, 
-    WardrobeComponent, 
-    AuthModalComponent, 
+    WardrobeComponent,
     CharacterDisplayComponent
   ],
   imports: [
@@ -41,6 +38,9 @@ import { FormsModule } from '@angular/forms';
     MatSidenavModule,
     FormsModule,
     HomeRoutingModule
+  ], 
+  exports: [
+    HomeComponent
   ]
 })
 export class HomeModule { }

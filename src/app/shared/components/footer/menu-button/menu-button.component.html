@@ -1,0 +1,23 @@
+<button class="menu-button mat-elevation-z6" mat-icon-button [matMenuTriggerFor]="settings"
+    aria-label="Settings for item transfers button.">
+    <mat-icon color="accent">settings</mat-icon>
+</button>
+
+<!-- Item Menu -->
+<mat-menu #settings="matMenu">
+    <h3 class="menu-label">Unequip gear to</h3>
+    <mat-button-toggle-group value="{{toggleSelected}}" vertical #itemGroup="matButtonToggleGroup">
+        <mat-button-toggle value="vault" aria-label="Sends uneqipped items to the vault">
+            <button mat-menu-item (click)="onClick('vault')">
+                <mat-icon color="accent">lock</mat-icon>
+                <span>Vault</span>
+            </button>
+        </mat-button-toggle>
+        <mat-button-toggle value="inventory" aria-label="Sends unequipped items to the inventory">
+            <button mat-menu-item (click)="onClick('inventory')">
+                <mat-icon color="accent">lock_open</mat-icon>
+                <span>Inventory</span>
+            </button>
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+</mat-menu>

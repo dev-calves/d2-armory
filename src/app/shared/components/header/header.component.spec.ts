@@ -1,7 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HeaderComponent } from './header.component';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Character, CharactersService } from 'src/app/core';
+import { mockCharacters } from './mocks/mock-characters';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -9,12 +12,22 @@ describe('HeaderComponent', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
+  class MockCharactersService {
+    public getCharacters(): Observable<Character[]>{
+      return new Observable<Character[]>(subscriber => {
+        subscriber.next(mockCharacters);
+        subscriber.complete();
+      });
+    }
+  }
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule],
       declarations: [ HeaderComponent ],
       providers: [
-        HttpClient
+        HttpClient,
+        {provide:CharactersService, useClass: MockCharactersService}
       ]
     })
     .compileComponents();
@@ -32,4 +45,14 @@ describe('HeaderComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should initialize characters after subscribing to the service', () => {
+    expect(component.characters).toEqual(mockCharacters);
+  });
+
+  it('should set a list of characters', () => {
+    component.characters = [{class:'qwerty', race: '', gender: '', light:'', emblem: '', background: ''}];
+    expect(component.characters[0].class).toContain("qwerty");
+  });
+  
 });

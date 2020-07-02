@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Character } from '../../../../core/models/character.model';
+import { ICharacter } from 'src/app/core';
 
 @Component({
   selector: 'app-mini-profile',
@@ -7,7 +7,7 @@ import { Character } from '../../../../core/models/character.model';
   styleUrls: ['./mini-profile.component.css']
 })
 export class MiniProfileComponent implements OnInit {
-  private _character: Character;
+  private _character: ICharacter;
 
   constructor() { }
 
@@ -15,11 +15,11 @@ export class MiniProfileComponent implements OnInit {
   }
 
   @Input()
-  set character(char: Character) {
+  set character(char: ICharacter) {
     this._character = char;
   }
 
-  get character(): Character {
+  get character(): ICharacter {
     return this._character;
   }
 }
