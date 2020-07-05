@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 
-import { IOauthResponse } from '../../../models';
+import { IOauthResponse, IOauthRefreshDefined } from '../../../models';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +22,9 @@ export class OauthService {
 
   public deleteTokens(): Observable<IOauthResponse> {
     return this._http.get<IOauthResponse>(environment.OAUTH_DELETE_ENDPOINT);
+  }
+
+  public refreshExist(): Observable<IOauthRefreshDefined> {
+    return this._http.get<IOauthRefreshDefined>(environment.OAUTH_REFRESH_ENDPOINT);
   }
 }

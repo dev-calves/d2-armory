@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 
-import { ICharacter, HomeService } from 'src/app/core';
+import { ICharacter, HomeService, OauthService } from 'src/app/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -28,33 +27,33 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _getUserProfileSub: Subscription;
   private _oauthServiceSub: Subscription;
   private _currentUserMembershipSub: Subscription;
+  private _refreshDefSub: Subscription;
 
   constructor(
     private homeService: HomeService,
     private route: ActivatedRoute,
-    private cookieService: CookieService
+    private oauthService: OauthService
   ) { }
 
   ngOnInit() {
-    // initialize /home?:code:state route
-    this._queryParamsSub = this.route.queryParams.subscribe(params => {
-      if (params?.code && params?.state &&
-        params?.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) { // use these parameters received from bungie to store user authentication.
-        // prevent oauth requests from being made with a stale "code" after refresh.
-        localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
+    this._refreshDefSub = this.oauthService.refreshExist().subscribe(refresh => {
+      this._queryParamsSub = this.route.queryParams.subscribe(params => { // initialize /home?:code:state route
+        if (params?.code && params?.state &&
+          params?.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) { // use these parameters received from bungie to store user authentication.
+          // prevent oauth requests from being made with a stale "code" after refreshing the page.
+          localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
 
-        // request access token
-        this.homeService.oauthAndUserProfile(this, params?.code);
-      } else if (this.cookieService.get('access-token')) {
-        this.loggedIn = true;
-        
-        // retrieve user profile information.
-        this.homeService.userProfile(this);
-      }
+          // request access token
+          this.homeService.oauthAndUserProfile(this, params?.code);
+
+        } else if (refresh["refresh-token-available"]) {
+          this.loggedIn = true;
+
+          // retrieve user profile information.
+          this.homeService.userProfile(this);
+        }
+      });
     });
-
-    // remove the stale state.
-    if (localStorage.state) localStorage.removeItem('state');
   }
 
   public get displayName() {
@@ -126,6 +125,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._getUserProfileSub.unsubscribe();
     this._oauthServiceSub.unsubscribe();
     this._currentUserMembershipSub.unsubscribe();
+    this._refreshDefSub.unsubscribe();
   }
 
 }
