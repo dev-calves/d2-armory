@@ -1,4 +1,5 @@
 export interface ICharacter {
+    id: string,
     class: string
     race: string
     gender: string

@@ -1,1 +1,58 @@
-<p>wardrobe works!</p>
+<div style="padding-bottom: 5px;" fxlayout="column" fxLayoutAlign="space-around center" *ngIf="!toHide">
+    <mat-card style="width: 90%; max-width: 90%;">
+        <div fxLayout="column" style="max-width: 100%;">
+            <div fxLayout="row" fxLayoutAlign="end start" style="max-width: 100%;">
+                <button mat-icon-button (click)="close()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <form style="margin-top: -40px;">
+                <mat-form-field style="width: 150px;">
+                    <mat-label>Wardrobe Name</mat-label>
+                    <input matInput placeholder="Ex. PVP or Nightfalls.." name="wardrobeName"
+                        [(ngModel)]="wardrobeNameValue">
+                    <button mat-button *ngIf="wardrobeNameValue" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="wardrobeNameValue=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </form>
+            <span fxLayout="row wrap">
+                <div fxLayout="column" fxLayoutAlign="end start">
+                    <mat-card-header style="margin-left: -18px;">
+                        <mat-card-title style="font-size: small;">Click to capture your outfit</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-actions style="padding-left: 40px;">
+                        <button class="add-button mat-elevation-z6" mat-button (click)="addOutfit()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </div>
+                <div #outfitsParentContainer
+                    style="overflow-x: auto; max-width: 80%; padding-top: 40px; padding-bottom: 20px; padding-left: 5px;"
+                    fxLayout="row">
+                    <!-- the createComponent method of the outfitsContainer is not working as intended. -->
+                    <!-- It's not placing components into the container  -->
+                    <!-- Moved the outfitsContainer into a parent container with styles to apply them to outfits -->
+                    <div #outfitsContainer></div>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+                    <app-outfit></app-outfit>
+            </div>
+            </span>
+        </div>
+    </mat-card>
+</div>
