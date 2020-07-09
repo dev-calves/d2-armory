@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -30,7 +31,8 @@ import { MenuButtonComponent } from './components/footer/menu-button/menu-button
     MatIconModule,
     MatButtonToggleModule,
     MatCheckboxModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    RouterModule
   ],
   providers: [],
   exports: [

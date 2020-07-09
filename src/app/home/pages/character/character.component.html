@@ -1,0 +1,23 @@
+<div style="padding-top: 5px; padding-bottom: 5px;" fxlayout="column" fxLayoutAlign="space-around center">
+    <mat-card style="width: 60%;">
+        <div fxLayout="row" fxLayoutAlign="space-around center">
+            <mat-card-header>
+                <mat-card-title style="font-size: medium;">Click to add a new wardrobe</mat-card-title>
+                <mat-card-subtitle style="font-size: small;">wardrobes are categories for outfits
+                </mat-card-subtitle>
+            </mat-card-header>
+        </div>
+        <mat-card-actions>
+            <span fxLayout="row" fxLayoutAlign="space-around">
+                <button class="mat-elevation-z6" style="font-size: 40px;" mat-button (click)="addWardrobe()">
+                    <mat-icon [inline]="true">add</mat-icon>
+                </button>
+            </span>
+        </mat-card-actions>
+    </mat-card>
+</div>
+<div #wardrobesParentContainer>
+    <div #wardrobesContainer>
+        <app-wardrobe></app-wardrobe>
+    </div>
+</div>
