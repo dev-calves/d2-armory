@@ -1,12 +1,19 @@
-<mat-toolbar color="primary">
-    <mat-toolbar-row>
-        <section>
-            <h2>Characters</h2>
-            <div fxLayout="row wrap" fxLayoutAlign="space-around center">
-                <button class="mat-button mat-elevation-z6" *ngFor="let character of characters">
+<mat-toolbar style="max-width: 100%;" color="primary">
+    <mat-toolbar-row style="max-width: 100%;">
+        <div style="width: 100%;" fxLayout="column">
+            <div fxLayout="row" fxLayoutAlign="space-between">
+                <h2>Characters</h2>
+                <button mat-icon-button (click)="removeHighlights()" [routerLink]="''">
+                    <mat-icon>home</mat-icon>
+                </button>
+            </div>
+            <div #buttonProfileContainer fxLayout="row wrap" fxLayoutAlign="space-between center">
+                <button mat-button class="mat-elevation-z6" [id]='character?.id' [routerLink]="['character']"
+                    [queryParams]="{id:  character?.id}" (click)="removeHighlights()"
+                    *ngFor="let character of characters">
                     <app-mini-profile [character]="character"></app-mini-profile>
                 </button>
             </div>
-        </section>
+        </div>
     </mat-toolbar-row>
 </mat-toolbar>

@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _membershipId: string = "";
   private _membershipType: number;
   private _characters: ICharacter[] = [{
+    id: "1234",
     class: "Class",
     race: "Race",
     gender: "Gender",
@@ -122,10 +123,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._queryParamsSub.unsubscribe();
-    this._getUserProfileSub.unsubscribe();
-    this._oauthServiceSub.unsubscribe();
-    this._currentUserMembershipSub.unsubscribe();
-    this._refreshDefSub.unsubscribe();
+    if (this._getUserProfileSub) {this._getUserProfileSub.unsubscribe();}
+    if (this._oauthServiceSub) {this._oauthServiceSub.unsubscribe();}
+    if (this._currentUserMembershipSub) {this._currentUserMembershipSub.unsubscribe();}
+    if (this._refreshDefSub) {this._refreshDefSub.unsubscribe();}
   }
 
 }

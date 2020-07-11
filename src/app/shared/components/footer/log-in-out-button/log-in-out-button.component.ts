@@ -101,7 +101,11 @@ export class LogInOutButtonComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this._oauthSubscribeSub.unsubscribe();
-    this._encryptSub.unsubscribe();
+    if (this._oauthSubscribeSub) {
+      this._oauthSubscribeSub.unsubscribe();
+    }
+    if (this._encryptSub) {
+      this._encryptSub.unsubscribe();
+    }
   }
 }

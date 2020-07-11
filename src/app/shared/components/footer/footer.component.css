@@ -5,18 +5,12 @@ mat-toolbar {
 mat-toolbar-row {
     width: 100%;
     height: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
 app-menu-button {
     margin-left: -30px;
 }
 
-.menu-header {
-    margin-bottom: 20px;
-}
-
-p {
+.p {
     margin-top: -4px;
     margin-bottom: 15px;
     font-weight: lighter;
@@ -35,6 +29,7 @@ p {
 }
 
 .plug {
+    padding-top: 20px;
     padding-left: 15px;
     font-size: small;
     font-style: italic;
