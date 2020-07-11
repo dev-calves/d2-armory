@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { CharacterComponent } from './pages/character/character.component';
+import { Routes, RouterModule } from '@angular/router';
 
 // returns the home component for root route and home routes.
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent,
+  {
+    path: 'home', component: HomeComponent,
     children: [
-      { path: 'character/:id', component: CharacterComponent }
+      { path: 'character', component: CharacterComponent }
     ]
   }
 ];

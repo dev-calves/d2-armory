@@ -1,11 +1,13 @@
 import {
-  Component, OnInit, Renderer2, ElementRef, ViewChild, ViewContainerRef,
+  Component, OnInit, Renderer2, ViewChild, ViewContainerRef,
   ComponentFactoryResolver,
   ComponentRef,
-  ComponentFactory, AfterViewInit, AfterViewChecked
+  AfterViewInit
 } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { WardrobeComponent } from '../../components/wardrobe/wardrobe.component';
-import { MatDivider } from '@angular/material/divider';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-character',
@@ -13,17 +15,27 @@ import { MatDivider } from '@angular/material/divider';
   styleUrls: ['./character.component.css']
 })
 export class CharacterComponent implements OnInit, AfterViewInit {
-
   private _wardrobes: ViewContainerRef
   private _wardrobeComponentRef: ComponentRef<WardrobeComponent>[] = [];
+  private _wardrobeParentContainer;
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef, private resolver: ComponentFactoryResolver) { }
+  private _queryParamsSub: Subscription;
 
-  ngOnInit(): void {
+  constructor(private _snackBar: MatSnackBar, private resolver: ComponentFactoryResolver, private route: ActivatedRoute, private router: Router, private renderer: Renderer2) {
 
   }
 
+  ngOnInit(): void {
+    this._queryParamsSub = this.route.queryParams.subscribe(params => {
+      // character component should only initialize with the query param id provided.
+      if (!params.id) {
+        this.router.navigate(['home']);
+      }
+    });
+  }
+
   ngAfterViewInit() {
+
   }
 
   @ViewChild('wardrobesContainer', { read: ViewContainerRef })
@@ -35,22 +47,59 @@ export class CharacterComponent implements OnInit, AfterViewInit {
     return this._wardrobes;
   }
 
+  @ViewChild('wardrobesParentContainer')
+  public set wardrobeParentContainer(element) {
+    this._wardrobeParentContainer = element;
+  }
+
+  public get wardrobeParentContainer() {
+    return this._wardrobeParentContainer;
+  }
+
   public addWardrobe() {
-    this.createWardrobeComponent();
+    let wardrobeError: HTMLElement = this.wardrobeParentContainer.nativeElement.querySelector('mat-error');
+
+    if (wardrobeError) {
+      this.openSnackBar(wardrobeError.innerHTML);
+    } else {
+      this.createWardrobeComponent();
+    }
   }
 
   public createWardrobeComponent() {
-    const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
-    let ref: ComponentRef<WardrobeComponent> = this.wardrobes.createComponent(wardrobeFactory);
-    this._wardrobeComponentRef.push(ref);
-    // this._wardrobeComponentRef.instance = this.close; // for inputs
+    let wardrobeCounter: number = 0;
+    let wardrobes: HTMLCollection = this.wardrobeParentContainer.nativeElement.children;
+
+    Array.from(wardrobes).forEach(element => {
+      if (element?.children?.length > 0) {
+        wardrobeCounter++;
+      }
+    });
+
+    if (wardrobeCounter <= 6) { // limit is 7 wardrobe components
+      const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
+      let ref: ComponentRef<WardrobeComponent> = this.wardrobes.createComponent(wardrobeFactory);
+      this._wardrobeComponentRef.push(ref);
+    } else {
+      this.openSnackBar('Max wardrobes reached');
+    }
   }
 
-  ngOnDestroy(){
+  public openSnackBar(message) {
+    this._snackBar.open(message, 'Dismiss', {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+
+    });
+  }
+
+  ngOnDestroy() {
     if (this._wardrobeComponentRef.length > 0) {
       this._wardrobeComponentRef.forEach(ref => {
         ref.destroy();
       });
     }
+    if (this._queryParamsSub) this._queryParamsSub.unsubscribe();
   }
 }
