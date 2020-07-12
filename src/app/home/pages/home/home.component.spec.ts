@@ -8,15 +8,15 @@ describe('HomeComponent', () => {
   let matDialog: MatDialog;
 
   class MockMatDialog {
-    open(any, object): MatDialog {
+    open(param1, param2): MatDialog {
       return new MatDialog(null, null, null, null, null, null, null);
     }
   }
-  
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ HomeComponent ],
-      providers: [{provide:MatDialog, useClass: MockMatDialog}]
+      providers: [{provide: MatDialog, useClass: MockMatDialog}]
     })
     .compileComponents();
   }));
@@ -34,7 +34,6 @@ describe('HomeComponent', () => {
 
   it('should launch the dialog box when openDialog is called', () => {
     spyOn(matDialog, 'open');
-    component.openDialog();
     expect(matDialog.open).toHaveBeenCalled();
   });
 });

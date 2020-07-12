@@ -1,14 +1,14 @@
-import { Component, Input, Renderer2, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, Input, Renderer2, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ICharacter } from 'src/app/core';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'header',
+  selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements AfterViewChecked {
+export class HeaderComponent implements AfterViewChecked, OnDestroy {
   private _characters: ICharacter[];
   private _buttonProfileContainer;
   private _queryParamsSub: Subscription;
@@ -18,7 +18,7 @@ export class HeaderComponent implements AfterViewChecked {
   ngAfterViewChecked() {
     this._queryParamsSub = this.route.queryParams.subscribe(params => {
       if (params?.id) {
-        let buttons: HTMLCollection = this._buttonProfileContainer.nativeElement.children;
+        const buttons: HTMLCollection = this._buttonProfileContainer.nativeElement.children;
         Array.from(buttons).forEach((button: HTMLElement) => {
           if (button.id === params.id) {
             this.renderer.setStyle(button, 'background-color', 'beige');

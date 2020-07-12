@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -11,10 +11,10 @@ import { LogInOutButtonService } from 'src/app/core';
   templateUrl: './log-in-out-button.component.html',
   styleUrls: ['./log-in-out-button.component.css']
 })
-export class LogInOutButtonComponent implements OnInit {
-  private _loggedIn: boolean = false;
+export class LogInOutButtonComponent implements OnInit, OnDestroy {
+  private _loggedIn = false;
   private _oauthSubscribeSub: Subscription;
-  private _mouseOverIcon: string = "mood";
+  private _mouseOverIcon = 'mood';
   private _bungieAuthUrl: string;
   private _encryptSub: Subscription;
   private _stateHex: string;
@@ -33,8 +33,8 @@ export class LogInOutButtonComponent implements OnInit {
     this.dialog.open(AuthModalComponent, {
       width: '400px',
       data: {
-        stateHex: stateHex,
-        url: url
+        stateHex,
+        url
       }
     });
   }
@@ -45,18 +45,18 @@ export class LogInOutButtonComponent implements OnInit {
 
   public logOutClick(): void {
     this._oauthSubscribeSub = this.oauthService.deleteTokens().subscribe(response => {
-      if (response.message === "tokens deleted.") {
-        location.href = "/home";
+      if (response.message === 'tokens deleted.') {
+        location.href = '/home';
       }
     });
   }
 
   public mouseOver(): void {
-    this.mouseOverIcon = "mood_bad"
+    this.mouseOverIcon = 'mood_bad';
   }
 
   public mouseOut(): void {
-    this.mouseOverIcon = "mood"
+    this.mouseOverIcon = 'mood';
   }
 
   public set stateHex(stateHex: string) {

@@ -1,3 +1,3 @@
 export interface IOauthRefreshDefined {
-    'refresh-token-available': boolean
+    'refresh-token-available': boolean;
 }

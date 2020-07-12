@@ -21,7 +21,7 @@ export class HomeService {
     // retrieve user profile and characters.
     homeReference.oauthServiceSub = this.oauthService.getAccessOauth(code).subscribe(
       oauthAccessResponse => {
-        if (oauthAccessResponse.message.includes("tokens recieved")) {
+        if (oauthAccessResponse.message.includes('tokens recieved')) {
           // retrieve user profile information after tokens are made available.
           homeReference.loggedIn = true;
           this.userProfile(homeReference);
@@ -36,7 +36,8 @@ export class HomeService {
         homeReference.displayName = currentUserMembership.displayName;
         return currentUserMembership;
       }),
-      concatMap(currentUserMembership => this.charactersService.getCharacters(currentUserMembership.membershipId, currentUserMembership.membershipType)),
+      concatMap(currentUserMembership => this.charactersService.getCharacters(
+        currentUserMembership.membershipId, currentUserMembership.membershipType)),
     ).subscribe(charactersResponse => homeReference.characters = charactersResponse);
   }
 }

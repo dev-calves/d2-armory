@@ -1,3 +1,3 @@
 export interface IDecryptResponse {
-    state: string
+    state: string;
 }

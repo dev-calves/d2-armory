@@ -8,11 +8,11 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { Router } from '@angular/router';
 import { ErrorHandlerIntercept } from './error-handler.interceptor';
 import { CharactersService } from 'src/app/core/services';
 
-class handler extends HttpHandler {
+class Handler extends HttpHandler {
     constructor() {
         super();
     }
@@ -34,14 +34,14 @@ describe('ErrorHandlerIntercept', () => {
     let intercept: ErrorHandlerIntercept;
 
     beforeEach(() => {
-        intercept = new ErrorHandlerIntercept(jasmine.createSpyObj(MatSnackBar, ['open']));
+        intercept = new ErrorHandlerIntercept(jasmine.createSpyObj(MatSnackBar, ['open']), jasmine.createSpyObj(Router));
     });
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
-                {provide:MatSnackBar, useClass: MockMatSnackBar},
+                {provide: MatSnackBar, useClass: MockMatSnackBar},
                 {
                     provide: HTTP_INTERCEPTORS,
                     useClass: ErrorHandlerIntercept,
@@ -50,8 +50,8 @@ describe('ErrorHandlerIntercept', () => {
             ]
         });
 
-        service = TestBed.get(CharactersService);
-        httpMock = TestBed.get(HttpTestingController);
+        service = TestBed.inject(CharactersService);
+        httpMock = TestBed.inject(HttpTestingController);
     });
 
     it('should intercept', () => {

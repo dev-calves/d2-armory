@@ -1,5 +1,5 @@
 export interface ICurrentUserMembership {
-    membershipId: string,
-    membershipType: number,
-    displayName: string
+    membershipId: string;
+    membershipType: number;
+    displayName: string;
 }

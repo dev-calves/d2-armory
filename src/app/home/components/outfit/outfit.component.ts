@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms'
+import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 
 @Component({
@@ -8,11 +8,11 @@ import { ErrorStateMatcher } from '@angular/material/core';
   styleUrls: ['./outfit.component.css']
 })
 export class OutfitComponent implements OnInit {
-  private _toHide: boolean = false;
+  private _toHide = false;
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
 
-  constructor() { 
+  constructor() {
     this.formControl = new FormControl('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z0-9 _]*$') // alphanumeric

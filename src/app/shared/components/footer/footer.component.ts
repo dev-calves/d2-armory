@@ -3,25 +3,25 @@ import { Component, Input, DoCheck } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'footer',
+  selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements DoCheck {
-  private _displayName: string = "";
-  private _steamId: string = '76561198276048723';
-  private _steamName: string = 'cedric401';
-  private _steamProfileLink: string = 'https://steamcommunity.com/id/cedric401/';
-  private _storage: "vault" | "inventory" = "vault";
-  private _loggedIn: boolean = false;
+  private _displayName = '';
+  private _steamId = '76561198276048723';
+  private _steamName = 'cedric401';
+  private _steamProfileLink = 'https://steamcommunity.com/id/cedric401/';
+  private _storage: 'vault' | 'inventory' = 'vault';
+  private _loggedIn = false;
 
   constructor() { }
 
   ngDoCheck(): void {
     if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === "vault" ||
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === "inventory") {
-      this.storage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) as "vault" | "inventory";
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'vault' ||
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'inventory') {
+      this.storage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) as 'vault' | 'inventory';
     }
   }
 
@@ -58,11 +58,11 @@ export class FooterComponent implements DoCheck {
     return this._steamProfileLink;
   }
 
-  public set storage(storage: "vault" | "inventory") {
+  public set storage(storage: 'vault' | 'inventory') {
     this._storage = storage;
   }
 
-  public get storage(): "vault" | "inventory" {
+  public get storage(): 'vault' | 'inventory' {
     return this._storage;
   }
 

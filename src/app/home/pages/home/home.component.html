@@ -1,10 +1,10 @@
 
 <body>
-    <header [characters]="characters"></header>
+    <app-header [characters]="characters"></app-header>
 
     <div class="content">
         <router-outlet></router-outlet>
     </div>
 
-    <footer [displayName]="displayName" [loggedIn]="loggedIn" class="footer"></footer>
+    <app-footer [displayName]="displayName" [loggedIn]="loggedIn" class="footer"></app-footer>
 </body>

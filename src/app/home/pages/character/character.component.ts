@@ -1,8 +1,8 @@
 import {
-  Component, OnInit, Renderer2, ViewChild, ViewContainerRef,
+  Component, OnInit, ViewChild, ViewContainerRef,
   ComponentFactoryResolver,
   ComponentRef,
-  AfterViewInit
+  OnDestroy
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { WardrobeComponent } from '../../components/wardrobe/wardrobe.component';
@@ -14,14 +14,17 @@ import { Subscription } from 'rxjs';
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.css']
 })
-export class CharacterComponent implements OnInit, AfterViewInit {
-  private _wardrobes: ViewContainerRef
+export class CharacterComponent implements OnInit, OnDestroy {
+  private _wardrobes: ViewContainerRef;
   private _wardrobeComponentRef: ComponentRef<WardrobeComponent>[] = [];
   private _wardrobeParentContainer;
 
   private _queryParamsSub: Subscription;
 
-  constructor(private _snackBar: MatSnackBar, private resolver: ComponentFactoryResolver, private route: ActivatedRoute, private router: Router, private renderer: Renderer2) {
+  constructor(private _snackBar: MatSnackBar,
+              private resolver: ComponentFactoryResolver,
+              private route: ActivatedRoute,
+              private router: Router) {
 
   }
 
@@ -32,10 +35,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         this.router.navigate(['home']);
       }
     });
-  }
-
-  ngAfterViewInit() {
-
   }
 
   @ViewChild('wardrobesContainer', { read: ViewContainerRef })
@@ -57,7 +56,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   public addWardrobe() {
-    let wardrobeError: HTMLElement = this.wardrobeParentContainer.nativeElement.querySelector('mat-error');
+    const wardrobeError: HTMLElement = this.wardrobeParentContainer.nativeElement.querySelector('mat-error');
 
     if (wardrobeError) {
       this.openSnackBar(wardrobeError.innerHTML);
@@ -67,8 +66,8 @@ export class CharacterComponent implements OnInit, AfterViewInit {
   }
 
   public createWardrobeComponent() {
-    let wardrobeCounter: number = 0;
-    let wardrobes: HTMLCollection = this.wardrobeParentContainer.nativeElement.children;
+    let wardrobeCounter = 0;
+    const wardrobes: HTMLCollection = this.wardrobeParentContainer.nativeElement.children;
 
     Array.from(wardrobes).forEach(element => {
       if (element?.children?.length > 0) {
@@ -78,7 +77,7 @@ export class CharacterComponent implements OnInit, AfterViewInit {
 
     if (wardrobeCounter <= 6) { // limit is 7 wardrobe components
       const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
-      let ref: ComponentRef<WardrobeComponent> = this.wardrobes.createComponent(wardrobeFactory);
+      const ref: ComponentRef<WardrobeComponent> = this.wardrobes.createComponent(wardrobeFactory);
       this._wardrobeComponentRef.push(ref);
     } else {
       this.openSnackBar('Max wardrobes reached');
@@ -100,6 +99,6 @@ export class CharacterComponent implements OnInit, AfterViewInit {
         ref.destroy();
       });
     }
-    if (this._queryParamsSub) this._queryParamsSub.unsubscribe();
+    if (this._queryParamsSub) { this._queryParamsSub.unsubscribe(); }
   }
 }
