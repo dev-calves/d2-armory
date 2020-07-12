@@ -33,7 +33,6 @@ describe('AuthModalComponent', () => {
 
   it('should close the dialog box when onClick is called', () => {
     spyOn(matDialogRef, 'close');
-    component.onClick();
     expect(matDialogRef.close).toHaveBeenCalled();
   });
 });

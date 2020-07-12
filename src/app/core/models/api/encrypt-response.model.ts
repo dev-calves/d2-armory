@@ -1,4 +1,4 @@
 export interface IEncryptResponse {
-    hex: string
-    bungieClientId: string
+    hex: string;
+    bungieClientId: string;
 }

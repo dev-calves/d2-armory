@@ -1,3 +1,3 @@
 export interface IOauthResponse {
-    message: string
+    message: string;
 }

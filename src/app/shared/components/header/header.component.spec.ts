@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { HeaderComponent } from './header.component';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Character, CharactersService } from 'src/app/core';
+import { ICharacter, CharactersService } from 'src/app/core';
 import { mockCharacters } from './mocks/mock-characters';
 
 describe('HeaderComponent', () => {
@@ -13,8 +13,8 @@ describe('HeaderComponent', () => {
   let httpTestingController: HttpTestingController;
 
   class MockCharactersService {
-    public getCharacters(): Observable<Character[]>{
-      return new Observable<Character[]>(subscriber => {
+    public getCharacters(): Observable<ICharacter[]>{
+      return new Observable<ICharacter[]>(subscriber => {
         subscriber.next(mockCharacters);
         subscriber.complete();
       });
@@ -27,7 +27,7 @@ describe('HeaderComponent', () => {
       declarations: [ HeaderComponent ],
       providers: [
         HttpClient,
-        {provide:CharactersService, useClass: MockCharactersService}
+        {provide: CharactersService, useClass: MockCharactersService}
       ]
     })
     .compileComponents();
@@ -51,8 +51,8 @@ describe('HeaderComponent', () => {
   });
 
   it('should set a list of characters', () => {
-    component.characters = [{class:'qwerty', race: '', gender: '', light:'', emblem: '', background: ''}];
-    expect(component.characters[0].class).toContain("qwerty");
+    component.characters = [{id: '', class: 'qwerty', race: '', gender: '', light: '', emblem: '', background: ''}];
+    expect(component.characters[0].class).toContain('qwerty');
   });
-  
+
 });

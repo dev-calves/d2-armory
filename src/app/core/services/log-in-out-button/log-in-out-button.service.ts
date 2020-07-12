@@ -14,11 +14,11 @@ export class LogInOutButtonService {
     let encryptRequest: EncryptRequest;
 
     if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === "vault" ||
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === "inventory") {
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'vault' ||
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'inventory') {
       encryptRequest = { state: localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) };
     } else {
-      encryptRequest = { state: "vault" };
+      encryptRequest = { state: 'vault' };
     }
 
     logInOutButtonRef.encryptSub = this.encryptService.postEncrypt(encryptRequest).subscribe(
@@ -27,7 +27,7 @@ export class LogInOutButtonService {
         logInOutButtonRef.bungieAuthUrl = 'https://www.bungie.net/en/oauth/authorize?client_id=' +
           response.bungieClientId + '&response_type=code&state=' + logInOutButtonRef.stateHex;
 
-        if (localStorage.getItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE) === "true") {
+        if (localStorage.getItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE) === 'true') {
           localStorage.setItem(environment.LOCAL_STORAGE_STATE, logInOutButtonRef.stateHex);
           location.href = logInOutButtonRef.bungieAuthUrl;
         } else {

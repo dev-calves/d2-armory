@@ -1,3 +1,3 @@
 export class DecryptRequest {
-    hex: string
+    hex: string;
 }

@@ -24,7 +24,7 @@ describe('CurrentUserMembershipService', () => {
 
   it('should return an observable after making an http call', () => {
     spyOn(httpClient, 'get').and.returnValue(new Observable());
-    let response: Observable<ICurrentUserMembership> = service.getCurrentUserMembership();
+    const response: Observable<ICurrentUserMembership> = service.getCurrentUserMembership();
     expect(response).toBeTruthy();
   });
 });

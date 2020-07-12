@@ -2,6 +2,7 @@ import {
   Component, OnInit, ViewChild, ViewContainerRef,
   ComponentFactoryResolver,
   ComponentRef,
+  OnDestroy,
 } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -13,9 +14,9 @@ import { OutfitComponent } from '../outfit/outfit.component';
   templateUrl: './wardrobe.component.html',
   styleUrls: ['./wardrobe.component.css']
 })
-export class WardrobeComponent implements OnInit {
-  private _toHide: boolean = false;
-  private _wardrobeNameValue = "";
+export class WardrobeComponent implements OnInit, OnDestroy {
+  private _toHide = false;
+  private _wardrobeNameValue = '';
   private _wardrobeName: string;
   private _outfitsContainer: ViewContainerRef;
   private _outfitComponentRef: ComponentRef<OutfitComponent>[] = [];
@@ -78,6 +79,10 @@ export class WardrobeComponent implements OnInit {
     this._outfitsParentContainer = container;
   }
 
+  public get outfitsParentContainer() {
+    return this._outfitsParentContainer;
+  }
+
   public get card() {
     return this._card;
   }
@@ -85,10 +90,6 @@ export class WardrobeComponent implements OnInit {
   @ViewChild('outfitCardContainer')
   public set card(card) {
     this._card = card;
-  }
-
-  public get outfitsParentContainer() {
-    return this._outfitsParentContainer;
   }
 
   public set formControl(control) {
@@ -112,7 +113,7 @@ export class WardrobeComponent implements OnInit {
   }
 
   public addOutfit() {
-    let outfitError: HTMLElement = this.card.nativeElement.querySelector('mat-error');
+    const outfitError: HTMLElement = this.card.nativeElement.querySelector('mat-error');
 
     if (outfitError) {
       this.openSnackBar(outfitError.innerHTML);
@@ -122,8 +123,8 @@ export class WardrobeComponent implements OnInit {
   }
 
   public createOutfitComponent() {
-    let outfitsContainerCounter: number = 0;
-    let outfits = this.outfitsParentContainer.nativeElement.children;
+    let outfitsContainerCounter = 0;
+    const outfits = this.outfitsParentContainer.nativeElement.children;
 
     Array.from(outfits).forEach((element: HTMLElement) => {
       if (element?.children?.length > 0) {

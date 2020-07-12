@@ -11,18 +11,18 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private _displayName: string = "";
-  private _loggedIn: boolean = false;
-  private _membershipId: string = "";
+  private _displayName = '';
+  private _loggedIn = false;
+  private _membershipId = '';
   private _membershipType: number;
   private _characters: ICharacter[] = [{
-    id: "1234",
-    class: "Class",
-    race: "Race",
-    gender: "Gender",
-    light: "Light Level",
-    emblem: "",
-    background: ""
+    id: '1234',
+    class: 'Class',
+    race: 'Race',
+    gender: 'Gender',
+    light: 'Light Level',
+    emblem: '',
+    background: ''
   }];
   private _queryParamsSub: Subscription;
   private _getUserProfileSub: Subscription;
@@ -40,14 +40,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._refreshDefSub = this.oauthService.refreshExist().subscribe(refresh => {
       this._queryParamsSub = this.route.queryParams.subscribe(params => { // initialize /home?:code:state route
         if (params?.code && params?.state &&
-          params?.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) { // use these parameters received from bungie to store user authentication.
+          params?.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
+          // use these parameters received from bungie to store user authentication.
           // prevent oauth requests from being made with a stale "code" after refreshing the page.
           localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
 
           // request access token
           this.homeService.oauthAndUserProfile(this, params?.code);
 
-        } else if (refresh["refresh-token-available"]) {
+        } else if (refresh['refresh-token-available']) {
           this.loggedIn = true;
 
           // retrieve user profile information.
@@ -123,10 +124,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._queryParamsSub.unsubscribe();
-    if (this._getUserProfileSub) {this._getUserProfileSub.unsubscribe();}
-    if (this._oauthServiceSub) {this._oauthServiceSub.unsubscribe();}
-    if (this._currentUserMembershipSub) {this._currentUserMembershipSub.unsubscribe();}
-    if (this._refreshDefSub) {this._refreshDefSub.unsubscribe();}
+    if (this._getUserProfileSub) { this._getUserProfileSub.unsubscribe(); }
+    if (this._oauthServiceSub) { this._oauthServiceSub.unsubscribe(); }
+    if (this._currentUserMembershipSub) { this._currentUserMembershipSub.unsubscribe(); }
+    if (this._refreshDefSub) { this._refreshDefSub.unsubscribe(); }
   }
 
 }

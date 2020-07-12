@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { DialogData } from 'src/app/core';
 
 @Component({
-  selector: 'auth-modal',
+  selector: 'app-auth-modal',
   templateUrl: './auth-modal.component.html',
   styleUrls: ['./auth-modal.component.css']
 })
@@ -14,7 +14,7 @@ export class AuthModalComponent implements OnInit, OnDestroy {
 
   constructor(
    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private dialogRef: MatDialogRef<AuthModalComponent>
+   private dialogRef: MatDialogRef<AuthModalComponent>
   ) { }
 
   ngOnInit(): void {}

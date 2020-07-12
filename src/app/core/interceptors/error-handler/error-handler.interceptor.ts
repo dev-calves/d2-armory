@@ -26,7 +26,7 @@ export class ErrorHandlerIntercept implements HttpInterceptor {
                     // server-side error
                     errorMessage = `${errorMessage} Status: ${error?.status} | Message: ${error?.message}`;
 
-                    if (error?.status == 401) {
+                    if (error?.status === 401) {
                         this._router.navigate(['home']);
                     }
                 }

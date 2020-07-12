@@ -10,7 +10,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { CharacterModelComponent } from './components/character-display/character-model/character-model.component';
 import { CharacterEquipmentComponent } from './components/character-display/character-equipment/character-equipment.component';
 import { WardrobeComponent } from './components/wardrobe/wardrobe.component';
-import { OutfitComponent } from './components/outfit/outfit.component'; 
+import { OutfitComponent } from './components/outfit/outfit.component';
 import { CharacterDisplayComponent } from './components/character-display/character-display.component';
 import { CharacterTabReuseStrategy } from './character-tab-reuse-strategy.class';
 
@@ -20,7 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule  } from '@angular/material/input';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatCardModule } from '@angular/material/card'
+import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CharacterComponent } from './pages/character/character.component';
@@ -30,7 +30,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 @NgModule({
   declarations: [
     HomeComponent,
-    CharacterModelComponent, 
+    CharacterModelComponent,
     CharacterEquipmentComponent,
     WardrobeComponent,
     CharacterDisplayComponent,
@@ -53,7 +53,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     FlexLayoutModule,
     HomeRoutingModule
-  ], 
+  ],
   providers: [
     {
       provide: RouteReuseStrategy,

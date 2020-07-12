@@ -15,9 +15,9 @@ export class OauthService {
 
   public getAccessOauth(code: string): Observable<IOauthResponse> {
     const headers: HttpHeaders = new HttpHeaders()
-      .set("Content-Type", "application/json")
-      .set("code", code);
-    return this._http.get<IOauthResponse>(environment.OAUTH_ACCESS_ENDPOINT, { headers: headers });
+      .set('Content-Type', 'application/json')
+      .set('code', code);
+    return this._http.get<IOauthResponse>(environment.OAUTH_ACCESS_ENDPOINT, { headers });
   }
 
   public deleteTokens(): Observable<IOauthResponse> {

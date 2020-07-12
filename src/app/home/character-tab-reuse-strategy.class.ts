@@ -2,13 +2,13 @@ import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from 
 
 export class CharacterTabReuseStrategy implements RouteReuseStrategy {
     private storedRoutes = new Map<string, DetachedRouteHandle>();
-    private shouldAttachFlag: boolean = false;
+    private shouldAttachFlag = false;
 
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         if (route?.routeConfig?.path === 'character') {
-            return true
+            return true;
         } else {
-            return false
+            return false;
         }
     }
     store(route: ActivatedRouteSnapshot, detachedTree: DetachedRouteHandle): void {
@@ -24,7 +24,7 @@ export class CharacterTabReuseStrategy implements RouteReuseStrategy {
         // occasionally the retrieve function is being entered before shouldAttach is entered.
         // creating a flag to have retrieve return cached routes only after shouldAttach is entered.
         if (route?.routeConfig && route?.routeConfig?.path !== 'home') {
-            let condition = !!route?.routeConfig && !!this.storedRoutes?.get(route?.routeConfig?.path + '/' + route?.queryParams?.id);
+            const condition = !!route?.routeConfig && !!this.storedRoutes?.get(route?.routeConfig?.path + '/' + route?.queryParams?.id);
 
             if (condition) {
                 this.shouldAttachFlag = true;
@@ -33,7 +33,7 @@ export class CharacterTabReuseStrategy implements RouteReuseStrategy {
                 return false;
             }
         } else {
-            return false
+            return false;
         }
     }
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle | null {
@@ -41,7 +41,7 @@ export class CharacterTabReuseStrategy implements RouteReuseStrategy {
             this.shouldAttachFlag = false;
             if (route?.routeConfig?.path === null) {
                 return null;
-            } else if (route?.routeConfig?.path === "home") {
+            } else if (route?.routeConfig?.path === 'home') {
                 return null;
             } else {
                 return this.storedRoutes?.get(route?.routeConfig?.path + '/' + route?.queryParams?.id);
@@ -54,7 +54,7 @@ export class CharacterTabReuseStrategy implements RouteReuseStrategy {
         // returning true prevents refreshing content for the next route.
         if (future?.routeConfig === null) {
             return true;
-        } else if (future?.routeConfig?.path === "home" && future?.queryParams?.id) {
+        } else if (future?.routeConfig?.path === 'home' && future?.queryParams?.id) {
             return true;
         } else if (future?.routeConfig?.path === 'home' && future?.routeConfig === curr?.routeConfig) {
             return true;
