@@ -37,25 +37,27 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this._refreshDefSub = this.oauthService.refreshExist().subscribe(refresh => {
-      this._queryParamsSub = this.route.queryParams.subscribe(params => { // initialize /home?:code:state route
-        if (params?.code && params?.state &&
-          params?.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
-          // use these parameters received from bungie to store user authentication.
-          // prevent oauth requests from being made with a stale "code" after refreshing the page.
-          localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
+    this._queryParamsSub = this.route?.queryParams?.subscribe(params => { // initialize /home?:code:state route
+      if (params?.code && params?.state &&
+        params?.state === localStorage?.getItem(environment.LOCAL_STORAGE_STATE)) {
+        // use these parameters received from bungie to store user authentication.
+        // prevent oauth requests from being made with a stale "code" after refreshing the page.
+        localStorage?.removeItem(environment.LOCAL_STORAGE_STATE);
 
-          // request access token
-          this.homeService.oauthAndUserProfile(this, params?.code);
+        // request access token
+        this.homeService?.oauthAndUserProfile(this, params?.code);
+      } else {
+        this._refreshDefSub = this.oauthService?.refreshExist().subscribe(refresh => {
+          if (refresh['refresh-token-available']) {
+            this.loggedIn = true;
 
-        } else if (refresh['refresh-token-available']) {
-          this.loggedIn = true;
-
-          // retrieve user profile information.
-          this.homeService.userProfile(this);
-        }
-      });
+            // retrieve user profile information.
+            this.homeService?.userProfile(this);
+          }
+        });
+      }
     });
+
   }
 
   public get displayName() {
