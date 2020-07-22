@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
@@ -13,8 +13,11 @@ export class OauthService {
 
   constructor(private _http: HttpClient) { }
 
-  public postAccessOauth(code: string): Observable<IOauthResponse> {
-    return this._http.post<IOauthResponse>(environment.OAUTH_ACCESS_ENDPOINT, { code: code });
+  public getAccessOauth(code: string): Observable<IOauthResponse> {
+    const headers: HttpHeaders = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('code', code);
+    return this._http.get<IOauthResponse>(environment.OAUTH_ACCESS_ENDPOINT, { headers });
   }
 
   public deleteTokens(): Observable<IOauthResponse> {
