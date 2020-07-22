@@ -19,7 +19,7 @@ export class HomeService {
 
   public oauthAndUserProfile(homeReference: HomeComponent, code: string): void {
     // retrieve user profile and characters.
-    homeReference.oauthServiceSub = this.oauthService.postAccessOauth(code).subscribe(
+    homeReference.oauthServiceSub = this.oauthService.getAccessOauth(code).subscribe(
       oauthAccessResponse => {
         if (oauthAccessResponse.message.includes('tokens recieved')) {
           // retrieve user profile information after tokens are made available.
