@@ -9,7 +9,7 @@
                         <div *ngIf="loggedIn; then loggedInLabel; else loggedOutLabel"></div>
                         <div fxLayout="row wrap">
                             <span class="p" style="padding-left: 15px;">Unequipped items will</span>
-                            <span class="p">&nbsp; be sent to the &nbsp;</span>
+                            <span class="p">&nbsp;be sent to the &nbsp;</span>
                             <span class="p"><span class="p item-box mat-elevation-z4">{{storage}}</span>.</span>
                         </div>
                         <app-menu-button #menuToggleButton></app-menu-button>
@@ -25,7 +25,10 @@
 </mat-toolbar>
 
 <ng-template #loggedOutLabel>
-    <p class="p">Log in to save outfits for your guardians.</p>
+    <div fxLayout="row wrap">
+        <p class="p">Log in to save outfits</p>
+        <span class="p">&nbsp;for your guardians.</span>
+    </div>
 </ng-template>
 <ng-template #loggedInLabel>
     <p class="p">Logged in as <span class="username">{{displayName}}</span>.</p>
