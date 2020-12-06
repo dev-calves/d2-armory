@@ -1,29 +1,21 @@
 
 <body>
-    <app-header [characters]="characters"></app-header>
+    <app-header [loggedIn]="loggedIn" [characters]="characters"></app-header>
 
     <div class="content">
         <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!loggedIn">
             <div style="padding-top: 10px;">
                 <p>
-                    This site is under construction.
-                </p>
-                <p>
-                    It's a hobby-site/project started during stay-at-home quarantine.
-                </p>
-                <p>
-                    Equipment swapping features for the Bungie I.P., Destiny 2, will be provided here in the future.
-                </p>
-                <p>
-                    An account with Bungie will be needed to use those features.
+                    This site is under construction. <br>
+                    It's a hobby-site/project started during stay-at-home quarantine. <br>
+                    Equipment swapping features for the Bungie I.P., Destiny 2, will be provided here in the future. <br>
+                    An account with Bungie will be needed to use that feature.
                 </p>
             </div>
         </section>
 
         <router-outlet></router-outlet>
     </div>
-
-
 
     <app-footer [displayName]="displayName" [loggedIn]="loggedIn" class="footer"></app-footer>
 </body>

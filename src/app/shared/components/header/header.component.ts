@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements AfterViewChecked, OnDestroy {
+  private _loggedIn: boolean;
   private _characters: ICharacter[];
   private _buttonProfileContainer;
   private _queryParamsSub: Subscription;
@@ -35,6 +36,15 @@ export class HeaderComponent implements AfterViewChecked, OnDestroy {
 
   get characters(): ICharacter[] {
     return this._characters;
+  }
+
+  @Input()
+  set loggedIn(loggedIn: boolean) {
+    this._loggedIn = loggedIn;
+  }
+
+  get loggedIn(): boolean {
+    return this._loggedIn;
   }
 
   @ViewChild('buttonProfileContainer')
