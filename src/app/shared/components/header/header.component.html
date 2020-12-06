@@ -8,12 +8,22 @@
                 </button>
             </div>
             <div #buttonProfileContainer fxLayout="row wrap" fxLayoutAlign="space-between center">
-                <button mat-button class="mat-elevation-z6" [id]='character?.id' [routerLink]="['character']"
-                    [queryParams]="{id:  character?.id}" (click)="removeHighlights()"
-                    *ngFor="let character of characters">
-                    <app-mini-profile [character]="character"></app-mini-profile>
-                </button>
+                <div *ngIf="loggedIn; then enabledMiniProfiles else disabledMiniProfiles"></div>
             </div>
         </div>
     </mat-toolbar-row>
 </mat-toolbar>
+
+<ng-template #enabledMiniProfiles>
+    <button mat-button class="mat-elevation-z6" [id]='character?.id' [routerLink]="['character']"
+        [queryParams]="{id:  character?.id}" (click)="removeHighlights()" *ngFor="let character of characters">
+        <app-mini-profile [character]="character"></app-mini-profile>
+    </button>
+</ng-template>
+
+<ng-template #disabledMiniProfiles>
+    <button disabled mat-button class="mat-elevation-z6" [id]='character?.id' [routerLink]="['character']"
+        [queryParams]="{id:  character?.id}" (click)="removeHighlights()" *ngFor="let character of characters">
+        <app-mini-profile [character]="character"></app-mini-profile>
+    </button>
+</ng-template>

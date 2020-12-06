@@ -6,3 +6,5 @@ export * from '../api/decrypt-response.model';
 export * from '../api/current-user-membership-response.model';
 export * from '../api/oauth-response.model';
 export * from '../api/oauth-refresh-defined.model';
+export * from '../api/equipment-capture-response.model';
+export * from '../api/equipment-dawn-response.model';

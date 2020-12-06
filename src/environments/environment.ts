@@ -7,6 +7,7 @@ export const environment = {
     OAUTH_ACCESS_ENDPOINT: 'http://127.0.0.1:3000/api/oauth/access',
     OAUTH_DELETE_ENDPOINT: 'http://127.0.0.1:3000/api/oauth/delete',
     OAUTH_REFRESH_ENDPOINT: 'http://127.0.0.1:3000/api/oauth/refresh',
+    EQUIPMENT_ENDPOINT: 'http://127.0.0.1:3000/api/equipments',
     LOCAL_STORAGE_STORAGE: 'storage',
     LOCAL_STORAGE_DISMISS_LOGON_MESSAGE: 'dismiss-logon-message',
     LOCAL_STORAGE_STATE: 'state'
