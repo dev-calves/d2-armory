@@ -51,43 +51,6 @@ export class CharacterComponent implements OnInit, OnDestroy {
         if (this.currentUserMembership && storedCharacterOutfits && storedCharacterOutfits[this.characterId] && Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
           this.wardrobes = storedCharacterOutfits[this.characterId];
         }
-
-        // if (this.currentUserMembership && Object.keys(localStorage).find(key => (key.includes('outfit') && key.includes(this.characterId)))) {
-        //   let wardrobes = [];
-        //   let outfits = [];
-
-        //   for (const localStorageKey in localStorage) {
-        //     if (Object.prototype.hasOwnProperty.call(localStorage, localStorageKey) && localStorageKey.includes('outfit') && localStorageKey.includes(this.characterId)) {
-        //       outfits.push(JSON.parse(localStorage.getItem(localStorageKey)));
-        //     }
-        //   }
-
-        //   // group outfits by wardrobes
-        //   outfits.forEach(outfit => {
-        //     if (wardrobes.length === 0) {
-        //       wardrobes[0] = {
-        //         wardrobeName: outfit.wardrobeName
-        //       };
-
-        //       wardrobes[0][outfit.wardrobeName] = [];
-        //       wardrobes[0][outfit.wardrobeName].push(outfit);
-        //     } else if (wardrobes.some(wardrobe => wardrobe.wardrobeName === outfit.wardrobeName)) {
-        //       wardrobes.forEach((wardrobe, wardrobeIndex) => {
-        //         if (wardrobe.wardrobeName === outfit.wardrobeName) {
-        //           wardrobes[wardrobeIndex][outfit.wardrobeName].push(outfit);
-        //         }
-        //       });
-        //     } else {
-        //       wardrobes.push({
-        //         wardrobeName: outfit.wardrobeName
-        //       });
-        //       wardrobes[wardrobes.length - 1][outfit.wardrobeName] = [];
-        //       wardrobes[wardrobes.length - 1][outfit.wardrobeName].push(outfit);
-        //     }
-        //   });
-
-        //   this._wardrobes = wardrobes;
-        // }
       });
     });
   }

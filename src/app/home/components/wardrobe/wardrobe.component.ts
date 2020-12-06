@@ -61,12 +61,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.outfits = this.outfitsParentContainer.nativeElement.children;
-    // console.log(this.initialOutfits);
-    // if (Object.keys(this.initialOutfits)?.length > 0) {
-    //   this.createMultipleOutfitComponents();
-    // }
-
-    // this.ref.detectChanges();
   }
 
   public set toHide(status: boolean) {
@@ -237,24 +231,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.openSnackBar('Max outfits reached');
     }
   }
-
-  // public createMultipleOutfitComponents() {
-  //   const outfitFactory = this.resolver.resolveComponentFactory(OutfitComponent);
-
-  //   this.initialOutfits.forEach(outfits => {
-  //     const ref: ComponentRef<OutfitComponent> = this.outfitsContainer.createComponent(outfitFactory);
-
-  //     ref.instance.characterId = outfits.characterId;
-  //     ref.instance.wardrobeName = outfits.wardrobeName;
-  //     ref.instance.outfitName = outfits.outfitName;
-  //     ref.instance.itemIds = outfits.itemIds;
-  //     ref.instance.toggleHighlightsEvent.subscribe(outfitElement => {
-  //       this.toggleHighlights(outfitElement);
-  //     });
-
-  //     this._outfitComponentRef.push(ref);
-  //   });
-  // }
 
   public openSnackBar(message) {
     this._snackBar.open(message, 'Dismiss', {
