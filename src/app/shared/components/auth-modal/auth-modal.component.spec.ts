@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { AuthModalComponent } from './auth-modal.component';
@@ -12,7 +12,7 @@ describe('AuthModalComponent', () => {
     close(): void {}
   }
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ AuthModalComponent ],
       providers: [ {provide: MatDialogRef, useClass: MockMatDialogRef} ]
