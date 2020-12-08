@@ -4,8 +4,8 @@ This application will allow saving and switching sets of armor combinations (out
 It will store multiple outfits into a collection (wardrobe).
 Outfits not in use will be sent to the vault (closet) to free up space in the gaurdian's inventory.
 
-The site is help with heroku and using free tier dynos so
-the site may need time to start up on initial visit.
+The site is hosted with heroku using their free tier dynos.
+The site may need time to start up on initial visit.
 
 Site: https://destiny2armory.herokuapp.com/home
 
