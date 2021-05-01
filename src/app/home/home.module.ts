@@ -61,7 +61,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     }
   ],
   exports: [
-    HomeComponent
+    HomeComponent,
+    CharacterComponent,
+    WardrobeComponent,
+    OutfitComponent
   ]
 })
 export class HomeModule { }

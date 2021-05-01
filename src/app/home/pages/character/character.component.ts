@@ -3,6 +3,7 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   OnDestroy,
+  Input,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { WardrobeComponent } from '../../components/wardrobe/wardrobe.component';
@@ -22,6 +23,7 @@ export class CharacterComponent implements OnInit, OnDestroy {
   private _currentUserMembership;
   private _characterId;
   private _wardrobes = [];
+  private _transferStorage: string;
 
   private _queryParamsSub: Subscription;
   private _currentUserMembershipSub: Subscription;
@@ -35,13 +37,32 @@ export class CharacterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._queryParamsSub = this.route.queryParams.subscribe(params => {
-      // character component should only initialize with the query param id provided.
-      if (!params.id) {
-        this.router.navigate(['home']);
-      }
+    // this._queryParamsSub = this.route.queryParams.subscribe(params => {
+    //   // character component should only initialize with the query param id provided.
+    //   if (!params.id) {
+    //     this.router.navigate(['home']);
+    //   }
 
-      this.characterId = params.id;
+    //   this.characterId = params.id;
+    //   this._currentUserMembershipSub = this.currentUserMembershipService.getCurrentUserMembership().subscribe(currentUserMembershipResponse => {
+    //     this.currentUserMembership = currentUserMembershipResponse;
+
+    //     // TODO: re-work this after database is implemented.
+    //     let storedCharacterOutfits = JSON.parse(localStorage.getItem('outfits'));
+
+    //     if (this.currentUserMembership && storedCharacterOutfits && storedCharacterOutfits[this.characterId] && Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
+    //       this.wardrobes = storedCharacterOutfits[this.characterId];
+    //     }
+    //   });
+    // });
+
+    // this._queryParamsSub = this.route.queryParams.subscribe(params => {
+      // character component should only initialize with the query param id provided.
+      // if (!params.id) {
+      //   this.router.navigate(['home']);
+      // }
+
+      // this.characterId = params.id;
       this._currentUserMembershipSub = this.currentUserMembershipService.getCurrentUserMembership().subscribe(currentUserMembershipResponse => {
         this.currentUserMembership = currentUserMembershipResponse;
 
@@ -52,7 +73,7 @@ export class CharacterComponent implements OnInit, OnDestroy {
           this.wardrobes = storedCharacterOutfits[this.characterId];
         }
       });
-    });
+    // });
   }
 
   @ViewChild('wardrobesContainer', { read: ViewContainerRef })
@@ -85,8 +106,18 @@ export class CharacterComponent implements OnInit, OnDestroy {
     return this._characterId;
   }
 
+  @Input()
   public set characterId(characterId) {
     this._characterId = characterId;
+  }
+
+  @Input()
+  public set transferStorage(transferStorage: string) {
+    this._transferStorage = transferStorage;
+  }
+
+  public get transferStorage() {
+    return this._transferStorage;
   }
 
   public get wardrobes() {

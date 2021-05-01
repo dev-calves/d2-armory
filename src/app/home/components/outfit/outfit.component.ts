@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, EventEmitter, Output, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { EquipmentsService } from 'src/app/core';
+import { EquipmentService } from 'src/app/core';
+import { Equipment } from 'src/app/core/models/api/equipment.model';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,15 +14,17 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   private _toHide: boolean = false;
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
-  private _itemIds: number[];
+  private _equipment: Equipment;
   private _wardrobeName: string;
-  private _characterId: number;
+  private _characterId: string;
   private _outfitName: string;
   private _membershipType: number;
+  private _membershipId: string;
+  private _transferStorage: string;
 
-  private _equipmentsServiceSub: Subscription;
+  private _equipmentServiceSub: Subscription;
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef, private equipmentsService: EquipmentsService) {
+  constructor(private renderer: Renderer2, private elementRef: ElementRef, private equipmentService: EquipmentService) {
     this.formControl = new FormControl('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z0-9 _]*$') // alphanumeric
@@ -64,12 +67,12 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   }
 
   @Input()
-  public set itemIds(itemIds: number[]) {
-    this._itemIds = itemIds;
+  public set equipment(equipment: Equipment) {
+    this._equipment = equipment;
   }
 
-  public get itemIds() {
-    return this._itemIds;
+  public get equipment() {
+    return this._equipment;
   }
 
   @Input()
@@ -82,7 +85,7 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   }
 
   @Input()
-  public set characterId(characterId: number) {
+  public set characterId(characterId: string) {
     this._characterId = characterId;
   }
 
@@ -100,6 +103,15 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   }
 
   @Input()
+  public set membershipId(membershipId: string) {
+    this._membershipId = membershipId;
+  }
+
+  public get membershipId() {
+    return this._membershipId;
+  }
+
+  @Input()
   public set outfitName(outfitName: string) {
     this._outfitName = outfitName;
   }
@@ -108,28 +120,38 @@ export class OutfitComponent implements OnInit, AfterViewInit {
     return this._outfitName;
   }
 
+  @Input()
+  public set transferStorage(transferStorage: string) {
+    this._transferStorage = transferStorage;
+  }
+
+  public get transferStorage() {
+    return this._transferStorage;
+  }
+
   public setOutfitNameValue(value) {
     this.formControl.setValue(value);
   }
 
   public dawnEquips() {
-    if (this.formControl.value) {
-      let closeButtonElement = this.elementRef.nativeElement.querySelector('#close-button');
-      let formCloseButtonElement = this.elementRef.nativeElement.querySelector('#form-close-button');
+    console.log(this.transferStorage)
+    // if (this.formControl.value) {
+    //   let closeButtonElement = this.elementRef.nativeElement.querySelector('#close-button');
+    //   let formCloseButtonElement = this.elementRef.nativeElement.querySelector('#form-close-button');
   
-      closeButtonElement.disabled = true;
-      formCloseButtonElement.disabled = true;
-      this.elementRef.nativeElement.firstChild.disabled = true;
+    //   closeButtonElement.disabled = true;
+    //   formCloseButtonElement.disabled = true;
+    //   this.elementRef.nativeElement.firstChild.disabled = true;
 
-      this._equipmentsServiceSub = this.equipmentsService.dawnEquipment(this.itemIds, this.membershipType, this.characterId).subscribe(response => {
-        if (response.equipStatus === "success") {
-          this.toggleHighlights();
-        }
-        closeButtonElement.disabled = false;
-        formCloseButtonElement.disabled = false;
-        this.elementRef.nativeElement.firstChild.disabled = false;
-      });
-    }
+    //   this._equipmentServiceSub = this.equipmentService.dawnEquipment(this.equipment, this.membershipType, this.membershipId, this.characterId, this.transferStorage).subscribe(response => {
+    //     if (response.equipStatus === "success") {
+    //       this.toggleHighlights();
+    //     }
+    //     closeButtonElement.disabled = false;
+    //     formCloseButtonElement.disabled = false;
+    //     this.elementRef.nativeElement.firstChild.disabled = false;
+    //   });
+    // }
   }
 
   @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();
@@ -148,13 +170,12 @@ export class OutfitComponent implements OnInit, AfterViewInit {
     localStorage.setItem('outfits', JSON.stringify(storedOutfits));
   }
 
-  public saveItemIds() {
+  public saveEquipment() {
     if (!this.formControl.errors) {
       const outfit = {
-        characterId: this.characterId,
         wardrobeName: this.wardrobeName,
         outfitName: this.formControl.value,
-        itemIds: this.itemIds
+        equipment: this.equipment
       };
 
       let outfits = {};
@@ -185,7 +206,7 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if (this._equipmentsServiceSub) this._equipmentsServiceSub.unsubscribe();
+    if (this._equipmentServiceSub) this._equipmentServiceSub.unsubscribe();
   }
 }
 

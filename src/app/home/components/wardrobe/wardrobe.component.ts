@@ -13,7 +13,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OutfitComponent } from '../outfit/outfit.component';
 
-import { EquipmentsService, ICurrentUserMembership } from 'src/app/core'
+import { EquipmentService, ICurrentUserMembership } from 'src/app/core'
 
 @Component({
   selector: 'app-wardrobe',
@@ -31,14 +31,15 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   private _outfitCardContainer;
   private _addOutfitButton;
   private _currentUserMembership: ICurrentUserMembership;
-  private _characterId: number;
+  private _characterId: string;
+  private _transferStorage: string;
   private _outfits: HTMLCollection;
   private _initialOutfits;
 
-  private _equipmentsServiceSub;
+  private _equipmentServiceSub;
 
   constructor(
-    private equipmentsService: EquipmentsService,
+    private equipmentService: EquipmentService,
     private _snackBar: MatSnackBar,
     private resolver: ComponentFactoryResolver,
     private ref: ChangeDetectorRef,
@@ -98,7 +99,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._characterId;
   }
 
-  public set characterId(characterId: number) {
+  public set characterId(characterId: string) {
     this._characterId = characterId;
   }
 
@@ -117,6 +118,15 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public get initialOutfits() {
     return this._initialOutfits;
+  }
+
+  @Input()
+  public set transferStorage(transferStorage: string) {
+    this._transferStorage = transferStorage;
+  }
+
+  public get transferStorage() {
+    return this._transferStorage;
   }
 
   @ViewChild('outfitsContainer', { read: ViewContainerRef })
@@ -204,7 +214,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (outfitCounter < 10) { // max outfits are 10.
       this.addOutfitButton.disabled = true;
 
-      this._equipmentsServiceSub = this.equipmentsService.captureEquipment(
+      this._equipmentServiceSub = this.equipmentService.captureEquipment(
         this.currentUserMembership.membershipId,
         this.currentUserMembership.membershipType,
         this.characterId
@@ -214,8 +224,9 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
 
         ref.instance.characterId = this.characterId;
         ref.instance.wardrobeName = this.formControl.value;
-        ref.instance.itemIds = captureResponse.equipmentIds;
+        ref.instance.equipment = captureResponse.equipment;
         ref.instance.membershipType = this.currentUserMembership.membershipType;
+        ref.instance.membershipId = this.currentUserMembership.membershipId;
         ref.instance.toggleHighlightsEvent.subscribe(outfitElement => {
           ref.changeDetectorRef.detectChanges();
           this.toggleHighlights(outfitElement);
@@ -260,7 +271,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
         ref.destroy();
       });
     }
-    if (this._equipmentsServiceSub) this._equipmentsServiceSub.unsubscribe();
+    if (this._equipmentServiceSub) this._equipmentServiceSub.unsubscribe();
   }
 }
 

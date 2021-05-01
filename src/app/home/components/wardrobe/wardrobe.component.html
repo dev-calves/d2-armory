@@ -43,7 +43,7 @@
                     <!-- It's not placing components into the container  -->
                     <!-- Moved the outfitsContainer into a parent container with styles to apply them to outfits -->
                     <div #outfitsContainer></div>
-                    <app-outfit [itemIds]="outfit?.value?.itemIds" [membershipType]="currentUserMembership?.membershipType" [characterId]="characterId" [wardrobeName]="wardrobeName" [outfitName]="outfit?.key" (toggleHighlightsEvent)="toggleHighlights($event)" *ngFor="let outfit of initialOutfits | keyvalue"></app-outfit>
+                    <app-outfit [equipment]="outfit?.value?.equipment" [membershipType]="currentUserMembership?.membershipType" [characterId]="characterId" [wardrobeName]="wardrobeName" [transferStorage]="transferStorage" [outfitName]="outfit?.key" (toggleHighlightsEvent)="toggleHighlights($event)" *ngFor="let outfit of initialOutfits | keyvalue"></app-outfit>
                 </div>
             </span>
         </div>

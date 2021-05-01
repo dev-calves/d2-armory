@@ -8,3 +8,5 @@ export * from '../api/oauth-response.model';
 export * from '../api/oauth-refresh-defined.model';
 export * from '../api/equipment-capture-response.model';
 export * from '../api/equipment-dawn-response.model';
+export * from './equipment.model';
+export * from './item.model';

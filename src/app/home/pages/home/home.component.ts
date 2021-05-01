@@ -15,6 +15,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _loggedIn = false;
   private _membershipId = '';
   private _membershipType: number;
+  private _transferStorage: string;
+  private _characterTabId: string;
   private _characters: ICharacter[] = [{
     id: '1234',
     class: 'Class',
@@ -37,6 +39,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
+
     this._queryParamsSub = this.route?.queryParams?.subscribe(params => { // initialize /home?:code:state route
       if (params?.code && params?.state &&
         params?.state === localStorage?.getItem(environment.LOCAL_STORAGE_STATE)) {
@@ -60,6 +64,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
 
+  ngOnChanges() {
+    
+  }
+
   public get displayName() {
     return this._displayName;
   }
@@ -76,12 +84,33 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._loggedIn = loggedIn;
   }
 
+  public get transferStorage() {
+    return this._transferStorage;
+  }
+
+  public set transferStorage(transferStorage: string) {
+    if (this._transferStorage != transferStorage) {
+      this._transferStorage = transferStorage;
+    }
+    // if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) != this.transferStorage) {
+    //   localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, transferStorage);
+    // }
+  }
+
   public get membershipId() {
     return this._membershipId;
   }
 
   public set membershipId(membershipId: string) {
     this._membershipId = membershipId;
+  }
+
+  public get characterTabId() {
+    return this._characterTabId;
+  }
+
+  public set characterTabId(characterTabId: string) {
+    this._characterTabId = characterTabId;
   }
 
   public get membershipType() {
@@ -122,6 +151,18 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   get currentUserMembershipSub(): Subscription {
     return this._currentUserMembershipSub;
+  }
+
+  public onMiniProfileClick(characterId: string): void {
+    this.characterTabId = characterId;
+  }
+
+  public onMenuToggleClick(value: string): void {
+    this.transferStorage = value;
+  }
+
+  public onHomeClick(): void {
+    this.characterTabId = null;
   }
 
   ngOnDestroy() {

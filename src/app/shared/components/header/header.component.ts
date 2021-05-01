@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Renderer2, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ICharacter } from 'src/app/core';
 import { Subscription } from 'rxjs';
@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 })
 export class HeaderComponent implements AfterViewChecked, OnDestroy {
   private _loggedIn: boolean;
+  // private _characterId: string;
   private _characters: ICharacter[];
   private _buttonProfileContainer;
   private _queryParamsSub: Subscription;
@@ -29,6 +30,10 @@ export class HeaderComponent implements AfterViewChecked, OnDestroy {
     });
   }
 
+  @Output() miniProfileClick: EventEmitter<any> = new EventEmitter<string>();
+
+  @Output() homeClick: EventEmitter<any> = new EventEmitter<any>();
+
   @Input()
   set characters(chars: ICharacter[]) {
     this._characters = chars;
@@ -47,6 +52,15 @@ export class HeaderComponent implements AfterViewChecked, OnDestroy {
     return this._loggedIn;
   }
 
+  // @Input()
+  // set characterId(characterId: string) {
+  //   this._characterId = characterId;
+  // }
+
+  // get characterId(): string {
+  //   return this._characterId;
+  // }
+
   @ViewChild('buttonProfileContainer')
   set buttonProfileContainer(element) {
     this._buttonProfileContainer = element;
@@ -56,12 +70,17 @@ export class HeaderComponent implements AfterViewChecked, OnDestroy {
     return this._buttonProfileContainer;
   }
 
-  public removeHighlights() {
-    const buttons: HTMLCollection = this.buttonProfileContainer.nativeElement.children;
+  public onHomeClick(): void {
+    this.homeClick.emit();
+  }
 
-    Array.from(buttons).forEach(button => {
-      this.renderer.removeStyle(button, 'background-color');
-    });
+  public onMiniProfileClick(value:any) {
+    // const buttons: HTMLCollection = this.buttonProfileContainer.nativeElement.children;
+
+    // Array.from(buttons).forEach(button => {
+    //   this.renderer.removeStyle(button, 'background-color');
+    // });
+    this.miniProfileClick.emit(value);
   }
 
   ngOnDestroy() {

@@ -7,7 +7,7 @@ export const environment = {
     OAUTH_ACCESS_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/oauth/access',
     OAUTH_DELETE_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/oauth/delete',
     OAUTH_REFRESH_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/oauth/refresh-status',
-    EQUIPMENT_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/equipments',
+    EQUIPMENT_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/equipment',
     LOCAL_STORAGE_STORAGE: 'storage',
     LOCAL_STORAGE_DISMISS_LOGON_MESSAGE: 'dismiss-logon-message',
     LOCAL_STORAGE_STATE: 'state'

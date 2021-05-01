@@ -1,3 +1,5 @@
+import { Equipment } from './equipment.model';
+
 export interface IEquipmentCapture {
-    equipmentIds: Array<number>
+    equipment: Equipment
 }
