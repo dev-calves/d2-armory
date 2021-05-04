@@ -54,12 +54,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FlexLayoutModule,
     HomeRoutingModule
   ],
-  providers: [
-    {
-      provide: RouteReuseStrategy,
-      useClass: CharacterTabReuseStrategy
-    }
-  ],
+  providers: [],
   exports: [
     HomeComponent,
     CharacterComponent,

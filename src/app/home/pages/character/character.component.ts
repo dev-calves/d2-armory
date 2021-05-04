@@ -4,8 +4,9 @@ import {
   ComponentRef,
   OnDestroy,
   Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { WardrobeComponent } from '../../components/wardrobe/wardrobe.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
@@ -24,57 +25,26 @@ export class CharacterComponent implements OnInit, OnDestroy {
   private _characterId;
   private _wardrobes = [];
   private _transferStorage: string;
-
-  private _queryParamsSub: Subscription;
   private _currentUserMembershipSub: Subscription;
 
   constructor(private currentUserMembershipService: CurrentUserMembershipService,
     private _snackBar: MatSnackBar,
-    private resolver: ComponentFactoryResolver,
-    private route: ActivatedRoute,
-    private router: Router) {
-
-  }
+    private resolver: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
-    // this._queryParamsSub = this.route.queryParams.subscribe(params => {
-    //   // character component should only initialize with the query param id provided.
-    //   if (!params.id) {
-    //     this.router.navigate(['home']);
-    //   }
+    this._currentUserMembershipSub = this.currentUserMembershipService.getCurrentUserMembership().subscribe(currentUserMembershipResponse => {
+      this.currentUserMembership = currentUserMembershipResponse;
 
-    //   this.characterId = params.id;
-    //   this._currentUserMembershipSub = this.currentUserMembershipService.getCurrentUserMembership().subscribe(currentUserMembershipResponse => {
-    //     this.currentUserMembership = currentUserMembershipResponse;
+      // TODO: re-work this after database is implemented.
+      let storedCharacterOutfits = JSON.parse(localStorage.getItem('outfits'));
 
-    //     // TODO: re-work this after database is implemented.
-    //     let storedCharacterOutfits = JSON.parse(localStorage.getItem('outfits'));
-
-    //     if (this.currentUserMembership && storedCharacterOutfits && storedCharacterOutfits[this.characterId] && Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
-    //       this.wardrobes = storedCharacterOutfits[this.characterId];
-    //     }
-    //   });
-    // });
-
-    // this._queryParamsSub = this.route.queryParams.subscribe(params => {
-      // character component should only initialize with the query param id provided.
-      // if (!params.id) {
-      //   this.router.navigate(['home']);
-      // }
-
-      // this.characterId = params.id;
-      this._currentUserMembershipSub = this.currentUserMembershipService.getCurrentUserMembership().subscribe(currentUserMembershipResponse => {
-        this.currentUserMembership = currentUserMembershipResponse;
-
-        // TODO: re-work this after database is implemented.
-        let storedCharacterOutfits = JSON.parse(localStorage.getItem('outfits'));
-
-        if (this.currentUserMembership && storedCharacterOutfits && storedCharacterOutfits[this.characterId] && Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
-          this.wardrobes = storedCharacterOutfits[this.characterId];
-        }
-      });
-    // });
+      if (this.currentUserMembership && storedCharacterOutfits && storedCharacterOutfits[this.characterId] && Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
+        this.wardrobes = storedCharacterOutfits[this.characterId];
+      }
+    });
   }
+
+  @Output() dawnEquipmentEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('wardrobesContainer', { read: ViewContainerRef })
   public set wardrobesContainer(element: ViewContainerRef) {
@@ -128,6 +98,10 @@ export class CharacterComponent implements OnInit, OnDestroy {
     this._wardrobes = wardrobes;
   }
 
+  public dawnEquipmentEmit(value: string) {
+    this.dawnEquipmentEvent.emit(value);
+  }
+
   public addWardrobe() {
     const wardrobeError: HTMLElement = this.wardrobeParentContainer.nativeElement.querySelector('mat-error');
 
@@ -155,6 +129,10 @@ export class CharacterComponent implements OnInit, OnDestroy {
       const ref: ComponentRef<WardrobeComponent> = this.wardrobesContainer.createComponent(wardrobeFactory);
       ref.instance.currentUserMembership = this.currentUserMembership;
       ref.instance.characterId = this.characterId;
+      ref.instance.dawnEquipmentEvent.subscribe(formValue => {
+        ref.changeDetectorRef.detectChanges();
+        this.dawnEquipmentEmit(formValue);
+      });
 
       this._wardrobeComponentRef.push(ref);
     } else {
@@ -176,7 +154,7 @@ export class CharacterComponent implements OnInit, OnDestroy {
         ref.destroy();
       });
     }
-    if (this._queryParamsSub) { this._queryParamsSub.unsubscribe(); }
+
     if (this._currentUserMembershipSub) { this._currentUserMembershipSub.unsubscribe(); }
   }
 }

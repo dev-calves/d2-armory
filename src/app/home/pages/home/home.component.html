@@ -3,7 +3,7 @@
     <app-header [loggedIn]="loggedIn" [characters]="characters" (miniProfileClick)="onMiniProfileClick($event)" (homeClick)="onHomeClick()"></app-header>
 
     <div class="content">
-        <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!characterTabId">
+        <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!charactersContainer?.get(0)">
             <div style="padding-top: 10px;">
                 <p>
                     This site is under construction. <br>
@@ -14,15 +14,10 @@
             </div>
         </section>
 
-        <!-- <router-outlet></router-outlet> -->
 
         <div *ngIf="loggedIn">
-            <div *ngFor="let character of characters">
-                <app-character [characterId]="character.id" [transferStorage]="transferStorage" *ngIf="character.id === characterTabId"></app-character>
-            </div>
+            <div #charactersContainer></div>
         </div>
-
-        
     </div>
 
     <app-footer [displayName]="displayName" [loggedIn]="loggedIn" [transferStorage]="transferStorage" (menuToggleClickEvent)="onMenuToggleClick($event)" class="footer"></app-footer>

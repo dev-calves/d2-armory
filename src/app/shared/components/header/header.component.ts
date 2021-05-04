@@ -1,34 +1,19 @@
-import { Component, Input, Output, EventEmitter, Renderer2, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Renderer2, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ICharacter } from 'src/app/core';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements AfterViewChecked, OnDestroy {
+export class HeaderComponent implements OnDestroy {
   private _loggedIn: boolean;
-  // private _characterId: string;
   private _characters: ICharacter[];
-  private _buttonProfileContainer;
-  private _queryParamsSub: Subscription;
+  private _buttonProfileContainer: ElementRef;
+  private _characterButtonSelected: Element;
 
   constructor(private renderer: Renderer2, private route: ActivatedRoute) { }
-
-  ngAfterViewChecked() {
-    this._queryParamsSub = this.route.queryParams.subscribe(params => {
-      if (params?.id) {
-        const buttons: HTMLCollection = this._buttonProfileContainer.nativeElement.children;
-        Array.from(buttons).forEach((button: HTMLElement) => {
-          if (button.id === params.id) {
-            this.renderer.setStyle(button, 'background-color', 'beige');
-          }
-        });
-      }
-    });
-  }
 
   @Output() miniProfileClick: EventEmitter<any> = new EventEmitter<string>();
 
@@ -52,17 +37,8 @@ export class HeaderComponent implements AfterViewChecked, OnDestroy {
     return this._loggedIn;
   }
 
-  // @Input()
-  // set characterId(characterId: string) {
-  //   this._characterId = characterId;
-  // }
-
-  // get characterId(): string {
-  //   return this._characterId;
-  // }
-
   @ViewChild('buttonProfileContainer')
-  set buttonProfileContainer(element) {
+  set buttonProfileContainer(element: ElementRef) {
     this._buttonProfileContainer = element;
   }
 
@@ -71,20 +47,26 @@ export class HeaderComponent implements AfterViewChecked, OnDestroy {
   }
 
   public onHomeClick(): void {
+    if (this._characterButtonSelected) {
+      this.renderer.removeStyle(this._characterButtonSelected, 'background-color');
+    }
+
     this.homeClick.emit();
   }
 
   public onMiniProfileClick(value:any) {
-    // const buttons: HTMLCollection = this.buttonProfileContainer.nativeElement.children;
+    const buttons: HTMLCollection = this.buttonProfileContainer.nativeElement.children;
 
-    // Array.from(buttons).forEach(button => {
-    //   this.renderer.removeStyle(button, 'background-color');
-    // });
+    if (this._characterButtonSelected) {
+      this.renderer.removeStyle(this._characterButtonSelected, 'background-color');
+    }
+
+    this._characterButtonSelected = Array.from(buttons).find(button => button.id === value);
+    this.renderer.setStyle(this._characterButtonSelected, 'background-color', 'beige');
+
     this.miniProfileClick.emit(value);
   }
 
-  ngOnDestroy() {
-    this._queryParamsSub.unsubscribe();
-  }
+  ngOnDestroy() { }
 
 }

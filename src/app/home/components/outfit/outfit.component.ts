@@ -1,9 +1,8 @@
 import { Component, OnInit, Input, EventEmitter, Output, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { EquipmentService } from 'src/app/core';
+
 import { Equipment } from 'src/app/core/models/api/equipment.model';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-outfit',
@@ -22,9 +21,7 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   private _membershipId: string;
   private _transferStorage: string;
 
-  private _equipmentServiceSub: Subscription;
-
-  constructor(private renderer: Renderer2, private elementRef: ElementRef, private equipmentService: EquipmentService) {
+  constructor(private elementRef: ElementRef) {
     this.formControl = new FormControl('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z0-9 _]*$') // alphanumeric
@@ -133,32 +130,14 @@ export class OutfitComponent implements OnInit, AfterViewInit {
     this.formControl.setValue(value);
   }
 
-  public dawnEquips() {
-    console.log(this.transferStorage)
-    // if (this.formControl.value) {
-    //   let closeButtonElement = this.elementRef.nativeElement.querySelector('#close-button');
-    //   let formCloseButtonElement = this.elementRef.nativeElement.querySelector('#form-close-button');
-  
-    //   closeButtonElement.disabled = true;
-    //   formCloseButtonElement.disabled = true;
-    //   this.elementRef.nativeElement.firstChild.disabled = true;
+  @Output() dawnEquipmentEvent: EventEmitter<any> = new EventEmitter<any>();
 
-    //   this._equipmentServiceSub = this.equipmentService.dawnEquipment(this.equipment, this.membershipType, this.membershipId, this.characterId, this.transferStorage).subscribe(response => {
-    //     if (response.equipStatus === "success") {
-    //       this.toggleHighlights();
-    //     }
-    //     closeButtonElement.disabled = false;
-    //     formCloseButtonElement.disabled = false;
-    //     this.elementRef.nativeElement.firstChild.disabled = false;
-    //   });
-    // }
+  public dawnEquips() {
+    this.toggleHighlightsEvent.emit(this.elementRef);
+    this.dawnEquipmentEvent.emit(this.formControl.value);
   }
 
   @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();
-
-  public toggleHighlights() {
-    this.toggleHighlightsEvent.emit(this.elementRef);
-  }
 
   public close() {
     this.toHide = !this.toHide;
@@ -205,9 +184,7 @@ export class OutfitComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnDestroy() {
-    if (this._equipmentServiceSub) this._equipmentServiceSub.unsubscribe();
-  }
+  ngOnDestroy() { }
 }
 
 class FormErrorStateMatcher implements ErrorStateMatcher {

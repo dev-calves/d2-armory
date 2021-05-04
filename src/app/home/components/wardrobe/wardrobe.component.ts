@@ -4,9 +4,11 @@ import {
   ComponentRef,
   OnDestroy,
   Input,
+  Output,
   ChangeDetectorRef,
   Renderer2,
-  ElementRef
+  ElementRef,
+  EventEmitter
 } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -42,9 +44,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     private equipmentService: EquipmentService,
     private _snackBar: MatSnackBar,
     private resolver: ComponentFactoryResolver,
-    private ref: ChangeDetectorRef,
-    private renderer: Renderer2,
-    private elementRef: ElementRef) {
+    private renderer: Renderer2) {
 
     this.formControl = new FormControl('', [
       Validators.required,
@@ -63,6 +63,8 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.outfits = this.outfitsParentContainer.nativeElement.children;
   }
+
+  @Output() dawnEquipmentEvent: EventEmitter<any> = new EventEmitter<any>();
 
   public set toHide(status: boolean) {
     this._toHide = status;
@@ -181,6 +183,10 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._matcher;
   }
 
+  public dawnEquipmentEmit(value: string) {
+    this.dawnEquipmentEvent.emit(value);
+  }
+
   public close() {
     this.toHide = !this.toHide;
 
@@ -227,16 +233,19 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
         ref.instance.equipment = captureResponse.equipment;
         ref.instance.membershipType = this.currentUserMembership.membershipType;
         ref.instance.membershipId = this.currentUserMembership.membershipId;
+        ref.instance.transferStorage = this.transferStorage;
         ref.instance.toggleHighlightsEvent.subscribe(outfitElement => {
           ref.changeDetectorRef.detectChanges();
           this.toggleHighlights(outfitElement);
+        });
+        ref.instance.dawnEquipmentEvent.subscribe(formValue => {
+          ref.changeDetectorRef.detectChanges();
+          this.dawnEquipmentEmit(formValue);
         });
 
         this._outfitComponentRef.push(ref);
 
         this.addOutfitButton.disabled = false;
-
-        ref.instance.toggleHighlights();
       });
     } else {
       this.openSnackBar('Max outfits reached');

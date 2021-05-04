@@ -18,8 +18,10 @@
                     <mat-error #wardrobeMalfunction *ngIf="formControl.hasError('required')">
                         Please enter a name
                     </mat-error>
-                    <button mat-button color="warn" *ngIf="formControl?.value" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="setWardrobeNameValue('')">
+                    <button mat-button color="warn" 
+                            *ngIf="formControl?.value" 
+                            matSuffix mat-icon-button aria-label="Clear"
+                            (click)="setWardrobeNameValue('')">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
@@ -43,7 +45,16 @@
                     <!-- It's not placing components into the container  -->
                     <!-- Moved the outfitsContainer into a parent container with styles to apply them to outfits -->
                     <div #outfitsContainer></div>
-                    <app-outfit [equipment]="outfit?.value?.equipment" [membershipType]="currentUserMembership?.membershipType" [characterId]="characterId" [wardrobeName]="wardrobeName" [transferStorage]="transferStorage" [outfitName]="outfit?.key" (toggleHighlightsEvent)="toggleHighlights($event)" *ngFor="let outfit of initialOutfits | keyvalue"></app-outfit>
+                    <app-outfit [equipment]="outfit?.value?.equipment" 
+                                [membershipType]="currentUserMembership?.membershipType" 
+                                [characterId]="characterId" 
+                                [wardrobeName]="wardrobeName" 
+                                [transferStorage]="transferStorage" 
+                                [outfitName]="outfit?.key" 
+                                (toggleHighlightsEvent)="toggleHighlights($event)" 
+                                (dawnEquipmentEvent)="dawnEquipmentEmit($event)" 
+                                *ngFor="let outfit of initialOutfits | keyvalue">
+                    </app-outfit>
                 </div>
             </span>
         </div>

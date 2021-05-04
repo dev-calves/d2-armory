@@ -20,5 +20,5 @@
     <!-- see wardrobe.html for the reason of having a child container -->
     <!-- TODO: fix ViewContainerRef misalignment -->
     <div #wardrobesContainer></div>
-    <app-wardrobe [wardrobeName]="wardrobe.key" [initialOutfits]="wardrobe.value" [currentUserMembership]="currentUserMembership" [characterId]="characterId" [transferStorage]="transferStorage" *ngFor="let wardrobe of wardrobes | keyvalue"></app-wardrobe>
+    <app-wardrobe [wardrobeName]="wardrobe.key" [initialOutfits]="wardrobe.value" [currentUserMembership]="currentUserMembership" [characterId]="characterId" [transferStorage]="transferStorage" (dawnEquipmentEvent)="dawnEquipmentEmit($event)" *ngFor="let wardrobe of wardrobes | keyvalue"></app-wardrobe>
 </div>
