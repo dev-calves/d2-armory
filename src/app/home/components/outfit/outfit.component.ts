@@ -17,7 +17,7 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   private _wardrobeName: string;
   private _characterId: string;
   private _outfitName: string;
-  private _membershipType: number;
+  private _membershipType: string;
   private _membershipId: string;
   private _transferStorage: string;
 
@@ -91,7 +91,7 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   }
 
   @Input()
-  public set membershipType(membershipType: number) {
+  public set membershipType(membershipType: string) {
     this._membershipType = membershipType;
   }
 
@@ -133,8 +133,10 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   @Output() dawnEquipmentEvent: EventEmitter<any> = new EventEmitter<any>();
 
   public dawnEquips() {
-    this.toggleHighlightsEvent.emit(this.elementRef);
-    this.dawnEquipmentEvent.emit(this.formControl.value);
+    if (this.formControl?.value) { // trigger the events if the outfit element has a title set.
+      this.toggleHighlightsEvent.emit(this.elementRef);
+      this.dawnEquipmentEvent.emit(this.equipment);
+    }
   }
 
   @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();

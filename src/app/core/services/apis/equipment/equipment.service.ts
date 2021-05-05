@@ -12,11 +12,11 @@ export class EquipmentService {
 
   constructor(private _http: HttpClient) { }
 
-  public captureEquipment(membershipId: string, membershipType: number, characterId: string): Observable<IEquipmentCapture> {
+  public captureEquipment(membershipId: string, membershipType: string, characterId: string): Observable<IEquipmentCapture> {
     return this._http.get<IEquipmentCapture>(`${environment.EQUIPMENT_ENDPOINT}/capture?membershipId=${membershipId}&membershipType=${membershipType}&characterId=${characterId}`);
   }
 
-  public dawnEquipment(equipment: Equipment, membershipType: number, membershipId: string, characterId: string, transferLocation: string): Observable<IEquipmentDawn> {
+  public dawnEquipment(equipment: Equipment, membershipType: string, membershipId: string, characterId: string, transferLocation: string): Observable<IEquipmentDawn> {
     return this._http.post<IEquipmentDawn>(`${environment.EQUIPMENT_ENDPOINT}/dawn`, {
       "equipment": equipment,
       "membershipType": membershipType,

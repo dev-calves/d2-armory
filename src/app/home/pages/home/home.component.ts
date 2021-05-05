@@ -1,8 +1,18 @@
-import { Component, OnInit, OnDestroy, ComponentFactoryResolver, ComponentRef, ViewChild, ViewRef, ViewContainerRef } from '@angular/core';
+import { 
+  Component, 
+  OnInit, 
+  OnDestroy, 
+  ComponentFactoryResolver, 
+  ComponentRef, 
+  ViewChild, 
+  ViewRef, 
+  ViewContainerRef 
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
-import { ICharacter, HomeService, OauthService } from 'src/app/core';
+import { ICharacter, HomeService, OauthService, EquipmentService } from 'src/app/core';
 import { environment } from 'src/environments/environment';
 import { CharacterComponent } from 'src/app/home/pages/character/character.component';
 
@@ -15,7 +25,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _displayName = '';
   private _loggedIn = false;
   private _membershipId = '';
-  private _membershipType: number;
+  private _membershipType: string;
   private _transferStorage: string;
   private _cachedComponents: Map<string, ViewRef> = new Map<string, ViewRef>();
   private _characters: ICharacter[] = [{
@@ -27,6 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     emblem: '',
     background: ''
   }];
+  private _showSpinner: boolean = false;
   private _charactersContainer: ViewContainerRef;
   private _queryParamsSub: Subscription;
   private _getUserProfileSub: Subscription;
@@ -37,6 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private homeService: HomeService,
+    private equipmentService: EquipmentService,
     private route: ActivatedRoute,
     private oauthService: OauthService,
     private resolver: ComponentFactoryResolver
@@ -114,8 +126,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this._membershipType;
   }
 
-  public set membershipType(membershipType: number) {
+  public set membershipType(membershipType: string) {
     this._membershipType = membershipType;
+  }
+
+  public get showSpinner() {
+    return this._showSpinner;
+  }
+
+  public set showSpinner(showSpinner: boolean) {
+    this._showSpinner = showSpinner;
   }
 
   set characters(chars: ICharacter[]) {
@@ -183,10 +203,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   
       ref.instance.characterId = characterId;
       ref.instance.transferStorage = this.transferStorage;
-      ref.instance.dawnEquipmentEvent.subscribe(formValue => {
-        // TODO: add api response code.
+      ref.instance.dawnEquipmentEvent.subscribe(equipment => {
+        this.showSpinner = true;
+        
+        this._equipmentServiceSub = this.equipmentService.dawnEquipment(equipment, this.membershipType, this.membershipId, characterId, this.transferStorage)
+          .pipe(
+            delay(3000) // delay to give Bungie DB time to update before gear swapping again.
+          ).subscribe(response => {
+            this.showSpinner = false;
+        });
       });
-
       this._cachedComponents.set(characterId, this.charactersContainer.get(0));
     }
   }

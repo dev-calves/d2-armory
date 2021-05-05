@@ -1,6 +1,15 @@
 
 <body>
-    <app-header [loggedIn]="loggedIn" [characters]="characters" (miniProfileClick)="onMiniProfileClick($event)" (homeClick)="onHomeClick()"></app-header>
+    <div class="overlay" *ngIf="showSpinner">
+        <mat-progress-spinner [mode]="'indeterminate'" *ngIf="showSpinner"></mat-progress-spinner>
+    </div>
+
+    <app-header 
+        [loggedIn]="loggedIn" 
+        [characters]="characters" 
+        (miniProfileClick)="onMiniProfileClick($event)" 
+        (homeClick)="onHomeClick()">
+    </app-header>
 
     <div class="content">
         <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!charactersContainer?.get(0)">
@@ -20,5 +29,11 @@
         </div>
     </div>
 
-    <app-footer [displayName]="displayName" [loggedIn]="loggedIn" [transferStorage]="transferStorage" (menuToggleClickEvent)="onMenuToggleClick($event)" class="footer"></app-footer>
+    <app-footer 
+        [displayName]="displayName" 
+        [loggedIn]="loggedIn" 
+        [transferStorage]="transferStorage" 
+        (menuToggleClickEvent)="onMenuToggleClick($event)" 
+        class="footer">
+    </app-footer>
 </body>

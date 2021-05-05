@@ -183,7 +183,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._matcher;
   }
 
-  public dawnEquipmentEmit(value: string) {
+  public dawnEquipmentEmit(value: object) {
     this.dawnEquipmentEvent.emit(value);
   }
 

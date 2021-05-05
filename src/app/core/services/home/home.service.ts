@@ -34,6 +34,8 @@ export class HomeService {
     homeReference.currentUserMembershipSub = this.currentUserMembershipService.getCurrentUserMembership().pipe(
       map(currentUserMembership => {
         homeReference.displayName = currentUserMembership.displayName;
+        homeReference.membershipType = currentUserMembership.membershipType;
+        homeReference.membershipId = currentUserMembership.membershipId;
         return currentUserMembership;
       }),
       concatMap(currentUserMembership => this.charactersService.getCharacters(

@@ -98,7 +98,7 @@ export class CharacterComponent implements OnInit, OnDestroy {
     this._wardrobes = wardrobes;
   }
 
-  public dawnEquipmentEmit(value: string) {
+  public dawnEquipmentEmit(value: object) {
     this.dawnEquipmentEvent.emit(value);
   }
 

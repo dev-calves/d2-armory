@@ -1,3 +1,7 @@
+import { IEquipmentTransferItem, IEquipmentItem } from './index';
+
 export interface IEquipmentDawn {
-    equipStatus: string
+    inventoryToVaultTransfers?: Array<IEquipmentTransferItem>,
+    equipment?: Array<IEquipmentItem>,
+    vaultToInventoryTransfers?: Array<IEquipmentTransferItem>
 }

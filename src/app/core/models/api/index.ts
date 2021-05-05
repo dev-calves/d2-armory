@@ -10,3 +10,6 @@ export * from '../api/equipment-capture-response.model';
 export * from '../api/equipment-dawn-response.model';
 export * from './equipment.model';
 export * from './item.model';
+export * from './equipment-transfer-item-model';
+export * from './equipment-dawn-response.model';
+export * from './equipment-item-model';

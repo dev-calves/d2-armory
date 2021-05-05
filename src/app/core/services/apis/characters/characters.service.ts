@@ -12,7 +12,7 @@ export class CharactersService {
 
   constructor(private _http: HttpClient) { }
 
-  public getCharacters(membershipId: string, membershipType: number): Observable<ICharacter[]> {
+  public getCharacters(membershipId: string, membershipType: string): Observable<ICharacter[]> {
     return this._http.get<ICharacter[]>(`${environment.CHARACTERS_ENDPOINT}?membershipId=${membershipId}&membershipType=${membershipType}`);
   }
 }

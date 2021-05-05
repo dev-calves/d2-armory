@@ -26,6 +26,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CharacterComponent } from './pages/character/character.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatIconModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
