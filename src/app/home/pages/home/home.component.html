@@ -1,9 +1,16 @@
 
 <body>
-    <app-header [loggedIn]="loggedIn" [characters]="characters"></app-header>
+    <div #overlaySpinnerContainer></div>
+
+    <app-header 
+        [loggedIn]="loggedIn"
+        [currentUserMembership]="currentUserMembership"
+        (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)" 
+        (homeClick)="homeService.onHomeClick(null, null, null)">
+    </app-header>
 
     <div class="content">
-        <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!loggedIn">
+        <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!charactersContainer?.get(0)">
             <div style="padding-top: 10px;">
                 <p>
                     This site is under construction. <br>
@@ -14,8 +21,16 @@
             </div>
         </section>
 
-        <router-outlet></router-outlet>
+        <div *ngIf="loggedIn">
+            <div #charactersContainer></div>
+        </div>
     </div>
 
-    <app-footer [displayName]="displayName" [loggedIn]="loggedIn" class="footer"></app-footer>
+    <app-footer 
+        [displayName]="currentUserMembership?.displayName" 
+        [loggedIn]="loggedIn" 
+        [transferStorage]="transferStorage" 
+        (menuToggleClickEvent)="onMenuToggleClick($event)" 
+        class="footer">
+    </app-footer>
 </body>

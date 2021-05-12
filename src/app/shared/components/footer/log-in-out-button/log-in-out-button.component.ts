@@ -29,6 +29,11 @@ export class LogInOutButtonComponent implements OnInit, OnDestroy {
 
   }
 
+  /**
+   * launches dialog box that can send user to Bungie to be authenticated.
+   * @param stateHex encrypted state.
+   * @param url bungie url.
+   */
   public openDialog(stateHex: string, url: string): void {
     this.dialog.open(AuthModalComponent, {
       width: '400px',
@@ -39,10 +44,16 @@ export class LogInOutButtonComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * send to bungie for authentication.
+   */
   public logOnClick(): void {
     this.logInOutButtonService.encryptStateAndLinkToBungie(this);
   }
 
+  /**
+   * Log out user by deleting tokens and refreshing home page.
+   */
   public logOutClick(): void {
     this._oauthSubscribeSub = this.oauthService.deleteTokens().subscribe(response => {
       if (response.message === 'tokens deleted.') {

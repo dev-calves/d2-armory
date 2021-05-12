@@ -23,17 +23,22 @@ export class AuthModalComponent implements OnInit, OnDestroy {
   public set dismissCheckBox(element) {
     this._dismissCheckBox = element;
   }
-
   public get dismissCheckBox() {
     return this._dismissCheckBox;
   }
 
+  /**
+   * stores state into localStorage for future comparison.
+   */
   public logOnClick(): void {
     // write or overwrite existing state item.
     localStorage.setItem(environment.LOCAL_STORAGE_STATE, this.data.stateHex);
     localStorage.setItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE, this.dismissCheckBox.checked);
   }
 
+  /**
+   * close dialog box.
+   */
   public closeClick(): void {
     this.dialogRef.close();
   }

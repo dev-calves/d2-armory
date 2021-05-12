@@ -4,7 +4,9 @@
   <p>If prompted by Bungie, please link "Destiny2 Armory" to your account.</p>
 </div>
 <span #logInConfirmationButtons>
-  <a [href]="data?.url"><button #LogOnButton mat-button (click)="logOnClick()" color="accent" cdkFocusInitial>Ok</button></a>
+  <a [href]="data?.url">
+    <button #LogOnButton mat-button (click)="logOnClick()" color="accent" cdkFocusInitial>Ok</button>
+  </a>
   <button style="margin-left: 5px;" mat-button color="accent" (click)="closeClick()">No Thanks</button>
   <div fxLayout="row" fxLayoutAlign="space-between">
     <span></span>

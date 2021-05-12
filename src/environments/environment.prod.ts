@@ -7,8 +7,15 @@ export const environment = {
     OAUTH_ACCESS_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/oauth/access',
     OAUTH_DELETE_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/oauth/delete',
     OAUTH_REFRESH_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/oauth/refresh-status',
-    EQUIPMENT_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/equipments',
+    EQUIPMENT_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/equipment',
     LOCAL_STORAGE_STORAGE: 'storage',
     LOCAL_STORAGE_DISMISS_LOGON_MESSAGE: 'dismiss-logon-message',
-    LOCAL_STORAGE_STATE: 'state'
+    LOCAL_STORAGE_STATE: 'state',
+    DEFAULT_CHARACTER_ID: '1234',
+    DEFAULT_CHARACTER_CLASS: 'Class',
+    DEFAULT_CHARACTER_RACE: 'Race',
+    DEFAULT_CHARACTER_GENDER: 'Gender',
+    DEFAULT_CHARACTER_LIGHT: 'Light Level',
+    DEFAULT_CHARACTER_EMBLEM: '',
+    DEFAULT_CHARACTER_BACKGROUND: ''
   };

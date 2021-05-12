@@ -1,5 +1,14 @@
 import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from '@angular/router';
 
+/**
+ * This reuse strategy is not currently being used. 
+ * If the character component implementation changes back to being placed on a route, then
+ * this reuse strategy would be used again.
+ * 
+ * This reuse strategy was written to place character components inside the home component on the route 'home/character/xx'.
+ * It also caches child routes to avoid re-initialization of the character component.
+ * Child routes for the home component would require numbers be associated with each character route ex. 'home/character1/xx', 'home/character2/xx'
+ */
 export class CharacterTabReuseStrategy implements RouteReuseStrategy {
     private storedRoutes = new Map<string, DetachedRouteHandle>();
     private shouldAttachFlag = false;

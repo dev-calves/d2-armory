@@ -55,7 +55,7 @@ describe('ErrorHandlerIntercept', () => {
     });
 
     it('should intercept', () => {
-        service.getCharacters('id123', 1).subscribe(response => {
+        service.getCharacters('id123', '1').subscribe(response => {
             expect(response).toBeTruthy();
         });
     });

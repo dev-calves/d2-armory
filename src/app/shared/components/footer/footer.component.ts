@@ -1,28 +1,30 @@
-import { Component, Input, DoCheck } from '@angular/core';
-
-import { environment } from 'src/environments/environment';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
-export class FooterComponent implements DoCheck {
-  private _displayName = '';
-  private _steamId = '76561198276048723';
-  private _steamName = 'cedric401';
-  private _steamProfileLink = 'https://steamcommunity.com/id/cedric401/';
-  private _storage: 'vault' | 'inventory' = 'vault';
+export class FooterComponent {
+  private _displayName: string  = '';
+  private _steamId: string = '76561198276048723';
+  private _steamName: string = 'cedric401';
+  private _steamProfileLink: string = 'https://steamcommunity.com/id/cedric401/';
+  private _transferStorage: string = 'inventory';
   private _loggedIn = false;
 
   constructor() { }
 
-  ngDoCheck(): void {
-    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'vault' ||
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'inventory') {
-      this.storage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) as 'vault' | 'inventory';
-    }
+  @Output() menuToggleClickEvent: EventEmitter<any> = new EventEmitter<string>();
+
+  /**
+   * sends transfer storage to HomeComponent to be updated among child components.
+   * @param value transfer storage.
+   */
+  public onMenuToggleClick(value: 'vault' | 'inventory'): void {
+    this.transferStorage = value;
+
+    this.menuToggleClickEvent.emit(value);
   }
 
   @Input()
@@ -32,6 +34,15 @@ export class FooterComponent implements DoCheck {
 
   public get displayName(): string {
     return this._displayName;
+  }
+
+  @Input()
+  public set transferStorage(transferStorage: string) {
+    this._transferStorage = transferStorage;
+  }
+
+  public get transferStorage(): string {
+    return this._transferStorage;
   }
 
   public set steamId(id: string) {
@@ -56,14 +67,6 @@ export class FooterComponent implements DoCheck {
 
   public get steamProfileLink(): string {
     return this._steamProfileLink;
-  }
-
-  public set storage(storage: 'vault' | 'inventory') {
-    this._storage = storage;
-  }
-
-  public get storage(): 'vault' | 'inventory' {
-    return this._storage;
   }
 
   @Input()

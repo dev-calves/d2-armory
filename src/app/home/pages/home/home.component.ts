@@ -1,8 +1,17 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { 
+  Component, 
+  OnInit, 
+  OnDestroy,
+  ViewChild, 
+  ViewContainerRef 
+} from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { ICharacter, HomeService, OauthService } from 'src/app/core';
+import { 
+  ICurrentUserMembership,
+  OverlaySpinnerService} from 'src/app/core';
+import { HomeService } from './home.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -11,125 +20,106 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private _displayName = '';
   private _loggedIn = false;
-  private _membershipId = '';
-  private _membershipType: number;
-  private _characters: ICharacter[] = [{
-    id: '1234',
-    class: 'Class',
-    race: 'Race',
-    gender: 'Gender',
-    light: 'Light Level',
-    emblem: '',
-    background: ''
-  }];
+  private _transferStorage: string;
+  private _currentUserMembership: ICurrentUserMembership;
+  private _charactersContainer: ViewContainerRef;
+  private _overlaySpinnerContainer: ViewContainerRef;
   private _queryParamsSub: Subscription;
-  private _getUserProfileSub: Subscription;
-  private _oauthServiceSub: Subscription;
   private _currentUserMembershipSub: Subscription;
-  private _refreshDefSub: Subscription;
 
   constructor(
-    private homeService: HomeService,
-    private route: ActivatedRoute,
-    private oauthService: OauthService
+    public homeService: HomeService,
+    private overlaySpinnerService: OverlaySpinnerService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this._queryParamsSub = this.route?.queryParams?.subscribe(params => { // initialize /home?:code:state route
-      if (params?.code && params?.state &&
-        params?.state === localStorage?.getItem(environment.LOCAL_STORAGE_STATE)) {
-        // use these parameters received from bungie to store user authentication.
+    // set the storage localStorage property.
+    this.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
+    
+    this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { // initialize /home?:code:state route
+      // use these parameters received from bungie to store user authentication.
+      if (params.code && params.state && params.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
         // prevent oauth requests from being made with a stale "code" after refreshing the page.
-        localStorage?.removeItem(environment.LOCAL_STORAGE_STATE);
+        localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
 
-        // request access token
-        this.homeService?.oauthAndUserProfile(this, params?.code);
-      } else {
-        this._refreshDefSub = this.oauthService?.refreshExist().subscribe(refresh => {
-          if (refresh['refresh-token-available']) {
+        // request access token and user data.
+        this._currentUserMembershipSub = this.homeService.oauthAndUserProfile(params.code)
+          .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
             this.loggedIn = true;
-
-            // retrieve user profile information.
-            this.homeService?.userProfile(this);
-          }
-        });
+            this.currentUserMembership = currentUserMembershipResponse;
+          });
+      } else {
+        // request user data.
+        this._currentUserMembershipSub = this.homeService.userProfile()
+          .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
+            this.loggedIn = true;
+            this.currentUserMembership = currentUserMembershipResponse;
+          });
       }
     });
-
-  }
-
-  public get displayName() {
-    return this._displayName;
-  }
-
-  public set displayName(displayName: string) {
-    this._displayName = displayName;
-  }
-
-  public get loggedIn() {
-    return this._loggedIn;
   }
 
   public set loggedIn(loggedIn: boolean) {
     this._loggedIn = loggedIn;
   }
-
-  public get membershipId() {
-    return this._membershipId;
+  public get loggedIn() {
+    return this._loggedIn;
   }
 
-  public set membershipId(membershipId: string) {
-    this._membershipId = membershipId;
+  public set transferStorage(transferStorage: string) {
+    if (this._transferStorage != transferStorage) {
+      this._transferStorage = transferStorage;
+    }
+    // TODO: remove this storage prop. after implementing DB.
+    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) != this.transferStorage) {
+      localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, transferStorage);
+    }
+  }
+  public get transferStorage() {
+    return this._transferStorage;
   }
 
-  public get membershipType() {
-    return this._membershipType;
+  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
+    this._currentUserMembership = currentUserMembership;
+  }
+  public get currentUserMembership() {
+    return this._currentUserMembership;
   }
 
-  public set membershipType(membershipType: number) {
-    this._membershipType = membershipType;
+  @ViewChild('charactersContainer', { read: ViewContainerRef })
+  public set charactersContainer(container: ViewContainerRef) {
+    this._charactersContainer = container;
+
+    // pass the container to the service for component creations.
+    this.homeService.charactersContainer = this.charactersContainer;
+  }
+  public get charactersContainer() {
+    return this._charactersContainer;
   }
 
-  set characters(chars: ICharacter[]) {
-    this._characters = chars;
+  @ViewChild('overlaySpinnerContainer', { read: ViewContainerRef })
+  public set overlaySpinnerContainer(container: ViewContainerRef) {
+    this._overlaySpinnerContainer = container;
+
+    this.overlaySpinnerService.overlaySpinnerContainerRef = container;
+  }
+  public get overlaySpinnerContainer() {
+    return this._overlaySpinnerContainer;
   }
 
-  get characters(): ICharacter[] {
-    return this._characters;
-  }
-
-  set oauthServiceSub(sub: Subscription) {
-    this._oauthServiceSub = sub;
-  }
-
-  get oauthServiceSub(): Subscription {
-    return this._oauthServiceSub;
-  }
-
-  set getUserProfileSub(sub: Subscription) {
-    this._getUserProfileSub = sub;
-  }
-
-  get getUserProfileSub(): Subscription {
-    return this._getUserProfileSub;
-  }
-
-  set currentUserMembershipSub(sub: Subscription) {
-    this._currentUserMembershipSub = sub;
-  }
-
-  get currentUserMembershipSub(): Subscription {
-    return this._currentUserMembershipSub;
+  /**
+   * updates transferStorage and localStorage.
+   * @param value 
+   */
+  public onMenuToggleClick(value: string): void {
+    this.transferStorage = value;
   }
 
   ngOnDestroy() {
     this._queryParamsSub.unsubscribe();
-    if (this._getUserProfileSub) { this._getUserProfileSub.unsubscribe(); }
-    if (this._oauthServiceSub) { this._oauthServiceSub.unsubscribe(); }
     if (this._currentUserMembershipSub) { this._currentUserMembershipSub.unsubscribe(); }
-    if (this._refreshDefSub) { this._refreshDefSub.unsubscribe(); }
   }
 
 }

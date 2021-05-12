@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-menu-button',
@@ -7,31 +6,30 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./menu-button.component.css']
 })
 export class MenuButtonComponent implements OnInit {
-  private _toggleSelected: 'vault' | 'inventory' = 'vault';
+  private _transferStorage: string = '';
 
   constructor() { }
 
-  ngOnInit() {
-    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
-      (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'vault' ||
-        localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'inventory')) {
-      this.toggleSelected = (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) as 'vault' | 'inventory');
-    } else {
-      localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, this.toggleSelected);
-    }
+  ngOnInit() { }
+
+  @Output() menuToggleClickEvent: EventEmitter<any> = new EventEmitter<string>();
+
+  /**
+   * toggles between vault and inventory.
+   * @param value transfer storage.
+   */
+  public onMenuToggleClick(value: 'vault' | 'inventory'): void {
+    this.transferStorage = value;
+
+    this.menuToggleClickEvent.emit(value);
   }
 
-  public onClick(value: 'vault' | 'inventory'): void {
-    this.toggleSelected = value;
-    localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, value);
-
+  @Input()
+  set transferStorage(transferStorage: string) {
+    this._transferStorage = transferStorage;
   }
 
-  get toggleSelected(): 'vault' | 'inventory' {
-    return this._toggleSelected;
-  }
-
-  set toggleSelected(vault: 'vault' | 'inventory') {
-    this._toggleSelected = vault;
+  get transferStorage(): string {
+    return this._transferStorage;
   }
 }

@@ -1,19 +1,15 @@
 import {
   Component, OnInit, AfterViewInit, ViewChild, ViewContainerRef,
-  ComponentFactoryResolver,
-  ComponentRef,
   OnDestroy,
   Input,
-  ChangeDetectorRef,
-  Renderer2,
   ElementRef
 } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { OutfitComponent } from '../outfit/outfit.component';
 
-import { EquipmentsService, ICurrentUserMembership } from 'src/app/core'
+import { ICurrentUserMembership } from 'src/app/core'
+import { WardrobeService } from './wardrobe.service';
+
 
 @Component({
   selector: 'app-wardrobe',
@@ -24,26 +20,19 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   private _toHide = false;
   private _wardrobeName: string;
   private _outfitsContainer: ViewContainerRef;
-  private _outfitComponentRef: ComponentRef<OutfitComponent>[] = [];
   private _outfitsParentContainer;
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
-  private _outfitCardContainer;
   private _addOutfitButton;
   private _currentUserMembership: ICurrentUserMembership;
-  private _characterId: number;
+  private _characterId: string;
+  private _transferStorage: string;
   private _outfits: HTMLCollection;
   private _initialOutfits;
 
-  private _equipmentsServiceSub;
-
   constructor(
-    private equipmentsService: EquipmentsService,
-    private _snackBar: MatSnackBar,
-    private resolver: ComponentFactoryResolver,
-    private ref: ChangeDetectorRef,
-    private renderer: Renderer2,
-    private elementRef: ElementRef) {
+    public wardrobeService: WardrobeService,
+    public elementRef: ElementRef) {
 
     this.formControl = new FormControl('', [
       Validators.required,
@@ -61,12 +50,13 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.outfits = this.outfitsParentContainer.nativeElement.children;
+    
+    this.wardrobeService.outfitsContainer = this.outfitsContainer;
   }
 
   public set toHide(status: boolean) {
     this._toHide = status;
   }
-
   public get toHide() {
     return this._toHide;
   }
@@ -75,7 +65,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   public set wardrobeName(name) {
     this._wardrobeName = name;
   }
-
   public get wardrobeName() {
     return this._wardrobeName;
   }
@@ -85,27 +74,24 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input()
+  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
+    this._currentUserMembership = currentUserMembership;
+  }
   public get currentUserMembership() {
     return this._currentUserMembership;
   }
 
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-
   @Input()
+  public set characterId(characterId: string) {
+    this._characterId = characterId;
+  }
   public get characterId() {
     return this._characterId;
-  }
-
-  public set characterId(characterId: number) {
-    this._characterId = characterId;
   }
 
   public set outfits(outfits: HTMLCollection) {
     this._outfits = outfits;
   }
-
   public get outfits() {
     return this._outfits;
   }
@@ -114,16 +100,22 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   public set initialOutfits(initialOutfits) {
     this._initialOutfits = initialOutfits;
   }
-
   public get initialOutfits() {
     return this._initialOutfits;
+  }
+
+  @Input()
+  public set transferStorage(transferStorage: string) {
+    this._transferStorage = transferStorage;
+  }
+  public get transferStorage() {
+    return this._transferStorage;
   }
 
   @ViewChild('outfitsContainer', { read: ViewContainerRef })
   public set outfitsContainer(container: ViewContainerRef) {
     this._outfitsContainer = container;
   }
-
   public get outfitsContainer() {
     return this._outfitsContainer;
   }
@@ -132,33 +124,21 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   public set outfitsParentContainer(container: any) {
     this._outfitsParentContainer = container;
   }
-
   public get outfitsParentContainer() {
     return this._outfitsParentContainer;
-  }
-
-  public get outfitCardContainer() {
-    return this._outfitCardContainer;
-  }
-
-  @ViewChild('outfitCardContainer')
-  public set outfitCardContainer(outfitCardContainer) {
-    this._outfitCardContainer = outfitCardContainer;
-  }
-
-  public get addOutfitButton() {
-    return this._addOutfitButton;
   }
 
   @ViewChild('addOutfitButton')
   public set addOutfitButton(addOutfitButton) {
     this._addOutfitButton = addOutfitButton;
   }
+  public get addOutfitButton() {
+    return this._addOutfitButton;
+  }
 
   public set formControl(control) {
     this._formControl = control;
   }
-
   public get formControl() {
     return this._formControl;
   }
@@ -166,104 +146,40 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   public set matcher(matcher) {
     this._matcher = matcher;
   }
-
   public get matcher() {
     return this._matcher;
   }
 
+  /**
+   * updates wardrobeService with the target container.
+   * adds an outfit to the target wardrobe.
+   */
+  public addOutfit() {
+    this.wardrobeService.outfitsContainer = this.outfitsContainer;
+
+    this.wardrobeService.addOutfit(
+      this.elementRef, 
+      this.outfits, 
+      this.currentUserMembership, 
+      this.characterId, 
+      this.formControl?.value, 
+      this.transferStorage);
+  }
+
+  // remove wardrove from view.
   public close() {
     this.toHide = !this.toHide;
 
-    let storedOutfits = JSON.parse(localStorage.getItem('outfits'));
-
-    delete storedOutfits[this.characterId][this.wardrobeName];
-
-    localStorage.setItem('outfits', JSON.stringify(storedOutfits));
-  }
-
-  public addOutfit() {
-    const outfitError: HTMLElement = this.outfitCardContainer.nativeElement.querySelector('mat-error');
-
-    if (outfitError) {
-      this.openSnackBar(outfitError.innerHTML);
-    } else {
-      this.createOutfitComponent();
-    }
-  }
-
-  public createOutfitComponent() {
-    let outfitCounter = 0;
-
-    // to ignore hidden outfit components.
-    Array.from(this.outfits).forEach(element => {
-      if (element?.children?.length > 0) {
-        outfitCounter++;
-      }
-    });
-
-    if (outfitCounter < 10) { // max outfits are 10.
-      this.addOutfitButton.disabled = true;
-
-      this._equipmentsServiceSub = this.equipmentsService.captureEquipment(
-        this.currentUserMembership.membershipId,
-        this.currentUserMembership.membershipType,
-        this.characterId
-      ).subscribe(captureResponse => {
-        const outfitFactory = this.resolver.resolveComponentFactory(OutfitComponent);
-        const ref: ComponentRef<OutfitComponent> = this.outfitsContainer.createComponent(outfitFactory);
-
-        ref.instance.characterId = this.characterId;
-        ref.instance.wardrobeName = this.formControl.value;
-        ref.instance.itemIds = captureResponse.equipmentIds;
-        ref.instance.membershipType = this.currentUserMembership.membershipType;
-        ref.instance.toggleHighlightsEvent.subscribe(outfitElement => {
-          ref.changeDetectorRef.detectChanges();
-          this.toggleHighlights(outfitElement);
-        });
-
-        this._outfitComponentRef.push(ref);
-
-        this.addOutfitButton.disabled = false;
-
-        ref.instance.toggleHighlights();
-      });
-    } else {
-      this.openSnackBar('Max outfits reached');
-    }
-  }
-
-  public openSnackBar(message) {
-    this._snackBar.open(message, 'Dismiss', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
-  }
-
-  public toggleHighlights(elementRef) {
-    let characterOutfits = document.querySelectorAll('app-outfit');
-
-    Array.from(characterOutfits).forEach((element: HTMLElement) => {
-      if (element.children.length > 0) { // ignore the container div
-        this.renderer.removeStyle(element.firstChild, 'background-color');
-        this.renderer.removeStyle(element.firstChild, 'color');
-      }
-    });
-
-    this.renderer.setStyle(elementRef.nativeElement.firstChild, 'background-color', 'grey');
-    this.renderer.setStyle(elementRef.nativeElement.firstChild, 'color', 'black');
+    // remove all outfits on the wardrobe.
+    this.wardrobeService.deleteWardrobeLocal(this.characterId, this.wardrobeName);
   }
 
   ngOnDestroy() {
-    if (this._outfitComponentRef.length > 0) {
-      this._outfitComponentRef.forEach(ref => {
-        ref.destroy();
-      });
-    }
-    if (this._equipmentsServiceSub) this._equipmentsServiceSub.unsubscribe();
+    this.wardrobeService.destroy();
   }
 }
 
+// error checker for the wardrobe name.
 class FormErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return !!(control && control.invalid && (control.dirty || control.touched || control.pristine));

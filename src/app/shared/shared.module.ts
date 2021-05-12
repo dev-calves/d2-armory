@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -17,11 +18,18 @@ import { MiniProfileComponent } from './components/header/mini-profile/mini-prof
 import { AuthModalComponent } from '../shared/components/auth-modal/auth-modal.component';
 import { LogInOutButtonComponent } from './components/footer/log-in-out-button/log-in-out-button.component';
 import { MenuButtonComponent } from './components/footer/menu-button/menu-button.component';
+import { OverlaySpinnerComponent } from './components/overlay-spinner/overlay-spinner.component';
 
 
 @NgModule({
   declarations: [
-    FooterComponent, AuthModalComponent, HeaderComponent, MiniProfileComponent, LogInOutButtonComponent, MenuButtonComponent
+    FooterComponent, 
+    AuthModalComponent, 
+    HeaderComponent, 
+    MiniProfileComponent, 
+    LogInOutButtonComponent, 
+    MenuButtonComponent, 
+    OverlaySpinnerComponent
   ],
   imports: [
     CommonModule,
@@ -31,12 +39,13 @@ import { MenuButtonComponent } from './components/footer/menu-button/menu-button
     MatIconModule,
     MatButtonToggleModule,
     MatCheckboxModule,
+    MatProgressSpinnerModule,
     FlexLayoutModule,
     RouterModule
   ],
   providers: [],
   exports: [
-    FooterComponent, HeaderComponent
+    FooterComponent, HeaderComponent, OverlaySpinnerComponent
   ]
 })
 export class SharedModule { }
