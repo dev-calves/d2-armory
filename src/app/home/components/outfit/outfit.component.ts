@@ -1,27 +1,28 @@
-import { Component, OnInit, Input, EventEmitter, Output, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ElementRef } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { Equipment } from 'src/app/core/models/api/equipment.model';
+import { ICurrentUserMembership } from 'src/app/core';
+import { IEquipment } from 'src/app/core/models/api/equipment.model';
+import { OutfitService } from './outfit.service';
 
 @Component({
   selector: 'app-outfit',
   templateUrl: './outfit.component.html',
   styleUrls: ['./outfit.component.css']
 })
-export class OutfitComponent implements OnInit, AfterViewInit {
+export class OutfitComponent implements OnInit {
   private _toHide: boolean = false;
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
-  private _equipment: Equipment;
+  private _equipment: IEquipment;
   private _wardrobeName: string;
   private _characterId: string;
   private _outfitName: string;
-  private _membershipType: string;
-  private _membershipId: string;
   private _transferStorage: string;
+  private _currentUserMembership: ICurrentUserMembership;
 
-  constructor(private elementRef: ElementRef) {
+  constructor(public elementRef: ElementRef, private outfitService: OutfitService) {
     this.formControl = new FormControl('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z0-9 _]*$') // alphanumeric
@@ -36,13 +37,9 @@ export class OutfitComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
-  }
-
   public set toHide(status: boolean) {
     this._toHide = status;
   }
-
   public get toHide() {
     return this._toHide;
   }
@@ -50,7 +47,6 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   public set formControl(control) {
     this._formControl = control;
   }
-
   public get formControl() {
     return this._formControl;
   }
@@ -58,25 +54,30 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   public set matcher(matcher) {
     this._matcher = matcher;
   }
-
   public get matcher() {
     return this._matcher;
   }
 
   @Input()
-  public set equipment(equipment: Equipment) {
+  public set equipment(equipment: IEquipment) {
     this._equipment = equipment;
   }
-
   public get equipment() {
     return this._equipment;
+  }
+
+  @Input()
+  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
+    this._currentUserMembership = currentUserMembership;
+  }
+  public get currentUserMembership() {
+    return this._currentUserMembership;
   }
 
   @Input()
   public set wardrobeName(wardrobeName: string) {
     this._wardrobeName = wardrobeName;
   }
-
   public get wardrobeName() {
     return this._wardrobeName;
   }
@@ -85,34 +86,14 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   public set characterId(characterId: string) {
     this._characterId = characterId;
   }
-
   public get characterId() {
     return this._characterId;
-  }
-
-  @Input()
-  public set membershipType(membershipType: string) {
-    this._membershipType = membershipType;
-  }
-
-  public get membershipType() {
-    return this._membershipType;
-  }
-
-  @Input()
-  public set membershipId(membershipId: string) {
-    this._membershipId = membershipId;
-  }
-
-  public get membershipId() {
-    return this._membershipId;
   }
 
   @Input()
   public set outfitName(outfitName: string) {
     this._outfitName = outfitName;
   }
-
   public get outfitName() {
     return this._outfitName;
   }
@@ -121,7 +102,6 @@ export class OutfitComponent implements OnInit, AfterViewInit {
   public set transferStorage(transferStorage: string) {
     this._transferStorage = transferStorage;
   }
-
   public get transferStorage() {
     return this._transferStorage;
   }
@@ -130,65 +110,55 @@ export class OutfitComponent implements OnInit, AfterViewInit {
     this.formControl.setValue(value);
   }
 
-  @Output() dawnEquipmentEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();
 
+  /**
+   * sends a request to equip the items stored on this outfit.
+   */
   public dawnEquips() {
     if (this.formControl?.value) { // trigger the events if the outfit element has a title set.
       this.toggleHighlightsEvent.emit(this.elementRef);
-      this.dawnEquipmentEvent.emit(this.equipment);
+
+      this.outfitService.dawnEquipment(
+                this.equipment, 
+                this.currentUserMembership, 
+                this.characterId, 
+                this.transferStorage);
     }
   }
 
-  @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();
-
+  /**
+   * remove the outfit button from view.
+   */
   public close() {
     this.toHide = !this.toHide;
 
-    let storedOutfits = JSON.parse(localStorage.getItem('outfits'));
-
-    delete storedOutfits[this.characterId][this.wardrobeName][this.outfitName];
-
-    localStorage.setItem('outfits', JSON.stringify(storedOutfits));
+    this.outfitService.removeCurrentEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName);
   }
 
+  /**
+   * store currently equipped items to an outfit button.
+   */
   public saveEquipment() {
+    // don't store equipment to an outfit without a proper name.
     if (!this.formControl.errors) {
-      const outfit = {
-        wardrobeName: this.wardrobeName,
-        outfitName: this.formControl.value,
-        equipment: this.equipment
-      };
+      // when the button is a name change, delete previous localStorage name of outfit.
+      this.outfitService.removePreviousEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName)
+      
+      // update name of outfit.
+      this.outfitName = this.formControl.value;
 
-      let outfits = {};
-
-      if (localStorage.getItem('outfits')) {
-        outfits = Object.assign({}, JSON.parse(localStorage.getItem('outfits')));
-
-        if (outfits[this.characterId]) {
-          if (outfits[this.characterId][this.wardrobeName]) {
-            outfits[this.characterId][this.wardrobeName][this.formControl.value] = outfit;
-          } else {
-            outfits[this.characterId][this.wardrobeName] = {};
-            outfits[this.characterId][this.wardrobeName][this.formControl.value] = outfit;
-          }
-        } else {
-          outfits[this.characterId] = {};
-          outfits[this.characterId][this.wardrobeName] = {};
-          outfits[this.characterId][this.wardrobeName][this.formControl.value] = outfit;
-        }
-      } else {
-        outfits[this.characterId] = {};
-        outfits[this.characterId][this.wardrobeName] = {};
-        outfits[this.characterId][this.wardrobeName][this.formControl.value] = outfit;
-      }
-
-      localStorage.setItem('outfits', JSON.stringify(outfits));
+      // store outfit with a new name || store new outfit.
+      this.outfitService.saveEquipmentLocal(this.wardrobeName, this.characterId,this.outfitName, this.equipment);
     }
   }
 
   ngOnDestroy() { }
 }
 
+/**
+ * form checker for the outfit name.
+ */
 class FormErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return !!(control && control.invalid && (control.dirty || control.touched || control.pristine));

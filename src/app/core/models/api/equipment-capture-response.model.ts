@@ -1,5 +1,5 @@
-import { Equipment } from './equipment.model';
+import { IEquipment } from './equipment.model';
 
 export interface IEquipmentCapture {
-    equipment: Equipment
+    equipment: IEquipment
 }

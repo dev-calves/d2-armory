@@ -10,7 +10,7 @@
             color="warn" 
             style="margin-right: -20px;" 
             mat-icon-button 
-            (click)="close()">
+            (click)="close();$event.stopPropagation()">
             <mat-icon style="font-size: small;">close</mat-icon>
         </button>
     </div>
@@ -23,7 +23,8 @@
                 type="text" 
                 [formControl]="formControl" 
                 [errorStateMatcher]="matcher" 
-                (blur)="saveEquipment()">
+                (click)="$event.stopPropagation()"
+                (blur)="saveEquipment();$event.stopPropagation()">
             <mat-error #outfitError *ngIf="formControl.hasError('pattern')">
                 Must be alphanumeric
             </mat-error>
@@ -37,7 +38,7 @@
                 matSuffix 
                 mat-icon-button 
                 aria-label="Clear"
-                (click)="setOutfitNameValue('')">
+                (click)="setOutfitNameValue('');$event.stopPropagation()">
                 <mat-icon>close</mat-icon>
             </button>
         </mat-form-field>

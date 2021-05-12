@@ -1,6 +1,6 @@
 import { Item }  from './item.model'
 
-export interface Equipment {
+export interface IEquipment {
         Kinetic_Weapons: Array<Item>,
         Energy_Weapons: Array<Item>,
         Power_Weapons: Array<Item>,

@@ -24,7 +24,7 @@ describe('CharactersService', () => {
 
   it('should return an observable after making an http call', () => {
     spyOn(httpClient, 'get').and.returnValue(new Observable());
-    const response: Observable<ICharacter[]> = service.getCharacters('id123', 0);
+    const response: Observable<ICharacter[]> = service.getCharacters('id123', '0');
     expect(response).toBeTruthy();
   });
 });

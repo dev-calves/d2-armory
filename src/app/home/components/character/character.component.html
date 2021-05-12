@@ -9,7 +9,7 @@
         </div>
         <mat-card-actions>
             <span fxLayout="row" fxLayoutAlign="space-around">
-                <button class="mat-elevation-z6" style="font-size: 40px;" mat-button (click)="addWardrobe()">
+                <button class="mat-elevation-z6" style="font-size: 40px;" mat-button (click)="characterService.addWardrobe(characterId, currentUserMembership)">
                     <mat-icon [inline]="true">add</mat-icon>
                 </button>
             </span>
@@ -17,8 +17,6 @@
     </mat-card>
 </div>
 <div #wardrobesParentContainer>
-    <!-- see wardrobe.html for the reason of having a child container -->
-    <!-- TODO: fix ViewContainerRef misalignment -->
     <div #wardrobesContainer></div>
     <app-wardrobe 
         [wardrobeName]="wardrobe.key" 
@@ -26,7 +24,6 @@
         [currentUserMembership]="currentUserMembership" 
         [characterId]="characterId" 
         [transferStorage]="transferStorage" 
-        (dawnEquipmentEvent)="dawnEquipmentEmit($event)" 
         *ngFor="let wardrobe of wardrobes | keyvalue">
     </app-wardrobe>
 </div>

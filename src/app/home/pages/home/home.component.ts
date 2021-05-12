@@ -1,20 +1,18 @@
 import { 
   Component, 
   OnInit, 
-  OnDestroy, 
-  ComponentFactoryResolver, 
-  ComponentRef, 
+  OnDestroy,
   ViewChild, 
-  ViewRef, 
   ViewContainerRef 
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
 
-import { ICharacter, HomeService, OauthService, EquipmentService } from 'src/app/core';
+import { 
+  ICurrentUserMembership,
+  OverlaySpinnerService} from 'src/app/core';
+import { HomeService } from './home.service';
 import { environment } from 'src/environments/environment';
-import { CharacterComponent } from 'src/app/home/pages/character/character.component';
 
 @Component({
   selector: 'app-home',
@@ -22,86 +20,52 @@ import { CharacterComponent } from 'src/app/home/pages/character/character.compo
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private _displayName = '';
   private _loggedIn = false;
-  private _membershipId = '';
-  private _membershipType: string;
   private _transferStorage: string;
-  private _cachedComponents: Map<string, ViewRef> = new Map<string, ViewRef>();
-  private _characters: ICharacter[] = [{
-    id: '1234',
-    class: 'Class',
-    race: 'Race',
-    gender: 'Gender',
-    light: 'Light Level',
-    emblem: '',
-    background: ''
-  }];
-  private _showSpinner: boolean = false;
+  private _currentUserMembership: ICurrentUserMembership;
   private _charactersContainer: ViewContainerRef;
+  private _overlaySpinnerContainer: ViewContainerRef;
   private _queryParamsSub: Subscription;
-  private _getUserProfileSub: Subscription;
-  private _oauthServiceSub: Subscription;
   private _currentUserMembershipSub: Subscription;
-  private _refreshDefSub: Subscription;
-  private _equipmentServiceSub: Subscription;
 
   constructor(
-    private homeService: HomeService,
-    private equipmentService: EquipmentService,
-    private route: ActivatedRoute,
-    private oauthService: OauthService,
-    private resolver: ComponentFactoryResolver
+    public homeService: HomeService,
+    private overlaySpinnerService: OverlaySpinnerService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    // set the storage localStorage property.
     this.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
-
-    this._queryParamsSub = this.route?.queryParams?.subscribe(params => { // initialize /home?:code:state route
-      if (params?.code && params?.state &&
-        params?.state === localStorage?.getItem(environment.LOCAL_STORAGE_STATE)) {
-        // use these parameters received from bungie to store user authentication.
+    
+    this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { // initialize /home?:code:state route
+      // use these parameters received from bungie to store user authentication.
+      if (params.code && params.state && params.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
         // prevent oauth requests from being made with a stale "code" after refreshing the page.
-        localStorage?.removeItem(environment.LOCAL_STORAGE_STATE);
+        localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
 
-        // request access token
-        this.homeService?.oauthAndUserProfile(this, params?.code);
-      } else {
-        this._refreshDefSub = this.oauthService?.refreshExist().subscribe(refresh => {
-          if (refresh['refresh-token-available']) {
+        // request access token and user data.
+        this._currentUserMembershipSub = this.homeService.oauthAndUserProfile(params.code)
+          .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
             this.loggedIn = true;
-
-            // retrieve user profile information.
-            this.homeService?.userProfile(this);
-          }
-        });
+            this.currentUserMembership = currentUserMembershipResponse;
+          });
+      } else {
+        // request user data.
+        this._currentUserMembershipSub = this.homeService.userProfile()
+          .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
+            this.loggedIn = true;
+            this.currentUserMembership = currentUserMembershipResponse;
+          });
       }
     });
-
-  }
-
-  ngOnChanges() {
-    
-  }
-
-  public get displayName() {
-    return this._displayName;
-  }
-
-  public set displayName(displayName: string) {
-    this._displayName = displayName;
-  }
-
-  public get loggedIn() {
-    return this._loggedIn;
   }
 
   public set loggedIn(loggedIn: boolean) {
     this._loggedIn = loggedIn;
   }
-
-  public get transferStorage() {
-    return this._transferStorage;
+  public get loggedIn() {
+    return this._loggedIn;
   }
 
   public set transferStorage(transferStorage: string) {
@@ -113,117 +77,49 @@ export class HomeComponent implements OnInit, OnDestroy {
       localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, transferStorage);
     }
   }
-
-  public get membershipId() {
-    return this._membershipId;
+  public get transferStorage() {
+    return this._transferStorage;
   }
 
-  public set membershipId(membershipId: string) {
-    this._membershipId = membershipId;
+  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
+    this._currentUserMembership = currentUserMembership;
   }
-
-  public get membershipType() {
-    return this._membershipType;
-  }
-
-  public set membershipType(membershipType: string) {
-    this._membershipType = membershipType;
-  }
-
-  public get showSpinner() {
-    return this._showSpinner;
-  }
-
-  public set showSpinner(showSpinner: boolean) {
-    this._showSpinner = showSpinner;
-  }
-
-  set characters(chars: ICharacter[]) {
-    this._characters = chars;
-  }
-
-  get characters(): ICharacter[] {
-    return this._characters;
-  }
-
-  set oauthServiceSub(sub: Subscription) {
-    this._oauthServiceSub = sub;
-  }
-
-  get oauthServiceSub(): Subscription {
-    return this._oauthServiceSub;
-  }
-
-  set getUserProfileSub(sub: Subscription) {
-    this._getUserProfileSub = sub;
-  }
-
-  get getUserProfileSub(): Subscription {
-    return this._getUserProfileSub;
-  }
-
-  set currentUserMembershipSub(sub: Subscription) {
-    this._currentUserMembershipSub = sub;
-  }
-
-  get currentUserMembershipSub(): Subscription {
-    return this._currentUserMembershipSub;
+  public get currentUserMembership() {
+    return this._currentUserMembership;
   }
 
   @ViewChild('charactersContainer', { read: ViewContainerRef })
   public set charactersContainer(container: ViewContainerRef) {
     this._charactersContainer = container;
-  }
 
+    // pass the container to the service for component creations.
+    this.homeService.charactersContainer = this.charactersContainer;
+  }
   public get charactersContainer() {
     return this._charactersContainer;
   }
 
-  public onMiniProfileClick(characterId: string): void {
-    this.createCharacterComponent(characterId);
+  @ViewChild('overlaySpinnerContainer', { read: ViewContainerRef })
+  public set overlaySpinnerContainer(container: ViewContainerRef) {
+    this._overlaySpinnerContainer = container;
+
+    this.overlaySpinnerService.overlaySpinnerContainerRef = container;
+  }
+  public get overlaySpinnerContainer() {
+    return this._overlaySpinnerContainer;
   }
 
+  /**
+   * updates transferStorage and localStorage.
+   * @param value 
+   */
   public onMenuToggleClick(value: string): void {
     this.transferStorage = value;
   }
 
-  public onHomeClick(): void {
-    this.charactersContainer.detach();
-  }
-
-  private createCharacterComponent(characterId: string) {
-
-    this.charactersContainer.detach();
-
-    if (this._cachedComponents.get(characterId)) {
-      this.charactersContainer.insert(this._cachedComponents.get(characterId));
-    } else {
-      const characterFactory = this.resolver.resolveComponentFactory(CharacterComponent);
-      const ref: ComponentRef<CharacterComponent> = this.charactersContainer.createComponent(characterFactory);
-  
-      ref.instance.characterId = characterId;
-      ref.instance.transferStorage = this.transferStorage;
-      ref.instance.dawnEquipmentEvent.subscribe(equipment => {
-        this.showSpinner = true;
-        
-        this._equipmentServiceSub = this.equipmentService.dawnEquipment(equipment, this.membershipType, this.membershipId, characterId, this.transferStorage)
-          .pipe(
-            delay(3000) // delay to give Bungie DB time to update before gear swapping again.
-          ).subscribe(response => {
-            this.showSpinner = false;
-        });
-      });
-      this._cachedComponents.set(characterId, this.charactersContainer.get(0));
-    }
-  }
-
   ngOnDestroy() {
     this._queryParamsSub.unsubscribe();
-    if (this._getUserProfileSub) { this._getUserProfileSub.unsubscribe(); }
-    if (this._oauthServiceSub) { this._oauthServiceSub.unsubscribe(); }
     if (this._currentUserMembershipSub) { this._currentUserMembershipSub.unsubscribe(); }
-    if (this._refreshDefSub) { this._refreshDefSub.unsubscribe(); }
-    if (this._equipmentServiceSub) { this._equipmentServiceSub.unsubscribe(); }
   }
 
 }

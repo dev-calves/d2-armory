@@ -14,6 +14,10 @@ export class MenuButtonComponent implements OnInit {
 
   @Output() menuToggleClickEvent: EventEmitter<any> = new EventEmitter<string>();
 
+  /**
+   * toggles between vault and inventory.
+   * @param value transfer storage.
+   */
   public onMenuToggleClick(value: 'vault' | 'inventory'): void {
     this.transferStorage = value;
 

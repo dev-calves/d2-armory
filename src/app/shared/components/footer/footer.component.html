@@ -10,9 +10,15 @@
                         <div fxLayout="row wrap">
                             <span class="p" style="padding-left: 15px;">Unequipped items will</span>
                             <span class="p">&nbsp;be sent to the &nbsp;</span>
-                            <span class="p"><span class="p item-box mat-elevation-z4">{{this.transferStorage}}</span>.</span>
+                            <span class="p">
+                                <span class="p item-box mat-elevation-z4">{{this.transferStorage}}</span>.
+                            </span>
                         </div>
-                        <app-menu-button (menuToggleClickEvent)="onMenuToggleClick($event)" [transferStorage]="transferStorage" #menuToggleButton></app-menu-button>
+                        <app-menu-button 
+                            (menuToggleClickEvent)="onMenuToggleClick($event)" 
+                            [transferStorage]="transferStorage" 
+                            #menuToggleButton>
+                        </app-menu-button>
                     </div>
                 </span>
                 <div class="plug" fxLayout="row wrap" fxLayoutAlign="end end">

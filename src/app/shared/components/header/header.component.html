@@ -8,20 +8,18 @@
                 </button>
             </div>
             <div #buttonProfileContainer fxLayout="row wrap" fxLayoutAlign="space-between center">
-                <div *ngIf="loggedIn; then enabledMiniProfiles else disabledMiniProfiles"></div>
+                <button 
+                    mat-button 
+                    [disabled]="showDisabled" 
+                    class="mat-elevation-z6" 
+                    [id]="character?.id" 
+                    (click)="onMiniProfileClick(character?.id)" 
+                    *ngFor="let character of characters">
+                    <app-mini-profile 
+                        [character]="character" 
+                        (miniProfileClick)="onMiniProfileClick($event)"></app-mini-profile>
+                </button>
             </div>
         </div>
     </mat-toolbar-row>
 </mat-toolbar>
-
-<ng-template #enabledMiniProfiles>
-    <button mat-button class="mat-elevation-z6" [id]='character?.id' (click)="onMiniProfileClick(character?.id)" *ngFor="let character of characters">
-        <app-mini-profile [character]="character" (miniProfileClick)="onMiniProfileClick($event)"></app-mini-profile>
-    </button>
-</ng-template>
-
-<ng-template #disabledMiniProfiles>
-    <button disabled mat-button class="mat-elevation-z6" [id]='character?.id' *ngFor="let character of characters">
-        <app-mini-profile [character]="character"></app-mini-profile>
-    </button>
-</ng-template>

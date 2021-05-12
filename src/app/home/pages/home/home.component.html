@@ -1,14 +1,12 @@
 
 <body>
-    <div class="overlay" *ngIf="showSpinner">
-        <mat-progress-spinner [mode]="'indeterminate'" *ngIf="showSpinner"></mat-progress-spinner>
-    </div>
+    <div #overlaySpinnerContainer></div>
 
     <app-header 
-        [loggedIn]="loggedIn" 
-        [characters]="characters" 
-        (miniProfileClick)="onMiniProfileClick($event)" 
-        (homeClick)="onHomeClick()">
+        [loggedIn]="loggedIn"
+        [currentUserMembership]="currentUserMembership"
+        (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)" 
+        (homeClick)="homeService.onHomeClick(null, null, null)">
     </app-header>
 
     <div class="content">
@@ -23,14 +21,13 @@
             </div>
         </section>
 
-
         <div *ngIf="loggedIn">
             <div #charactersContainer></div>
         </div>
     </div>
 
     <app-footer 
-        [displayName]="displayName" 
+        [displayName]="currentUserMembership?.displayName" 
         [loggedIn]="loggedIn" 
         [transferStorage]="transferStorage" 
         (menuToggleClickEvent)="onMenuToggleClick($event)" 

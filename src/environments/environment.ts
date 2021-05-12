@@ -10,5 +10,12 @@ export const environment = {
     EQUIPMENT_ENDPOINT: 'http://127.0.0.1:3000/api/equipment',
     LOCAL_STORAGE_STORAGE: 'storage',
     LOCAL_STORAGE_DISMISS_LOGON_MESSAGE: 'dismiss-logon-message',
-    LOCAL_STORAGE_STATE: 'state'
+    LOCAL_STORAGE_STATE: 'state',
+    DEFAULT_CHARACTER_ID: '1234',
+    DEFAULT_CHARACTER_CLASS: 'Class',
+    DEFAULT_CHARACTER_RACE: 'Race',
+    DEFAULT_CHARACTER_GENDER: 'Gender',
+    DEFAULT_CHARACTER_LIGHT: 'Light Level',
+    DEFAULT_CHARACTER_EMBLEM: '',
+    DEFAULT_CHARACTER_BACKGROUND: ''
 };

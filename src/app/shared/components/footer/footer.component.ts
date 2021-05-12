@@ -17,6 +17,10 @@ export class FooterComponent {
 
   @Output() menuToggleClickEvent: EventEmitter<any> = new EventEmitter<string>();
 
+  /**
+   * sends transfer storage to HomeComponent to be updated among child components.
+   * @param value transfer storage.
+   */
   public onMenuToggleClick(value: 'vault' | 'inventory'): void {
     this.transferStorage = value;
 
