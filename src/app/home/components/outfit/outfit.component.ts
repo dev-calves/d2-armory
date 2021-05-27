@@ -13,6 +13,7 @@ import { OutfitService } from './outfit.service';
 })
 export class OutfitComponent implements OnInit {
   private _toHide: boolean = false;
+  private _ignoreSpaceKey: boolean = false;
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
   private _equipment: IEquipment;
@@ -116,7 +117,7 @@ export class OutfitComponent implements OnInit {
    * sends a request to equip the items stored on this outfit.
    */
   public dawnEquips() {
-    if (this.formControl?.value) { // trigger the events if the outfit element has a title set.
+    if (this.formControl?.value && !this._ignoreSpaceKey) { // trigger the events if the outfit element has a title set.
       this.toggleHighlightsEvent.emit(this.elementRef);
 
       this.outfitService.dawnEquipment(
@@ -125,6 +126,7 @@ export class OutfitComponent implements OnInit {
                 this.characterId, 
                 this.transferStorage);
     }
+    this._ignoreSpaceKey = false;
   }
 
   /**
@@ -150,6 +152,17 @@ export class OutfitComponent implements OnInit {
 
       // store outfit with a new name || store new outfit.
       this.outfitService.saveEquipmentLocal(this.wardrobeName, this.characterId,this.outfitName, this.equipment);
+    }
+  }
+
+  /**
+   * normally pressing space or enter on a form button will trigger onClick event.
+   * this will ignore the space press to allow adding spaces to outfit names.
+   * @param event holds the key press event data.
+   */
+  public keyPress(event: KeyboardEvent) {
+    if (event.key === ' ') {
+      this._ignoreSpaceKey = true;
     }
   }
 

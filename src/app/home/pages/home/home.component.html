@@ -10,17 +10,55 @@
     </app-header>
 
     <div class="content">
-        <section fxLayout="row column" fxLayoutAlign="space-around" *ngIf="!charactersContainer?.get(0)">
+        <section *ngIf="!charactersContainer?.get(0)">
             <div style="padding-top: 10px;">
-                <p>
-                    This site is under construction. <br>
+                <p style="text-align: center; font-size: medium; margin-bottom: 15px">
+                    This site is under-going construction. <br>
                     It's a hobby-site/project started during stay-at-home quarantine. <br>
-                    Equipment swapping features for the Bungie I.P., Destiny 2, will be provided here in the future. <br>
+                    Bungie's Companion Apis are used to swap sets of equipment at a time.<br>
+                    The swaps can occur off-line, in orbit, the tower, and other safe spaces.<br>
                     An account with Bungie will be needed to use that feature.
                 </p>
+                <span fxLayout="row" fxLayoutAlign="space-around">
+                    <div>
+                        <mat-card class="tut-card">
+                            <mat-card-header>
+                              <mat-card-title>Creating a Wardrobe</mat-card-title>
+                              <mat-card-subtitle>(Group of outfits)</mat-card-subtitle>
+                            </mat-card-header>
+                            <img 
+                                mat-card-image 
+                                src="https://chi01pap001files.storage.live.com/y4m0PrzlM_1hg7qW9pE4ex7Z5Kb9HbAx5HslnD1GmxSq92r-NTBtnmqkeMoiT1fNS5ujHszC1Tfnsxxw2A5iXxZFbc55uYtRMO52ZK0yFih0aaNWp3fo-F8R3BZbuzTFNBjUPER6zmI7NtXUZf-fsVq_-28G8NTmQMzrDcHMDaiqgzKlucT_h7EprRTts_XVEzH?width=1387&height=923&cropmode=none" 
+                                alt="Photo of a Wardrobe">
+                            <mat-card-content>
+                              <p style="font-size: medium;">
+                                Wardrobes are groups of outfits that follow a theme.<br>
+                                Examples are Nightfalls, PVP, "Contraverse" builds, etc.<br>
+                                A wardrobe will need to be created before storing outfits.
+                              </p>
+                            </mat-card-content>
+                        </mat-card>
+                        <mat-card class="tut-card">
+                            <mat-card-header>
+                              <mat-card-title>Creating an Outfit</mat-card-title>
+                              <mat-card-subtitle>(Stored set of Equipment)</mat-card-subtitle>
+                            </mat-card-header>
+                            <img 
+                                mat-card-image 
+                                src="https://chi01pap001files.storage.live.com/y4mf_PDj9qG3_URCi6Gs2S_AMYerF3VkCz8RCmPrc4VuqN4_A2JPpYXcx0dfKjobqu5Hm5Cn-j1KUu-oulkWw9E8aVg3aR1UxjRnrf9wfmftNjgsbxhLnU8PpoQt40l3EknEhXUrYlTqTWCElp9F06wGW9SsQBK93Eqoxx7QySHq4cIuHYdWjOMwjHCaKJ_rCXJ?width=1379&height=926&cropmode=none" 
+                                alt="Photo of an outfit">
+                            <mat-card-content>
+                              <p style="font-size: medium;">
+                                An outfit is a set of equipment that can be swapped to.<br>
+                                An outfit stores sub-class, weapons, armor, and ghost items.<br>
+                                Clicking the capture button will record the currently equipped items into an outfit.
+                              </p>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </span>
             </div>
         </section>
-
         <div *ngIf="loggedIn">
             <div #charactersContainer></div>
         </div>
