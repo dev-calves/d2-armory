@@ -4,12 +4,12 @@
 <!-- TODO: consider making the button a toggle button. -->
 <ng-template #logInAction>
     <button class="menu-button mat-elevation-z6" mat-icon-button (click)="logOnClick()">
-        <mat-icon [inline]="true" color="accent">face</mat-icon>
+        <mat-icon [inline]="true">face</mat-icon>
     </button>
 </ng-template>
 <ng-template #logOutAction>
     <button class="menu-button mat-elevation-z6" mat-icon-button (click)="logOutClick()">
-        <mat-icon [inline]="true" color="accent" (mouseover)="mouseOver()" (mouseout)="mouseOut()">{{mouseOverIcon}}
+        <mat-icon [inline]="true" (mouseover)="mouseOver()" (mouseout)="mouseOut()">{{mouseOverIcon}}
         </mat-icon>
     </button>
 </ng-template>

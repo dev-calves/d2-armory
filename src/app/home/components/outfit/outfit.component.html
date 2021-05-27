@@ -24,6 +24,7 @@
                 [formControl]="formControl" 
                 [errorStateMatcher]="matcher" 
                 (click)="$event.stopPropagation()"
+                (keypress)="keyPress($event)"
                 (blur)="saveEquipment();$event.stopPropagation()">
             <mat-error #outfitError *ngIf="formControl.hasError('pattern')">
                 Must be alphanumeric

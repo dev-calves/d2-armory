@@ -70,7 +70,7 @@ export class OutfitService {
     // parse localStorage into JSON objects.
     let storedOutfits = JSON.parse(localStorage.getItem('outfits'));
 
-    if (storedOutfits[characterId] &&
+    if (storedOutfits && storedOutfits[characterId] &&
       storedOutfits[characterId][wardrobeName] &&
       storedOutfits[characterId][wardrobeName][outfitName] &&
       storedOutfits[characterId][wardrobeName][outfitName].outfitName === outfitName) {

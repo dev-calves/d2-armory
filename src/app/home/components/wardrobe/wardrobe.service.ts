@@ -149,13 +149,11 @@ export class WardrobeService {
     Array.from(characterOutfits).forEach((element: HTMLElement) => {
       if (element.children.length > 0) { // ignore the container div
         this._renderer.removeStyle(element.firstChild, 'background-color');
-        this._renderer.removeStyle(element.firstChild, 'color');
       }
     });
 
     // highlight current outfit.
-    this._renderer.setStyle(elementRef.nativeElement.firstChild, 'background-color', 'grey');
-    this._renderer.setStyle(elementRef.nativeElement.firstChild, 'color', 'black');
+    this._renderer.setStyle(elementRef.nativeElement.firstChild, 'background-color', 'gainsboro');
   }
 
   /**
