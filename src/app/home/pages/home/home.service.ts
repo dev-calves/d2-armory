@@ -32,7 +32,12 @@ export class HomeService {
     return this._charactersContainer;
   }
 
-  public onHomeClick = this.onMiniProfileClick;
+  public onHomeClick() {
+    // clear character view.
+    if (this.charactersContainer) {
+      this.charactersContainer.detach();
+    }
+  };
 
   /**
    * chooses which character tab to display when a miniprofile is clicked on.
@@ -41,11 +46,13 @@ export class HomeService {
    * @param transferStorage allow transfer from the inventory|vault.
    */
   public onMiniProfileClick(
-    characterId: string, 
-    currentUserMembership: ICurrentUserMembership, 
+    characterId: string,
+    currentUserMembership: ICurrentUserMembership,
     transferStorage: string): void {
     // clear character view.
-    this.charactersContainer.detach();
+    if (this.charactersContainer) {
+      this.charactersContainer.detach();
+    }
 
     if (characterId) {
       if (this._cachedComponents.get(characterId)) {

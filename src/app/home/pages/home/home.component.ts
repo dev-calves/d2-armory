@@ -3,7 +3,7 @@ import {
   OnInit, 
   OnDestroy,
   ViewChild, 
-  ViewContainerRef 
+  ViewContainerRef
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // set the storage localStorage property.
     this.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
-    
+
     this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { // initialize /home?:code:state route
       // use these parameters received from bungie to store user authentication.
       if (params.code && params.state && params.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
