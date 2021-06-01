@@ -19,6 +19,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { HomeComponent } from './pages/home/home.component';
 import { WardrobeComponent } from './components/wardrobe/wardrobe.component';
@@ -50,6 +51,7 @@ import { CharacterService } from './components/character/character.service';
     MatToolbarModule,
     MatButtonToggleModule,
     MatTooltipModule,
+    MatSlideToggleModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,

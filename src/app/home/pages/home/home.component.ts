@@ -8,6 +8,8 @@ import {
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+
 import { 
   ICurrentUserMembership,
   OverlaySpinnerService} from 'src/app/core';
@@ -115,6 +117,18 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   public onMenuToggleClick(value: string): void {
     this.transferStorage = value;
+  }
+
+  /**
+   * modifies transferStorage on toggle.
+   * @param slideToggle event data for the slide toggle component.
+   */
+  public onChange(slideToggle: MatSlideToggleChange) {
+    if (slideToggle.checked) {
+      this.transferStorage = 'vault';
+    } else {
+      this.transferStorage = 'inventory';
+    }
   }
 
   ngOnDestroy() {

@@ -14,6 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { FooterComponent } from './components/footer/footer.component';
 import { CharacterDisplayComponent } from './components/character-display/character-display.component';
@@ -45,6 +46,7 @@ import { HomeMenuButtonsComponent } from './components/home-menu-buttons/home-me
     MatSidenavModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatTooltipModule,
     FlexLayoutModule,
     RouterModule
   ],

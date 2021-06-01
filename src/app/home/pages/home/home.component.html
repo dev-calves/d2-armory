@@ -2,47 +2,60 @@
     <!-- loading spinner -->
     <div #overlaySpinnerContainer></div>
 
-    <mat-sidenav-container class="example-container">
+    <mat-sidenav-container class="sidenav-container">
         <!-- sidenav content -->
         <mat-sidenav #sidenav mode="over">
-                <mat-toolbar color="primary">
-                    <mat-toolbar-row>
-                        <app-home-menu-buttons (menuClick)="sidenav.toggle()" (homeClick)="homeService?.onHomeClick()"></app-home-menu-buttons>
-                    </mat-toolbar-row>
-                </mat-toolbar>
-                <div class="sidenav-content">
-                    <div class="sidenav-row">
-                        <mat-button-toggle-group #transferStorageToggle="matButtonToggleGroup" [value]="transferStorage" aria-label="transfer storage toggle" (click)="transferStorage = transferStorageToggle.value">
-                            <mat-button-toggle value="inventory" matTooltip="Current Equipment will be put away in the character's inventory. Equipment to be worn, will be taken from the inventory.">Inventory</mat-button-toggle>
-                            <mat-button-toggle value="vault" matTooltip="Current Equipment will be put away in the vault. Equipment to be worn, will be taken from the character's inventory and vault.">Vault</mat-button-toggle>
-                        </mat-button-toggle-group>
-                        <span class="sidenav-row-label">Item Transfers</span>
-                    </div>
+            <mat-toolbar color="primary">
+                <mat-toolbar-row>
+                    <app-home-menu-buttons (menuClick)="sidenav.toggle()" (homeClick)="homeService?.onHomeClick()">
+                    </app-home-menu-buttons>
+                </mat-toolbar-row>
+            </mat-toolbar>
+            <div class="sidenav-content">
+                <div class="sidenav-row">
+                    <mat-slide-toggle color="accent" [checked]="transferStorage === 'vault'"
+                        (change)="onChange($event)" aria-label="Vault Transfer Slide-Toggle">
+                        <span class="sidenav-row-label">Vault Transfer</span>
+                    </mat-slide-toggle>
                 </div>
+                <div class="sidenav-row">
+                    <mat-slide-toggle color="accent" checked="false" aria-label="Dark Mode Slide-Toggle">
+                        <span fxLayout="row" fxLayoutAlign="center center" class="sidenav-row-label">
+                            <mat-icon style="padding-right: 5px;">dark_mode</mat-icon> Dark Mode
+                        </span>
+                    </mat-slide-toggle>
+                </div>
+            </div>
         </mat-sidenav>
         <!-- home page content -->
         <mat-sidenav-content>
             <!-- header -->
-            <app-header [loggedIn]="loggedIn" [displayName]="currentUserMembership?.displayName"
-                (menuClick)="sidenav.toggle()"
-                (homeClick)="homeService.onHomeClick()"></app-header>
-            <app-character-display [loggedIn]="loggedIn" [currentUserMembership]="currentUserMembership"
-                (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)">
-            </app-character-display>
+            <header>
+                <app-header [loggedIn]="loggedIn" [displayName]="currentUserMembership?.displayName"
+                    (menuClick)="sidenav.toggle()" (homeClick)="homeService.onHomeClick()"></app-header>
+            </header>
+            <section>
+                <app-character-display [loggedIn]="loggedIn" [currentUserMembership]="currentUserMembership"
+                    (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)">
+                </app-character-display>
+            </section>
             <!-- home content -->
             <div class="content">
-                <section *ngIf="!charactersContainer?.get(0)">
-                    <div >
-                        <div fxLayout="column" fxLayoutAlign="center center">
-                            <h1>Under Construction</h1>
-                            <p style="text-align: center; font-size: medium; margin-bottom: 10px">
-                                This site is under-going construction. <br>
-                                It's a hobby-site/project started during stay-at-home quarantine. <br>
-                                Bungie's Companion Apis are used to swap sets of equipment at a time.<br>
-                                The swaps can occur off-line, in orbit, the tower, and other safe spaces.<br>
+                <div *ngIf="!charactersContainer?.get(0)">
+                    <div>
+                        <section>
+                            <div fxLayout="column" fxLayoutAlign="end center">
+                                <h1>Under Construction</h1>
+                            </div>
+                            
+                            <p style=" font-size: large; margin-bottom: 10px">
+                                This site is under-going construction. <br><br>
+                                It's a hobby-site/project started during stay-at-home quarantine. <br><br>
+                                Bungie's Companion Apis are used to swap sets of equipment at a time.<br><br>
+                                The swaps can occur off-line, in orbit, the tower, and other safe spaces.<br><br>
                                 An account with Bungie will be needed to use this feature.
                             </p>
-                        </div>
+                        </section>
                         <mat-divider style="margin-top: 20px; margin-bottom: 20px;"></mat-divider>
                         <!-- tutorial content -->
                         <section fxLayout="column" fxLayoutAlign="center center">
@@ -60,8 +73,8 @@
                                             alt="Photo of a Wardrobe">
                                         <mat-card-content>
                                             <p style="font-size: medium;">
-                                                Wardrobes are groups of outfits that follow a theme.<br>
-                                                Examples are Nightfalls, PVP, "Contraverse" builds, etc.<br>
+                                                Wardrobes are groups of outfits that follow a theme.<br><br>
+                                                Examples are Nightfalls, PVP, "Contraverse" builds, etc.<br><br>
                                                 A wardrobe will need to be created before storing outfits.
                                             </p>
                                         </mat-card-content>
@@ -78,10 +91,28 @@
                                             alt="Photo of an outfit">
                                         <mat-card-content>
                                             <p style="font-size: medium;">
-                                                An outfit is a set of equipment that can be swapped to.<br>
-                                                An outfit stores sub-class, weapons, armor, and ghost items.<br>
-                                                Clicking the capture button will record the currently equipped items into an
+                                                An outfit is a set of equipment that can be swapped to.<br><br>
+                                                An outfit stores sub-class, weapons, armor, and ghost items.<br><br>
+                                                Clicking the capture button will record the currently equipped items
+                                                into an
                                                 outfit.
+                                            </p>
+                                        </mat-card-content>
+                                    </mat-card>
+                                    <mat-divider inset="true"></mat-divider>
+                                    <!-- vault transfer tutorial -->
+                                    <mat-card class="tut-card">
+                                        <mat-card-header>
+                                            <mat-card-title>Vault Transfer Setting</mat-card-title>
+                                        </mat-card-header>
+                                        <img mat-card-image
+                                            src="https://chi01pap001files.storage.live.com/y4mPcJy7YJRYMIpZb9i2gDlJ6DZ6Llo9XoTOv0uGaikpM277uMAOddoubqTqZxWXpJlwFom9knlUTU9ybPrhwFPoB8sySVfEZU9DQyCAXP4d6brbZj30EXwbWHi96jgCwsxmZO6P2OzwZy8O0Zs-8vQC1HdgjMR1jwlWwUZ_kgFAyk5e4Mj_cdE1ygEfO-DVPk3?width=1411&height=926&cropmode=none"
+                                            alt="Photo of the Vault Transfer Setting">
+                                        <mat-card-content>
+                                            <p style="font-size: medium;">
+                                                Normally, equipment is transfered to/from the character's inventory.<br><br>
+                                                This setting will allow retrieving from the vault if items are not in the inventory.<br><br>
+                                                Items being unequipped will be sent to the vault to keep the inventory light.
                                             </p>
                                         </mat-card-content>
                                     </mat-card>
@@ -89,7 +120,7 @@
                             </span>
                         </section>
                     </div>
-                </section>
+                </div>
                 <!-- selected character tab content -->
                 <div *ngIf="loggedIn">
                     <div #charactersContainer></div>

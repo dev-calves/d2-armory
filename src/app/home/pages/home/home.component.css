@@ -39,7 +39,7 @@ mat-sidenav-content {
     overflow-x: auto;
 }
 
-.example-container {
+.sidenav-container {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -55,7 +55,7 @@ mat-sidenav-content {
 }
 
 .sidenav-row {
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     margin-right: 30px;
 }
 
