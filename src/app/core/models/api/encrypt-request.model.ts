@@ -1,3 +1,3 @@
-export class EncryptRequest {
+export interface IEncryptRequest {
     state: string;
 }

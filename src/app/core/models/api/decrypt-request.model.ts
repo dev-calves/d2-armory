@@ -1,3 +1,3 @@
-export class DecryptRequest {
+export interface IDecryptRequest {
     hex: string;
 }

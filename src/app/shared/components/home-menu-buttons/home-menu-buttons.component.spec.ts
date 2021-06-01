@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HeaderComponent } from './header.component';
+import { HomeMenuButtonsComponent } from './home-menu-buttons.component';
 
-describe('HeaderComponent', () => {
-  let component: HeaderComponent;
-  let fixture: ComponentFixture<HeaderComponent>;
+describe('HomeMenuButtonsComponent', () => {
+  let component: HomeMenuButtonsComponent;
+  let fixture: ComponentFixture<HomeMenuButtonsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ]
+      declarations: [ HomeMenuButtonsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HeaderComponent);
+    fixture = TestBed.createComponent(HomeMenuButtonsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

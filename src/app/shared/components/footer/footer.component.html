@@ -1,41 +1,9 @@
 <mat-toolbar color="primary">
-    <mat-toolbar-row fxLayout="row" fxLayoutAlign="start end">
-        <section style="width:100%;">
-            <h2>Menu</h2>
-            <span style="width:100%;" fxLayout="row wrap" fxLayoutAlign="space-between end">
-                <span fxLayout="row">
-                    <app-log-in-out-button [loggedIn]="loggedIn"></app-log-in-out-button>
-                    <div>
-                        <div *ngIf="loggedIn; then loggedInLabel; else loggedOutLabel"></div>
-                        <div fxLayout="row wrap">
-                            <span class="p" style="padding-left: 15px;">Unequipped items will</span>
-                            <span class="p">&nbsp;be sent to the &nbsp;</span>
-                            <span class="p">
-                                <span class="p item-box mat-elevation-z4">{{this.transferStorage}}</span>.
-                            </span>
-                        </div>
-                        <app-menu-button 
-                            (menuToggleClickEvent)="onMenuToggleClick($event)" 
-                            [transferStorage]="transferStorage" 
-                            #menuToggleButton>
-                        </app-menu-button>
-                    </div>
-                </span>
-                <div class="plug" fxLayout="row wrap" fxLayoutAlign="end end">
-                    <p class="p" style="margin-bottom: 0">you can find me on steam! &nbsp;</p>
-                    <a target="_blank" rel="external" href="{{steamProfileLink}}">{{steamId}} or {{steamName}}</a>
-                </div>
+    <mat-toolbar-row fxLayout="row" fxLayoutAlign="center center">
+        <span fxLayout="column" fxLayoutAlign="center center">
+            <span style="font-size: small;" fxLayout="row" fxLayoutAlign="center center">
+                <span class="steam">you can find me on <a target="_blank" rel="external" href="{{steamProfileLink}}">steam</a>!</span>
             </span>
-        </section>
+        </span>
     </mat-toolbar-row>
 </mat-toolbar>
-
-<ng-template #loggedOutLabel>
-    <div fxLayout="row wrap">
-        <p class="p">Log in to save outfits</p>
-        <span class="p">&nbsp;for your guardians.</span>
-    </div>
-</ng-template>
-<ng-template #loggedInLabel>
-    <p class="p">Logged in as <span class="username">{{displayName}}</span>.</p>
-</ng-template>

@@ -16,6 +16,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { HomeComponent } from './pages/home/home.component';
 import { WardrobeComponent } from './components/wardrobe/wardrobe.component';
@@ -44,6 +47,9 @@ import { CharacterService } from './components/character/character.service';
     MatIconModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatToolbarModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,

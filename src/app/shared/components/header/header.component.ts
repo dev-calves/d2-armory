@@ -1,121 +1,161 @@
-import { Component, Input, Output, EventEmitter, Renderer2, 
-  ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
-import { CharactersService, ICharacter, ICurrentUserMembership } from 'src/app/core';
 import { environment } from 'src/environments/environment';
-
+import { EncryptService, OauthService, HighlightMiniProfileService } from 'src/app/core/services';
+import { IEncryptRequest } from 'src/app/core/models';
+import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-  private _loggedIn: boolean;
-  private _characters: ICharacter[];
-  private _buttonProfileContainer: ElementRef;
-  private _characterButtonSelected: Element;
-  private _showDisabled: boolean = true;
-  private _currentUserMembership: ICurrentUserMembership;
-  private _characterSub: Subscription;
+export class HeaderComponent implements OnInit {
+  private _loggedIn = false;
+  private _stateHex: string;
+  private _bungieAuthUrl: string;
+  private _displayName: string;
+  private _showDisplayName: boolean = true;
 
-  constructor(private renderer: Renderer2,
-    private characterService: CharactersService) { }
+  private _oauthSubscribeSub: Subscription;
+  private _encryptSub: Subscription;
 
-  ngOnInit() {
-    this.characters = [{
-      id: environment.DEFAULT_CHARACTER_ID,
-      class: environment.DEFAULT_CHARACTER_CLASS,
-      race: environment.DEFAULT_CHARACTER_RACE,
-      gender: environment.DEFAULT_CHARACTER_GENDER,
-      light: environment.DEFAULT_CHARACTER_LIGHT,
-      emblem: environment.DEFAULT_CHARACTER_EMBLEM,
-      background: environment.DEFAULT_CHARACTER_BACKGROUND
-    }];
+  constructor(
+    private dialog: MatDialog,
+    private encryptService: EncryptService,
+    private oauthService: OauthService,
+    private highlightService: HighlightMiniProfileService
+  ) { }
+
+  ngOnInit(): void {
+    // hide display name when the screen is small.
+    if (window.innerWidth < 480) {
+      this.showDisplayName = false;
+    }
   }
 
-  @Output() miniProfileClick: EventEmitter<any> = new EventEmitter<string>();
+  @Output() menuClick: EventEmitter<any> = new EventEmitter<any>();
 
   @Output() homeClick: EventEmitter<any> = new EventEmitter<any>();
 
-  set characters(chars: ICharacter[]) {
-    this._characters = chars;
-  }
-  get characters(): ICharacter[] {
-    return this._characters;
-  }
-
   @Input()
-  set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-
-    if (currentUserMembership) {
-      this.updateCharacters();
-    }
-  }
-  get currentUserMembership() {
-    return this._currentUserMembership;
-  }
-
-  @Input()
-  set loggedIn(loggedIn: boolean) {
+  public set loggedIn(loggedIn: boolean) {
     this._loggedIn = loggedIn;
   }
-
-  get loggedIn(): boolean {
+  public get loggedIn(): boolean {
     return this._loggedIn;
   }
 
-  set showDisabled(showDisabled: boolean) {
-    this._showDisabled = showDisabled;
+  @Input()
+  public set displayName(displayName: string) {
+    this._displayName = displayName;
+  }
+  public get displayName(): string {
+    return this._displayName;
   }
 
-  get showDisabled() {
-    return this._showDisabled
+  public set showDisplayName(showDisplayName: boolean) {
+    this._showDisplayName = showDisplayName;
+  }
+  public get showDisplayName() {
+    return this._showDisplayName;
   }
 
-  @ViewChild('buttonProfileContainer')
-  set buttonProfileContainer(element: ElementRef) {
-    this._buttonProfileContainer = element;
-  }
+  /**
+   * sends user to bungie for authentication.
+   */
+  public logOnClick(): void {
+    let encryptRequest: IEncryptRequest;
 
-  get buttonProfileContainer() {
-    return this._buttonProfileContainer;
-  }
-
-  private updateCharacters() {
-    this._characterSub = this.characterService.getCharacters(this.currentUserMembership.membershipId,
-      this.currentUserMembership.membershipType).subscribe((characterResponse: ICharacter[]) => {
-
-        this.characters = characterResponse;
-        this.showDisabled = false;
-      });
-  }
-
-  public onHomeClick(): void {
-    if (this._characterButtonSelected) {
-      this.renderer.removeStyle(this._characterButtonSelected, 'background-color');
+    // capture state of web page.
+    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'vault' ||
+      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'inventory') {
+      encryptRequest = { state: localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) };
+    } else {
+      encryptRequest = { state: 'inventory' };
     }
+
+    // encrypt state and send user to bungie with the state.
+    this._encryptSub = this.encryptService.postEncrypt(encryptRequest).subscribe(
+      response => {
+        this._stateHex = response.hex;
+        this._bungieAuthUrl = 'https://www.bungie.net/en/oauth/authorize?client_id=' +
+          response.bungieClientId + '&response_type=code&state=' + this._stateHex;
+
+        if (localStorage.getItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE) === 'true') {
+          localStorage.setItem(environment.LOCAL_STORAGE_STATE, this._stateHex);
+          location.href = this._bungieAuthUrl;
+        } else {
+          this.openDialog(this._stateHex, this._bungieAuthUrl);
+        }
+      }
+    );
+  }
+
+  /**
+   * Log out user by deleting tokens and refreshing home page.
+   */
+  public logOutClick(): void {
+    this._oauthSubscribeSub = this.oauthService.deleteTokens().subscribe(response => {
+      if (response.message === 'tokens deleted.') {
+        location.href = '/home';
+      }
+    });
+  }
+
+  /**
+   * sends click event to home component.
+   */
+  public onMenuClick(): void {
+    this.menuClick.emit();
+  }
+
+  /**
+   * sends click event to home component.
+   */
+  public onHomeClick(): void {
+    this.highlightService.removeCharacterHighlight();
 
     this.homeClick.emit();
   }
 
-  public onMiniProfileClick(value: any) {
-    const buttons: HTMLCollection = this.buttonProfileContainer.nativeElement.children;
+  /**
+   * launches dialog box that can send user to Bungie to be authenticated.
+   * @param stateHex encrypted state.
+   * @param url bungie url.
+   */
+  public openDialog(stateHex: string, url: string): void {
+    this.dialog.open(AuthModalComponent, {
+      width: '400px',
+      data: {
+        stateHex,
+        url
+      }
+    });
+  }
 
-    if (this._characterButtonSelected) {
-      this.renderer.removeStyle(this._characterButtonSelected, 'background-color');
+  /**
+   * decide to show display name based on window size for all devices.
+   * @param event ignored.
+   */
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (window.innerWidth < 480) {
+      this.showDisplayName = false;
+    } else if (window.innerWidth > 480) {
+      this.showDisplayName = true;
     }
-
-    this._characterButtonSelected = Array.from(buttons).find(button => button.id === value);
-    this.renderer.setStyle(this._characterButtonSelected, 'background-color', 'beige');
-
-    this.miniProfileClick.emit(value);
   }
 
   ngOnDestroy() {
-    if (this._characterSub) { this._characterSub.unsubscribe(); }
+    if (this._oauthSubscribeSub) {
+      this._oauthSubscribeSub.unsubscribe();
+    }
+    if (this._encryptSub) {
+      this._encryptSub.unsubscribe();
+    }
   }
-
 }

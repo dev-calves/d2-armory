@@ -1,74 +1,102 @@
-
 <body>
+    <!-- loading spinner -->
     <div #overlaySpinnerContainer></div>
 
-    <app-header 
-        [loggedIn]="loggedIn"
-        [currentUserMembership]="currentUserMembership"
-        (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)" 
-        (homeClick)="homeService.onHomeClick(null, null, null)">
-    </app-header>
-
-    <div class="content">
-        <section *ngIf="!charactersContainer?.get(0)">
-            <div style="padding-top: 10px;">
-                <p style="text-align: center; font-size: medium; margin-bottom: 15px">
-                    This site is under-going construction. <br>
-                    It's a hobby-site/project started during stay-at-home quarantine. <br>
-                    Bungie's Companion Apis are used to swap sets of equipment at a time.<br>
-                    The swaps can occur off-line, in orbit, the tower, and other safe spaces.<br>
-                    An account with Bungie will be needed to use that feature.
-                </p>
-                <span fxLayout="row" fxLayoutAlign="space-around">
-                    <div>
-                        <mat-card class="tut-card">
-                            <mat-card-header>
-                              <mat-card-title>Creating a Wardrobe</mat-card-title>
-                              <mat-card-subtitle>(Group of outfits)</mat-card-subtitle>
-                            </mat-card-header>
-                            <img 
-                                mat-card-image 
-                                src="https://chi01pap001files.storage.live.com/y4m0PrzlM_1hg7qW9pE4ex7Z5Kb9HbAx5HslnD1GmxSq92r-NTBtnmqkeMoiT1fNS5ujHszC1Tfnsxxw2A5iXxZFbc55uYtRMO52ZK0yFih0aaNWp3fo-F8R3BZbuzTFNBjUPER6zmI7NtXUZf-fsVq_-28G8NTmQMzrDcHMDaiqgzKlucT_h7EprRTts_XVEzH?width=1387&height=923&cropmode=none" 
-                                alt="Photo of a Wardrobe">
-                            <mat-card-content>
-                              <p style="font-size: medium;">
-                                Wardrobes are groups of outfits that follow a theme.<br>
-                                Examples are Nightfalls, PVP, "Contraverse" builds, etc.<br>
-                                A wardrobe will need to be created before storing outfits.
-                              </p>
-                            </mat-card-content>
-                        </mat-card>
-                        <mat-card class="tut-card">
-                            <mat-card-header>
-                              <mat-card-title>Creating an Outfit</mat-card-title>
-                              <mat-card-subtitle>(Stored set of Equipment)</mat-card-subtitle>
-                            </mat-card-header>
-                            <img 
-                                mat-card-image 
-                                src="https://chi01pap001files.storage.live.com/y4mf_PDj9qG3_URCi6Gs2S_AMYerF3VkCz8RCmPrc4VuqN4_A2JPpYXcx0dfKjobqu5Hm5Cn-j1KUu-oulkWw9E8aVg3aR1UxjRnrf9wfmftNjgsbxhLnU8PpoQt40l3EknEhXUrYlTqTWCElp9F06wGW9SsQBK93Eqoxx7QySHq4cIuHYdWjOMwjHCaKJ_rCXJ?width=1379&height=926&cropmode=none" 
-                                alt="Photo of an outfit">
-                            <mat-card-content>
-                              <p style="font-size: medium;">
-                                An outfit is a set of equipment that can be swapped to.<br>
-                                An outfit stores sub-class, weapons, armor, and ghost items.<br>
-                                Clicking the capture button will record the currently equipped items into an outfit.
-                              </p>
-                            </mat-card-content>
-                        </mat-card>
+    <mat-sidenav-container class="example-container">
+        <!-- sidenav content -->
+        <mat-sidenav #sidenav mode="over">
+                <mat-toolbar color="primary">
+                    <mat-toolbar-row>
+                        <app-home-menu-buttons (menuClick)="sidenav.toggle()" (homeClick)="homeService?.onHomeClick()"></app-home-menu-buttons>
+                    </mat-toolbar-row>
+                </mat-toolbar>
+                <div class="sidenav-content">
+                    <div class="sidenav-row">
+                        <mat-button-toggle-group #transferStorageToggle="matButtonToggleGroup" [value]="transferStorage" aria-label="transfer storage toggle" (click)="transferStorage = transferStorageToggle.value">
+                            <mat-button-toggle value="inventory" matTooltip="Current Equipment will be put away in the character's inventory. Equipment to be worn, will be taken from the inventory.">Inventory</mat-button-toggle>
+                            <mat-button-toggle value="vault" matTooltip="Current Equipment will be put away in the vault. Equipment to be worn, will be taken from the character's inventory and vault.">Vault</mat-button-toggle>
+                        </mat-button-toggle-group>
+                        <span class="sidenav-row-label">Item Transfers</span>
                     </div>
-                </span>
+                </div>
+        </mat-sidenav>
+        <!-- home page content -->
+        <mat-sidenav-content>
+            <!-- header -->
+            <app-header [loggedIn]="loggedIn" [displayName]="currentUserMembership?.displayName"
+                (menuClick)="sidenav.toggle()"
+                (homeClick)="homeService.onHomeClick()"></app-header>
+            <app-character-display [loggedIn]="loggedIn" [currentUserMembership]="currentUserMembership"
+                (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)">
+            </app-character-display>
+            <!-- home content -->
+            <div class="content">
+                <section *ngIf="!charactersContainer?.get(0)">
+                    <div >
+                        <div fxLayout="column" fxLayoutAlign="center center">
+                            <h1>Under Construction</h1>
+                            <p style="text-align: center; font-size: medium; margin-bottom: 10px">
+                                This site is under-going construction. <br>
+                                It's a hobby-site/project started during stay-at-home quarantine. <br>
+                                Bungie's Companion Apis are used to swap sets of equipment at a time.<br>
+                                The swaps can occur off-line, in orbit, the tower, and other safe spaces.<br>
+                                An account with Bungie will be needed to use this feature.
+                            </p>
+                        </div>
+                        <mat-divider style="margin-top: 20px; margin-bottom: 20px;"></mat-divider>
+                        <!-- tutorial content -->
+                        <section fxLayout="column" fxLayoutAlign="center center">
+                            <h1>Tutorial of Features</h1>
+                            <span fxLayout="row" fxLayoutAlign="space-around">
+                                <div>
+                                    <!-- wardrobe tutorial -->
+                                    <mat-card class="tut-card">
+                                        <mat-card-header>
+                                            <mat-card-title>Creating a Wardrobe</mat-card-title>
+                                            <mat-card-subtitle>(Group of outfits)</mat-card-subtitle>
+                                        </mat-card-header>
+                                        <img mat-card-image
+                                            src="https://chi01pap001files.storage.live.com/y4m_FhVAmHWc-0_wwuo18bgHCAuzrzF1_teXELnTVOVUcxH9QqDTz2Ntbe70pKncjydjubGaz1MuKtilcsoNAXxF5TWNSoZipfsUdv8YPcmud5huanfkO57aSXTZixJZLiPoXxX0JKUJqtDidhqn0hM0fPngfmzYGGvIDlzgn-fWV4un25onLektkh3hh1oMn4D?width=1394&height=917&cropmode=none"
+                                            alt="Photo of a Wardrobe">
+                                        <mat-card-content>
+                                            <p style="font-size: medium;">
+                                                Wardrobes are groups of outfits that follow a theme.<br>
+                                                Examples are Nightfalls, PVP, "Contraverse" builds, etc.<br>
+                                                A wardrobe will need to be created before storing outfits.
+                                            </p>
+                                        </mat-card-content>
+                                    </mat-card>
+                                    <mat-divider inset="true"></mat-divider>
+                                    <!-- outfit tutorial -->
+                                    <mat-card class="tut-card">
+                                        <mat-card-header>
+                                            <mat-card-title>Creating an Outfit</mat-card-title>
+                                            <mat-card-subtitle>(Stored set of Equipment)</mat-card-subtitle>
+                                        </mat-card-header>
+                                        <img mat-card-image
+                                            src="https://chi01pap001files.storage.live.com/y4mFYh-6Aai3zMRtjGlIng-8IowDxgVjZWE8mdWbhgL9Rb5SSc8tBQlify5uP-vF1Jc1VsI1MriwQbqFqtcOlK_sVPNYiMpuVdoN7SXq6BjYOSef3sQGlfwQKij6VgrEePgZ7UeaT3E9LZbdY7dVjOeCNKwIaC818RZbpQZXQTTQm-hy_tjgx9LpC9AFLw9UGSe?width=1399&height=925&cropmode=none"
+                                            alt="Photo of an outfit">
+                                        <mat-card-content>
+                                            <p style="font-size: medium;">
+                                                An outfit is a set of equipment that can be swapped to.<br>
+                                                An outfit stores sub-class, weapons, armor, and ghost items.<br>
+                                                Clicking the capture button will record the currently equipped items into an
+                                                outfit.
+                                            </p>
+                                        </mat-card-content>
+                                    </mat-card>
+                                </div>
+                            </span>
+                        </section>
+                    </div>
+                </section>
+                <!-- selected character tab content -->
+                <div *ngIf="loggedIn">
+                    <div #charactersContainer></div>
+                </div>
             </div>
-        </section>
-        <div *ngIf="loggedIn">
-            <div #charactersContainer></div>
-        </div>
-    </div>
-
-    <app-footer 
-        [displayName]="currentUserMembership?.displayName" 
-        [loggedIn]="loggedIn" 
-        [transferStorage]="transferStorage" 
-        (menuToggleClickEvent)="onMenuToggleClick($event)" 
-        class="footer">
-    </app-footer>
+            <!-- footer -->
+            <app-footer class="footer"></app-footer>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
 </body>
