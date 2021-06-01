@@ -7,6 +7,7 @@ mat-toolbar-row {
     max-width: 100%;
     width: 100%;
     padding-right: 10px;
+    padding-top: 10px;
     padding-bottom: 10px;
 }
 button {

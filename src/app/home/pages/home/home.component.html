@@ -1,4 +1,4 @@
-<body>
+<div #HomePageContainer class="homePageContainer">
     <!-- loading spinner -->
     <div #overlaySpinnerContainer></div>
 
@@ -14,12 +14,13 @@
             <div class="sidenav-content">
                 <div class="sidenav-row">
                     <mat-slide-toggle color="accent" [checked]="transferStorage === 'vault'"
-                        (change)="onChange($event)" aria-label="Vault Transfer Slide-Toggle">
+                        (change)="onVaultToggleChange($event)" aria-label="Vault Transfer Slide-Toggle">
                         <span class="sidenav-row-label">Vault Transfer</span>
                     </mat-slide-toggle>
                 </div>
                 <div class="sidenav-row">
-                    <mat-slide-toggle color="accent" checked="false" aria-label="Dark Mode Slide-Toggle">
+                    <mat-slide-toggle #darkModeSlideToggle color="accent" aria-label="Dark Mode Slide-Toggle"
+                        (change)="onDarkModeToggleChange($event)">
                         <span fxLayout="row" fxLayoutAlign="center center" class="sidenav-row-label">
                             <mat-icon style="padding-right: 5px;">dark_mode</mat-icon> Dark Mode
                         </span>
@@ -34,6 +35,7 @@
                 <app-header [loggedIn]="loggedIn" [displayName]="currentUserMembership?.displayName"
                     (menuClick)="sidenav.toggle()" (homeClick)="homeService.onHomeClick()"></app-header>
             </header>
+            <mat-divider></mat-divider>
             <section>
                 <app-character-display [loggedIn]="loggedIn" [currentUserMembership]="currentUserMembership"
                     (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)">
@@ -49,7 +51,7 @@
                             </div>
                             
                             <p style=" font-size: large; margin-bottom: 10px">
-                                This site is under-going construction. <br><br>
+                                This site is under-going construction. A database is next to be implemented. <br><br>
                                 It's a hobby-site/project started during stay-at-home quarantine. <br><br>
                                 Bungie's Companion Apis are used to swap sets of equipment at a time.<br><br>
                                 The swaps can occur off-line, in orbit, the tower, and other safe spaces.<br><br>
@@ -74,7 +76,7 @@
                                         <mat-card-content>
                                             <p style="font-size: medium;">
                                                 Wardrobes are groups of outfits that follow a theme.<br><br>
-                                                Examples are Nightfalls, PVP, "Contraverse" builds, etc.<br><br>
+                                                Examples are Nightfalls, PVP, "Contraverse Hold" builds, etc.<br><br>
                                                 A wardrobe will need to be created before storing outfits.
                                             </p>
                                         </mat-card-content>
@@ -130,4 +132,4 @@
             <app-footer class="footer"></app-footer>
         </mat-sidenav-content>
     </mat-sidenav-container>
-</body>
+</div>

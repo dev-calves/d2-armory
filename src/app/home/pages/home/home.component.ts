@@ -1,18 +1,22 @@
-import { 
-  Component, 
-  OnInit, 
+import {
+  Component,
+  OnInit,
   OnDestroy,
-  ViewChild, 
-  ViewContainerRef
+  ViewChild,
+  ViewContainerRef,
+  ChangeDetectorRef,
+  Renderer2,
+  ElementRef
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 
-import { 
+import {
   ICurrentUserMembership,
-  OverlaySpinnerService} from 'src/app/core';
+  OverlaySpinnerService
+} from 'src/app/core';
 import { HomeService } from './home.service';
 import { environment } from 'src/environments/environment';
 
@@ -27,13 +31,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _currentUserMembership: ICurrentUserMembership;
   private _charactersContainer: ViewContainerRef;
   private _overlaySpinnerContainer: ViewContainerRef;
+  private _darkModeSlideToggle: MatSlideToggle;
+  private _homePageContainer: ElementRef;
   private _queryParamsSub: Subscription;
   private _currentUserMembershipSub: Subscription;
 
   constructor(
-    public homeService: HomeService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private route: ActivatedRoute,
     private overlaySpinnerService: OverlaySpinnerService,
-    private route: ActivatedRoute
+    private renderer: Renderer2,
+    public homeService: HomeService,
   ) { }
 
   ngOnInit() {
@@ -90,6 +98,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this._currentUserMembership;
   }
 
+  @ViewChild('HomePageContainer')
+  public set homePageContainer(element: ElementRef) {
+    this._homePageContainer = element;
+  }
+  public get homePageContainer() {
+    return this._homePageContainer;
+  }
+
   @ViewChild('charactersContainer', { read: ViewContainerRef })
   public set charactersContainer(container: ViewContainerRef) {
     this._charactersContainer = container;
@@ -111,6 +127,44 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this._overlaySpinnerContainer;
   }
 
+  @ViewChild('darkModeSlideToggle')
+  public set darkModeSlideToggle(slideToggle: MatSlideToggle) {
+    this._darkModeSlideToggle = slideToggle;
+
+    this.changeThemeMode('');
+  }
+  public get darkModeSlideToggle() {
+    return this._darkModeSlideToggle;
+  }
+
+  public changeThemeMode(theme: string) {
+    switch (theme) {
+      case 'dark':
+        this.renderer.addClass(this.homePageContainer.nativeElement, 'darkMode');
+        localStorage.setItem('theme', 'dark');
+        break;
+      case 'light':
+        this.renderer.removeClass(this.homePageContainer.nativeElement, 'darkMode');
+        localStorage.setItem('theme', 'light');
+        break;
+      default:
+        if (window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)') &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches) {
+
+          this.darkModeSlideToggle.toggle();
+          this.changeDetectorRef.detectChanges();
+
+          this.renderer.addClass(this.homePageContainer.nativeElement, 'darkMode');
+
+          localStorage.setItem('theme', 'dark');
+        } else {
+          localStorage.setItem('theme', 'light');
+        }
+        break;
+    }
+  }
+
   /**
    * updates transferStorage and localStorage.
    * @param value 
@@ -123,11 +177,19 @@ export class HomeComponent implements OnInit, OnDestroy {
    * modifies transferStorage on toggle.
    * @param slideToggle event data for the slide toggle component.
    */
-  public onChange(slideToggle: MatSlideToggleChange) {
+  public onVaultToggleChange(slideToggle: MatSlideToggleChange) {
     if (slideToggle.checked) {
       this.transferStorage = 'vault';
     } else {
       this.transferStorage = 'inventory';
+    }
+  }
+
+  public onDarkModeToggleChange(slideToggle: MatSlideToggle) {
+    if (slideToggle.checked) {
+      this.changeThemeMode('dark');
+    } else {
+      this.changeThemeMode('light');
     }
   }
 

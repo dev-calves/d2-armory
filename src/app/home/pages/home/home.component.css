@@ -4,7 +4,7 @@ header {
     max-width: 100%;
 }
 
-html, body {
+html {
     height: 100%;
     margin: 0pt;
 }
@@ -12,6 +12,11 @@ html, body {
 mat-sidenav-content {
     display: flex;
     flex-direction: column;
+}
+
+.homePageContainer {
+    height: 100%;
+    margin: 0pt;
 }
 
 .content {
@@ -32,12 +37,12 @@ mat-sidenav-content {
     overflow-x: hidden;
 }
 
-.main-container {
+/* .main-container {
     max-width: 100%;
     height: 100%;
     overflow-y: auto;
     overflow-x: auto;
-}
+} */
 
 .sidenav-container {
     position: absolute;
