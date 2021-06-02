@@ -4,6 +4,7 @@ import { EquipmentService } from 'src/app/core/services/apis/equipment/equipment
 import { OverlaySpinnerService } from 'src/app/core/services//overlay-spinner';
 import { Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -51,13 +52,13 @@ export class OutfitService {
    */
   public removeCurrentEquipmentLocal(characterId: string, wardrobeName: string, outfitName: string) {
     // parse localStorage into JSON objects.
-    let storedOutfits = JSON.parse(localStorage.getItem('outfits'));
+    let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
     // remove the specific outfit.
-    delete storedOutfits[characterId][wardrobeName][outfitName];
+    delete storedEquipment[characterId][wardrobeName][outfitName];
 
     // stringify updated outfits and store into localStorage.
-    localStorage.setItem('outfits', JSON.stringify(storedOutfits));
+    localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
   }
 
   /**
@@ -68,17 +69,17 @@ export class OutfitService {
    */
   public removePreviousEquipmentLocal(characterId: string, wardrobeName: string, outfitName: string) {
     // parse localStorage into JSON objects.
-    let storedOutfits = JSON.parse(localStorage.getItem('outfits'));
+    let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
-    if (storedOutfits && storedOutfits[characterId] &&
-      storedOutfits[characterId][wardrobeName] &&
-      storedOutfits[characterId][wardrobeName][outfitName] &&
-      storedOutfits[characterId][wardrobeName][outfitName].outfitName === outfitName) {
+    if (storedEquipment && storedEquipment[characterId] &&
+      storedEquipment[characterId][wardrobeName] &&
+      storedEquipment[characterId][wardrobeName][outfitName] &&
+      storedEquipment[characterId][wardrobeName][outfitName].outfitName === outfitName) {
       // remove previous name.
-      delete storedOutfits[characterId][wardrobeName][outfitName];
+      delete storedEquipment[characterId][wardrobeName][outfitName];
 
       // update outfits in localStorage.
-      localStorage.setItem('outfits', JSON.stringify(storedOutfits));
+      localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
     }
   }
 
@@ -97,32 +98,32 @@ export class OutfitService {
       equipment: equipment
     };
 
-    let outfits = {};
+    let storedEquipment = {};
 
     // build structure for the outfits localStorage property.
-    if (localStorage.getItem('outfits')) {
-      outfits = Object.assign({}, JSON.parse(localStorage.getItem('outfits')));
+    if (localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT)) {
+      storedEquipment = Object.assign({}, JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT)));
 
-      if (outfits[characterId]) {
-        if (outfits[characterId][wardrobeName]) {
-          outfits[characterId][wardrobeName][outfitName] = outfit;
+      if (storedEquipment[characterId]) {
+        if (storedEquipment[characterId][wardrobeName]) {
+          storedEquipment[characterId][wardrobeName][outfitName] = outfit;
         } else {
-          outfits[characterId][wardrobeName] = {};
-          outfits[characterId][wardrobeName][outfitName] = outfit;
+          storedEquipment[characterId][wardrobeName] = {};
+          storedEquipment[characterId][wardrobeName][outfitName] = outfit;
         }
       } else {
-        outfits[characterId] = {};
-        outfits[characterId][wardrobeName] = {};
-        outfits[characterId][wardrobeName][outfitName] = outfit;
+        storedEquipment[characterId] = {};
+        storedEquipment[characterId][wardrobeName] = {};
+        storedEquipment[characterId][wardrobeName][outfitName] = outfit;
       }
     } else {
-      outfits[characterId] = {};
-      outfits[characterId][wardrobeName] = {};
-      outfits[characterId][wardrobeName][outfitName] = outfit;
+      storedEquipment[characterId] = {};
+      storedEquipment[characterId][wardrobeName] = {};
+      storedEquipment[characterId][wardrobeName][outfitName] = outfit;
     }
 
     // store the outfits to localStorage.
-    localStorage.setItem('outfits', JSON.stringify(outfits));
+    localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
   }
 
   public destroy(){

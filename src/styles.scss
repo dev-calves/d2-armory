@@ -3,6 +3,7 @@
 @include mat-core();
 $primary: mat-palette($mat-blue-grey, 700, 100, 900);
 $accent: mat-palette($mat-orange, 600, 100, 900);
+$darkAccent: mat-palette($mat-brown, 500);
 $warn: mat-palette($mat-red);
 $default-theme: mat-light-theme(
   (
@@ -17,7 +18,7 @@ $dark-theme: mat-dark-theme(
   (
     color: (
       primary: $primary,
-      accent: $accent,
+      accent: $darkAccent,
       warn: $warn,
     ),
   )

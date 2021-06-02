@@ -11,6 +11,7 @@ export const environment = {
     LOCAL_STORAGE_STORAGE: 'storage',
     LOCAL_STORAGE_DISMISS_LOGON_MESSAGE: 'dismiss-logon-message',
     LOCAL_STORAGE_STATE: 'state',
+    LOCAL_STORAGE_EQUIPMENT: 'equipment',
     DEFAULT_CHARACTER_ID: '1234',
     DEFAULT_CHARACTER_CLASS: 'Class',
     DEFAULT_CHARACTER_RACE: 'Race',

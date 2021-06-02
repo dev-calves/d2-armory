@@ -10,6 +10,7 @@ export const environment = {
     EQUIPMENT_ENDPOINT: 'https://destiny2armory.herokuapp.com/api/equipment',
     LOCAL_STORAGE_STORAGE: 'storage',
     LOCAL_STORAGE_DISMISS_LOGON_MESSAGE: 'dismiss-logon-message',
+    LOCAL_STORAGE_EQUIPMENT: 'equipment',
     LOCAL_STORAGE_STATE: 'state',
     DEFAULT_CHARACTER_ID: '1234',
     DEFAULT_CHARACTER_CLASS: 'Class',

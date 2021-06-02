@@ -1,45 +1,28 @@
-import { Injectable, ComponentRef, ComponentFactoryResolver, ViewContainerRef, ElementRef } from '@angular/core';
+import { Injectable, ComponentRef, ComponentFactoryResolver } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ICurrentUserMembership } from 'src/app/core';
+import { CharacterComponent } from 'src/app/home/components/character/character.component';
 import { WardrobeComponent } from 'src/app/home/components/wardrobe/wardrobe.component';
-
+import { OutfitComponent } from 'src/app/home/components/outfit/outfit.component';
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
-  private _wardrobeComponentRef: ComponentRef<WardrobeComponent>[] = [];
-  private _wardrobeParentContainer: ElementRef;
-  private _wardrobesContainer: ViewContainerRef;
 
   constructor(private _snackBar: MatSnackBar, private resolver: ComponentFactoryResolver) { }
-
-  public set wardrobesContainer(container: ViewContainerRef) {
-    this._wardrobesContainer = container;
-  }
-  public get wardrobesContainer(){
-    return this._wardrobesContainer;
-  }
-
-  public set wardrobeParentContainer(container: ElementRef) {
-    this._wardrobeParentContainer = container;
-  }
-  public get wardrobeParentContainer() {
-    return this._wardrobeParentContainer;
-  }
 
   /**
    * creates a wardrobe upon button click.
    * @param characterId character id.
    * @param currentUserMembership user account info.
    */
-  public addWardrobe(characterId: string, currentUserMembership: ICurrentUserMembership) {
-    const wardrobeError: HTMLElement = this.wardrobeParentContainer.nativeElement.querySelector('mat-error');
+  public addWardrobe(characterComponent: CharacterComponent) {
+    const wardrobeError: HTMLElement = characterComponent.wardrobeParentContainer.nativeElement.querySelector('mat-error');
 
     // creates a wardrobe if the form is filled properly.
     if (wardrobeError) {
       this.openSnackBar(wardrobeError.innerHTML);
     } else {
-      this.createWardrobeComponent(characterId, currentUserMembership);
+      this.createNewWardrobeComponent(characterComponent);
     }
   }
 
@@ -48,32 +31,49 @@ export class CharacterService {
    * @param characterId character id.
    * @param currentUserMembership user account info.
    */
-  public createWardrobeComponent(characterId: string, currentUserMembership: ICurrentUserMembership) {
-    let wardrobeCounter = 0;
-    const wardrobes: HTMLCollection = this.wardrobeParentContainer.nativeElement.children;
-
-    // hidden wardrobes will fill up this array.
-    // this counter will ignore hidden wardrobes.
-    Array.from(wardrobes).forEach(element => {
-      if (element?.children?.length > 0) {
-        wardrobeCounter++;
-      }
-    });
-
-    if (wardrobeCounter < 7) { // limit is 7 wardrobe components.
+  public createNewWardrobeComponent(characterComponent: CharacterComponent) {
+    if (characterComponent.wardrobes.length < 7) { // limit is 7 wardrobe components.
       const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
-      const ref: ComponentRef<WardrobeComponent> = this.wardrobesContainer.createComponent(wardrobeFactory);
-      ref.instance.currentUserMembership = currentUserMembership;
-      ref.instance.characterId = characterId;
+      const ref: ComponentRef<WardrobeComponent> = characterComponent.wardrobesContainer.createComponent(wardrobeFactory);
+      ref.instance.currentUserMembership = characterComponent.currentUserMembership;
+      ref.instance.characterId = characterComponent.characterId;
+      ref.instance.outfitClickEvent.subscribe((outfitRef: ComponentRef<OutfitComponent>) => {
+        outfitRef.instance.color = 'accent';
+      });
 
       // place new wardrobes at the top of the page.
-      this.wardrobesContainer.move(ref.hostView, 0);
-      // ref.changeDetectorRef.detectChanges();
+      characterComponent.wardrobesContainer.move(ref.hostView, 0);
+      ref.changeDetectorRef.detectChanges();
 
       // store refs for destruction.
-      this._wardrobeComponentRef.push(ref);
+      characterComponent.wardrobes.push(ref);
     } else {
       this.openSnackBar('Max wardrobes reached');
+    }
+  }
+
+  public initializeWardrobes(characterComponent: CharacterComponent) { 
+    for (const wardrobeName in characterComponent.initialWardrobes) {
+      const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
+      const ref: ComponentRef<WardrobeComponent> = characterComponent.wardrobesContainer.createComponent(wardrobeFactory);
+      ref.instance.currentUserMembership = characterComponent.currentUserMembership;
+      ref.instance.characterId = characterComponent.characterId;
+      ref.instance.wardrobeName = wardrobeName;
+      ref.instance.initialOutfits = characterComponent.initialWardrobes[wardrobeName];
+      ref.instance.outfitClickEvent.subscribe((outfitRef: ComponentRef<OutfitComponent>) => {
+        if (characterComponent.selectedOutfit) {
+          characterComponent.selectedOutfit.instance.color = '';
+        }
+        outfitRef.instance.color = 'accent';
+        characterComponent.selectedOutfit = outfitRef;
+      });
+  
+      // place new wardrobes at the top of the page.
+      characterComponent.wardrobesContainer.move(ref.hostView, 0);
+      ref.changeDetectorRef.detectChanges();
+  
+      // for managing refs and for destroying them.
+      characterComponent.wardrobes.push(ref);
     }
   }
 
@@ -87,14 +87,5 @@ export class CharacterService {
       horizontalPosition: 'center',
       verticalPosition: 'top'
     });
-  }
-
-  /**
-   * destroy refs.
-   */
-  public destroy() {
-    this._wardrobeComponentRef.forEach((wardrobe: ComponentRef<WardrobeComponent>) => {
-      wardrobe.destroy();
-    })
   }
 }

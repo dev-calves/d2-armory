@@ -21,6 +21,7 @@ export class OutfitComponent implements OnInit {
   private _characterId: string;
   private _outfitName: string;
   private _transferStorage: string;
+  private _color: string = '';
   private _currentUserMembership: ICurrentUserMembership;
 
   constructor(public elementRef: ElementRef, private outfitService: OutfitService) {
@@ -57,6 +58,13 @@ export class OutfitComponent implements OnInit {
   }
   public get matcher() {
     return this._matcher;
+  }
+
+  public set color(color: string) {
+    this._color = color;
+  }
+  public get color(){
+    return this._color;
   }
 
   @Input()
@@ -111,14 +119,14 @@ export class OutfitComponent implements OnInit {
     this.formControl.setValue(value);
   }
 
-  @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();
+  @Output() outfitClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   /**
    * sends a request to equip the items stored on this outfit.
    */
   public dawnEquips() {
     if (this.formControl?.value && !this._ignoreSpaceKey) { // trigger the events if the outfit element has a title set.
-      this.toggleHighlightsEvent.emit(this.elementRef);
+      this.outfitClickEvent.emit();
 
       this.outfitService.dawnEquipment(
                 this.equipment, 
@@ -164,6 +172,10 @@ export class OutfitComponent implements OnInit {
     if (event.key === ' ') {
       this._ignoreSpaceKey = true;
     }
+  }
+
+  public returnView() {
+    return this.elementRef;
   }
 
   ngOnDestroy() { }
