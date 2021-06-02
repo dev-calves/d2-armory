@@ -38,7 +38,11 @@ export class CharacterService {
       ref.instance.currentUserMembership = characterComponent.currentUserMembership;
       ref.instance.characterId = characterComponent.characterId;
       ref.instance.outfitClickEvent.subscribe((outfitRef: ComponentRef<OutfitComponent>) => {
+        if (characterComponent.selectedOutfit) {
+          characterComponent.selectedOutfit.instance.color = '';
+        }
         outfitRef.instance.color = 'accent';
+        characterComponent.selectedOutfit = outfitRef;
       });
 
       // place new wardrobes at the top of the page.

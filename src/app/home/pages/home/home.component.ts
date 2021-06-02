@@ -1,6 +1,7 @@
 import {
   Component,
   OnInit,
+  AfterViewInit,
   OnDestroy,
   ViewChild,
   ViewContainerRef,
@@ -25,7 +26,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private _loggedIn = false;
   private _transferStorage: string;
   private _currentUserMembership: ICurrentUserMembership;
@@ -69,6 +70,15 @@ export class HomeComponent implements OnInit, OnDestroy {
           });
       }
     });
+  }
+
+  ngAfterViewInit() {
+    if (this.isDarkMode()) {
+      this.changeThemeMode('dark');
+      this.darkModeSlideToggle.toggle();
+    } else if (!localStorage.getItem('theme')) {
+      this.changeThemeMode('');
+    } 
   }
 
   public set loggedIn(loggedIn: boolean) {
@@ -130,8 +140,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('darkModeSlideToggle')
   public set darkModeSlideToggle(slideToggle: MatSlideToggle) {
     this._darkModeSlideToggle = slideToggle;
-
-    this.changeThemeMode('');
   }
   public get darkModeSlideToggle() {
     return this._darkModeSlideToggle;
@@ -163,6 +171,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
         break;
     }
+  }
+
+  public isDarkMode() {
+    return (localStorage.getItem('theme') && localStorage.getItem('theme') === 'dark');
   }
 
   /**

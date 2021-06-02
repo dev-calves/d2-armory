@@ -5,7 +5,7 @@
     <mat-sidenav-container class="sidenav-container">
         <!-- sidenav content -->
         <mat-sidenav #sidenav mode="over">
-            <mat-toolbar color="primary">
+            <mat-toolbar style="min-width: 300px;" color="primary">
                 <mat-toolbar-row>
                     <app-home-menu-buttons (menuClick)="sidenav.toggle()" (homeClick)="homeService?.onHomeClick()">
                     </app-home-menu-buttons>
@@ -49,11 +49,12 @@
                             <div fxLayout="column" fxLayoutAlign="end center">
                                 <h1>Under Construction</h1>
                             </div>
-                            
-                            <p style=" font-size: large; margin-top: 10px; margin-bottom: 10px">
+
+                            <p style=" font-size: large; text-align: center; margin-top: 10px; margin-bottom: 10px">
                                 This site is under-going construction. A database is next to be implemented. <br><br>
                                 It's a hobby-site/project started during stay-at-home quarantine. <br><br>
-                                Bungie's Companion Apis are used for membership data and actions like equipping/transfering items.<br><br>
+                                Bungie's Companion Apis are used for membership data and actions like
+                                equipping/transfering items.<br><br>
                                 These actions can occur off-line, in orbit, tower, or other social spaces.<br><br>
                                 An account with Bungie will be needed to use this feature.
                             </p>
@@ -70,9 +71,7 @@
                                             <mat-card-title>Creating a Wardrobe</mat-card-title>
                                             <mat-card-subtitle>(Group of outfits)</mat-card-subtitle>
                                         </mat-card-header>
-                                        <img mat-card-image
-                                            src="https://chi01pap001files.storage.live.com/y4m_FhVAmHWc-0_wwuo18bgHCAuzrzF1_teXELnTVOVUcxH9QqDTz2Ntbe70pKncjydjubGaz1MuKtilcsoNAXxF5TWNSoZipfsUdv8YPcmud5huanfkO57aSXTZixJZLiPoXxX0JKUJqtDidhqn0hM0fPngfmzYGGvIDlzgn-fWV4un25onLektkh3hh1oMn4D?width=1394&height=917&cropmode=none"
-                                            alt="Photo of a Wardrobe">
+                                        <div *ngIf="isDarkMode();then darkWardrobeImg; else lightWardrobeImg"></div>
                                         <mat-card-content>
                                             <p style="font-size: medium;">
                                                 Wardrobes are groups of outfits that follow a theme.<br><br>
@@ -88,9 +87,7 @@
                                             <mat-card-title>Creating an Outfit</mat-card-title>
                                             <mat-card-subtitle>(Stored set of Equipment)</mat-card-subtitle>
                                         </mat-card-header>
-                                        <img mat-card-image
-                                            src="https://chi01pap001files.storage.live.com/y4mFYh-6Aai3zMRtjGlIng-8IowDxgVjZWE8mdWbhgL9Rb5SSc8tBQlify5uP-vF1Jc1VsI1MriwQbqFqtcOlK_sVPNYiMpuVdoN7SXq6BjYOSef3sQGlfwQKij6VgrEePgZ7UeaT3E9LZbdY7dVjOeCNKwIaC818RZbpQZXQTTQm-hy_tjgx9LpC9AFLw9UGSe?width=1399&height=925&cropmode=none"
-                                            alt="Photo of an outfit">
+                                        <div *ngIf="isDarkMode(); then darkOutfitImg; else lightOutfitImg"></div>
                                         <mat-card-content>
                                             <p style="font-size: medium;">
                                                 An outfit is a recorded set of equipment.<br><br>
@@ -106,14 +103,15 @@
                                         <mat-card-header>
                                             <mat-card-title>Vault Transfer Setting</mat-card-title>
                                         </mat-card-header>
-                                        <img mat-card-image
-                                            src="https://chi01pap001files.storage.live.com/y4mPcJy7YJRYMIpZb9i2gDlJ6DZ6Llo9XoTOv0uGaikpM277uMAOddoubqTqZxWXpJlwFom9knlUTU9ybPrhwFPoB8sySVfEZU9DQyCAXP4d6brbZj30EXwbWHi96jgCwsxmZO6P2OzwZy8O0Zs-8vQC1HdgjMR1jwlWwUZ_kgFAyk5e4Mj_cdE1ygEfO-DVPk3?width=1411&height=926&cropmode=none"
-                                            alt="Photo of the Vault Transfer Setting">
+                                        <div *ngIf="isDarkMode(); then darkVaultImg; else lightVaultImg"></div>
                                         <mat-card-content>
                                             <p style="font-size: medium;">
-                                                Normally, equipment is transfered to-and-from the character's inventory.<br><br>
-                                                This setting will allow retrieving equipment from the vault if they are not in the inventory.<br><br>
-                                                Items being unequipped will be sent to the vault to keep the inventory light.
+                                                Normally, equipment is transfered to-and-from the character's
+                                                inventory.<br><br>
+                                                This setting will allow retrieving equipment from the vault if they are
+                                                not in the inventory.<br><br>
+                                                Items being unequipped will be sent to the vault to keep the inventory
+                                                light.
                                             </p>
                                         </mat-card-content>
                                     </mat-card>
@@ -132,3 +130,36 @@
         </mat-sidenav-content>
     </mat-sidenav-container>
 </div>
+
+<ng-template #lightWardrobeImg>
+    <img mat-card-image
+        src="https://chi01pap001files.storage.live.com/y4mKQHc_cR34RRq9EHKjeG07Hiu-IbaCtkw11FJq2Fst1pjOJToCOZMpuXXpS2FNtWQ-C2-zCD5-BJDUiYdb_cIGepqVLJ9TsOquQS2XCfljzcVG9kjAA4GFolNcG22uoum_5xOBAnpkUs0DUbNXbsrf_guB1J9b3geAPa2EluUwlfjs4lhbb8NKXRhhXbTtrik?width=1914&height=929&cropmode=none"
+        alt="Photo of a Wardrobe">
+</ng-template>
+<ng-template #darkWardrobeImg>
+    <img mat-card-image
+        src="https://chi01pap001files.storage.live.com/y4m9zkl6Y9nc2VlbUY13iqftjVMOWY1qNQ-kMWVrqxq01IyZSgqXo5UcpiI2DUSK87wLFHjKejx0KK4mY6tn01lUwphC5JXKmHbOj-Dr7vmCFsvP36cwS5Lh5YaZ22WYVhuly6yc8KhhaxHcK950ucYA889mRtPaobZ37-ZUroSOGgoDLuWV8Mir15HplGyz36Y?width=1911&height=923&cropmode=none"
+        alt="Photo of a Wardrobe">
+</ng-template>
+
+<ng-template #lightOutfitImg>
+    <img mat-card-image
+        src="https://chi01pap001files.storage.live.com/y4mYZweYPfJk7Z1vv9rUXeDvsbSq2wO7HN31kF0hw-z-DE55fMhLgoVVfVwFeG7mqnAbObk5r7430rajMQuvIPrTuTCoKgvMoV_KDWlpcWu9Azqt72sMPMmxdxTjdmF8S2baM2Z9juK6ZTG6j7h2qQt_XNP39mqU0-fS9HuiV9L5RNE6EVwX9W2n1EO-50NGNLX?width=1911&height=931&cropmode=none"
+        alt="Photo of a Wardrobe">
+</ng-template>
+<ng-template #darkOutfitImg>
+    <img mat-card-image
+        src="https://chi01pap001files.storage.live.com/y4mh8h10WwLpuCVUk-q_jIe8BDjcXwFEjBIRliGXox1DP5QgTOeMUZYtk9xLP_DCwC0jyhNg3DaQLT88NJe-jeovzFS5vd2ADHGaFiHzC7lPLzFrgsDvaZaDSXZ2MfIWWA8yB4p_nU3ga4aSOYjkeP3EQCBoNWVJPyBVHZ2ISOH8iA_sqmOgJwhtrSHHSN7SZ9p?width=1913&height=929&cropmode=none"
+        alt="Photo of a Wardrobe">
+</ng-template>
+
+<ng-template #lightVaultImg>
+    <img mat-card-image
+        src="https://chi01pap001files.storage.live.com/y4mUdrTztm2Ipmrb3YgBO0SW_k94ebLCxmH-Xc-CKAQfgKAfh7fxZmUm8yE6kRIQI52wyb4mBXd2VLshux5EPVJt_Ms5_SWvK6-eKnxCfRurcIOibp0Q6HFPFvat2TUP5owF2eAvqrMJ92R0SM_ImQnzVoEqfqBp6d9WlnFj8QilFtJiEgoAGzo98jhDx0JTq5n?width=1910&height=926&cropmode=none"
+        alt="Photo of a Wardrobe">
+</ng-template>
+<ng-template #darkVaultImg>
+    <img mat-card-image
+        src="https://chi01pap001files.storage.live.com/y4mjgoMG60Xa5P4hKgrMRwqd3R69EXrPOcTMtte7eIxiBDulPlFAgTVtWA4kd3oEmDBIN6Gayry-Mkl4kSf8W3WXcyfeVeR6yLf1ZKUKp575RPJ9EgBJXSHmkxBAH204No6hYs7zJnrP7RRt4VhAYCq0azHJnmEtRcUzgeyUYf3EccmhliV034jaPh-f_nGrUnw?width=1911&height=925&cropmode=none"
+        alt="Photo of a Wardrobe">
+</ng-template>
