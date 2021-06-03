@@ -4,7 +4,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 
 import { environment } from 'src/environments/environment';
 import { DialogData, LocalStorageService } from 'src/app/core';
-import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-auth-modal',
@@ -18,17 +17,10 @@ export class AuthModalComponent implements OnInit, OnDestroy {
   constructor(
    @Inject(MAT_DIALOG_DATA) public data: DialogData,
    private dialogRef: MatDialogRef<AuthModalComponent>,
-   public localStorageService: LocalStorageService,
-   private overlay: OverlayContainer
+   public localStorageService: LocalStorageService
    ) { }
 
-  ngOnInit(): void {
-    if (this.localStorageService.isDarkMode()) {
-      this.overlay.getContainerElement().classList.add('darkMode');
-    } else {
-      this.overlay.getContainerElement().classList.remove('darkMode');
-    }
-  }
+  ngOnInit(): void {}
 
   @ViewChild('dismissCheckbox')
   public set dismissCheckBox(element: MatCheckbox) {
