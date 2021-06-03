@@ -12,8 +12,6 @@ import { LocalStorageService, OverlaySpinnerService, TransferStorageService } fr
 
 import { OverlayContainer } from '@angular/cdk/overlay';
 
-import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -37,7 +35,8 @@ export class AppComponent implements AfterViewInit {
 
   ngOnInit() {
     // set the storage localStorage property.
-    this.transferStorageService.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
+    this.transferStorageService.transferStorage = 
+      this.localStorageService.transferStorage;
   }
 
   ngAfterViewInit() {
@@ -45,7 +44,7 @@ export class AppComponent implements AfterViewInit {
       this.changeThemeMode('dark');
       this.darkModeSlideToggle.toggle();
       this.changeDetectorRef.detectChanges();
-    } else if (!localStorage.getItem('theme')) {
+    } else if (!this.localStorageService.theme) {
       this.changeThemeMode('');
     }
   }
@@ -81,12 +80,14 @@ export class AppComponent implements AfterViewInit {
       case 'dark':
         this.renderer.addClass(this.appContainer.nativeElement, 'darkMode');
         this.overlay.getContainerElement().classList.add('darkMode');
-        localStorage.setItem('theme', 'dark');
+
+        this.localStorageService.theme = 'dark';
         break;
       case 'light':
         this.renderer.removeClass(this.appContainer.nativeElement, 'darkMode');
         this.overlay.getContainerElement().classList.remove('darkMode');
-        localStorage.setItem('theme', 'light');
+
+        this.localStorageService.theme = 'light';
         break;
       default:
         if (window.matchMedia &&
@@ -99,9 +100,9 @@ export class AppComponent implements AfterViewInit {
           this.renderer.addClass(this.appContainer.nativeElement, 'darkMode');
           this.overlay.getContainerElement().classList.add('darkMode');
 
-          localStorage.setItem('theme', 'dark');
+          this.localStorageService.theme = 'dark';
         } else {
-          localStorage.setItem('theme', 'light');
+          this.localStorageService.theme = 'light';
         }
         break;
     }

@@ -17,7 +17,6 @@ import {
   LoggedInService
 } from 'src/app/core';
 import { HomeService } from './home.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -43,9 +42,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     // initialize /home?:code:state route
     this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { 
       // use these parameters received from bungie to store user authentication.
-      if (params.code && params.state && params.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
+      if (params.code && params.state && params.state === 
+          this.localStorageService.state) {
         // prevent oauth requests from being made with a stale "code" after refreshing the page.
-        localStorage.removeItem(environment.LOCAL_STORAGE_STATE);
+        this.localStorageService.state = null;
 
         // request access token and user data.
         this._currentUserMembershipSub = this.homeService.oauthAndUserProfile(params.code)

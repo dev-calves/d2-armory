@@ -9,9 +9,8 @@ import {
   ComponentRef,
   ChangeDetectorRef
 } from '@angular/core';
-import { CurrentMembershipService } from 'src/app/core';
+import { CurrentMembershipService, LocalStorageService } from 'src/app/core';
 
-import { environment } from 'src/environments/environment';
 import { OutfitComponent } from '../outfit/outfit.component';
 import { WardrobeComponent } from '../wardrobe/wardrobe.component';
 import { CharacterService } from './character.service';
@@ -32,18 +31,12 @@ export class CharacterComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     public characterService: CharacterService,
     private changeDetectorRef: ChangeDetectorRef,
-    public currentMembershipService: CurrentMembershipService
+    public currentMembershipService: CurrentMembershipService,
+    private localStorageService: LocalStorageService
     ) { }
 
   ngOnInit(): void {
-    // TODO: re-work this after database is implemented.
-    let storedCharacterOutfits = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
-
-    if (storedCharacterOutfits &&
-      storedCharacterOutfits[this.characterId] &&
-      Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
-      this._initialWardrobes = storedCharacterOutfits[this.characterId];
-    }
+    this._initialWardrobes = this.localStorageService.getInitialWardrobes(this.characterId);
   }
 
   ngAfterViewInit(): void {

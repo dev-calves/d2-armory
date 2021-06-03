@@ -17,6 +17,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 
 import { WardrobeService } from './wardrobe.service';
 import { OutfitComponent } from '../../components/outfit/outfit.component';
+import { LocalStorageService } from 'src/app/core';
 
 @Component({
   selector: 'app-wardrobe',
@@ -38,7 +39,8 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     public wardrobeService: WardrobeService,
     public elementRef: ElementRef,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private localStorageService: LocalStorageService
     ) {
 
     this.formControl = new FormControl('', [
@@ -167,7 +169,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.toHide = !this.toHide;
 
     // remove all outfits on the wardrobe.
-    this.wardrobeService.deleteWardrobeLocal(this.characterId, this.wardrobeName);
+    this.localStorageService.deleteWardrobeLocal(this.characterId, this.wardrobeName);
   }
 
   ngOnDestroy() {

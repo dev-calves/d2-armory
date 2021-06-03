@@ -2,13 +2,13 @@ import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
-import { environment } from 'src/environments/environment';
 import { 
   EncryptService, 
   OauthService, 
   LoggedInService, 
   CurrentMembershipService, 
-  HomeClickService
+  HomeClickService,
+  LocalStorageService
 } from 'src/app/core/services';
 import { IEncryptRequest } from 'src/app/core/models';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
@@ -32,7 +32,8 @@ export class HeaderComponent implements OnInit {
     private oauthService: OauthService,
     public loggedInService: LoggedInService,
     public currentMembershipService: CurrentMembershipService,
-    private homeClickService: HomeClickService
+    private homeClickService: HomeClickService,
+    private localStorageService: LocalStorageService
   ) { }
 
   ngOnInit(): void {
@@ -58,10 +59,11 @@ export class HeaderComponent implements OnInit {
     let encryptRequest: IEncryptRequest;
 
     // capture state of web page.
-    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) &&
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'vault' ||
-      localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) === 'inventory') {
-      encryptRequest = { state: localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) };
+    if (
+      this.localStorageService.transferStorage &&
+      this.localStorageService.transferStorage === 'vault' ||
+      this.localStorageService.transferStorage === 'inventory') {
+      encryptRequest = { state: this.localStorageService.transferStorage };
     } else {
       encryptRequest = { state: 'inventory' };
     }
@@ -73,8 +75,9 @@ export class HeaderComponent implements OnInit {
         this._bungieAuthUrl = 'https://www.bungie.net/en/oauth/authorize?client_id=' +
           response.bungieClientId + '&response_type=code&state=' + this._stateHex;
 
-        if (localStorage.getItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE) === 'true') {
-          localStorage.setItem(environment.LOCAL_STORAGE_STATE, this._stateHex);
+        if (
+          this.localStorageService.dismissLogonMessage === 'true') {
+          this.localStorageService.state = this._stateHex;
           location.href = this._bungieAuthUrl;
         } else {
           this.openDialog(this._stateHex, this._bungieAuthUrl);

@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { IEquipment, IEquipmentCapture } from 'src/app/core/models';
 import { CurrentMembershipService, EquipmentService, OverlaySpinnerService } from 'src/app/core/services';
 import { OutfitComponent } from 'src/app/home/components/outfit/outfit.component';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -170,22 +169,6 @@ export class WardrobeService {
 
     // move the outfit to the left-most position.
     outfitsContainer.move(ref.hostView, 0);
-  }
-
-  /**
-   * remove wardrobe from localStorage.
-   * @param characterId character id.
-   * @param wardrobeName wardrobe name.
-   */
-  public deleteWardrobeLocal(characterId: string, wardrobeName: string): void {
-    // parse outfits localStorage.
-    let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
-
-    // delete wardrobe along with it's outfits.
-    delete storedEquipment[characterId][wardrobeName];
-
-    // update outfits localStorage.
-    localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
   }
 
   /**
