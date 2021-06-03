@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, EventEmitter, Output, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { MatInput } from '@angular/material/input';
 import { LocalStorageService } from 'src/app/core';
 
 import { IEquipment } from 'src/app/core/models/api/equipment.model';
@@ -101,6 +102,9 @@ export class OutfitComponent implements OnInit {
     return this._outfitName;
   }
 
+  @ViewChild('nameText') 
+  public nameTextInput: MatInput
+
   public setOutfitNameValue(value) {
     this.formControl.setValue(value);
   }
@@ -138,8 +142,6 @@ export class OutfitComponent implements OnInit {
   public saveEquipment() {
     // don't store equipment to an outfit without a proper name.
     if (!this.formControl.errors) {
-      console.log(this.outfitName);
-
       // when the button is a name change, delete previous localStorage name of outfit.
       this.localStorageService.removePreviousEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName);
       
@@ -159,6 +161,8 @@ export class OutfitComponent implements OnInit {
   public keyPress(event: KeyboardEvent) {
     if (event.key === ' ') {
       this._ignoreSpaceKey = true;
+    } else if (event.key === 'Enter') {
+      this.dawnEquips();
     }
   }
 
