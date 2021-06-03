@@ -138,6 +138,8 @@ export class OutfitComponent implements OnInit {
   public saveEquipment() {
     // don't store equipment to an outfit without a proper name.
     if (!this.formControl.errors) {
+      console.log(this.outfitName);
+
       // when the button is a name change, delete previous localStorage name of outfit.
       this.localStorageService.removePreviousEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName);
       

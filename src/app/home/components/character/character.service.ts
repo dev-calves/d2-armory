@@ -16,7 +16,8 @@ export class CharacterService {
    * @param currentUserMembership user account info.
    */
   public addWardrobe(characterComponent: CharacterComponent) {
-    const wardrobeError: HTMLElement = characterComponent.wardrobeParentContainer.nativeElement.querySelector('mat-error');
+    const wardrobeError: HTMLElement = 
+      characterComponent.wardrobeParentContainer.nativeElement.querySelector('mat-error');
 
     // creates a wardrobe if the form is filled properly.
     if (wardrobeError) {
@@ -33,7 +34,8 @@ export class CharacterService {
   public createNewWardrobeComponent(characterComponent: CharacterComponent) {
     if (characterComponent.wardrobes.length < 7) { // limit is 7 wardrobe components.
       const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
-      const ref: ComponentRef<WardrobeComponent> = characterComponent.wardrobesContainer.createComponent(wardrobeFactory);
+      const ref: ComponentRef<WardrobeComponent> = 
+        characterComponent.wardrobesContainer.createComponent(wardrobeFactory);
       ref.instance.characterId = characterComponent.characterId;
       ref.instance.outfitClickEvent.subscribe((outfitRef: ComponentRef<OutfitComponent>) => {
         if (characterComponent.selectedOutfit) {
