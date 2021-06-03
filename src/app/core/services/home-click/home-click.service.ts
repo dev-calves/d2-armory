@@ -16,6 +16,17 @@ export class HomeClickService {
     return this._charactersContainer;
   }
 
+  /**
+   * TODO: modify onHomeClick to route to home.
+   * If new pages are planned to be developed,
+   * modify the onHomeClick to route to the home page and
+   * not remove charachter highlights.
+   * modify the mini-profile onClick method:
+   *  1st click: attach the character mini-profile view to home.
+   *  2nd click: detach the character mini-profile view from home,
+   *    instead of the onHomeClick doing it.
+   */
+
   public onHomeClick() {
     // clear character view.
     if (this.charactersContainer) {
