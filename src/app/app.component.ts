@@ -10,6 +10,8 @@ import {
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LocalStorageService, OverlaySpinnerService, TransferStorageService } from './core';
 
+import { OverlayContainer } from '@angular/cdk/overlay';
+
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -27,7 +29,9 @@ export class AppComponent implements AfterViewInit {
     private changeDetectorRef: ChangeDetectorRef,
     private overlaySpinnerService: OverlaySpinnerService,
     public transferStorageService: TransferStorageService,
-    private localStorageService: LocalStorageService) {
+    private localStorageService: LocalStorageService,
+    private overlay: OverlayContainer
+    ) {
 
   }
 
@@ -76,10 +80,12 @@ export class AppComponent implements AfterViewInit {
     switch (theme) {
       case 'dark':
         this.renderer.addClass(this.appContainer.nativeElement, 'darkMode');
+        this.overlay.getContainerElement().classList.add('darkMode');
         localStorage.setItem('theme', 'dark');
         break;
       case 'light':
         this.renderer.removeClass(this.appContainer.nativeElement, 'darkMode');
+        this.overlay.getContainerElement().classList.remove('darkMode');
         localStorage.setItem('theme', 'light');
         break;
       default:
@@ -91,6 +97,7 @@ export class AppComponent implements AfterViewInit {
           this.changeDetectorRef.detectChanges();
 
           this.renderer.addClass(this.appContainer.nativeElement, 'darkMode');
+          this.overlay.getContainerElement().classList.add('darkMode');
 
           localStorage.setItem('theme', 'dark');
         } else {
