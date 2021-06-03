@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { LocalStorageService } from '../local-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -7,15 +7,15 @@ import { environment } from 'src/environments/environment';
 export class TransferStorageService {
   private _transferStorage: string = 'inventory';
 
-  constructor() {}
+  constructor(private localStorageService: LocalStorageService) {}
 
   public set transferStorage(transferStorage: string) {
     if (this._transferStorage != transferStorage) {
       this._transferStorage = transferStorage;
     }
-    // TODO: remove this storage prop. after implementing DB.
-    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) != this.transferStorage) {
-      localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, transferStorage);
+
+    if (this.localStorageService.transferStorage != this.transferStorage) {
+      this.localStorageService.transferStorage = this.transferStorage;
     }
   }
   public get transferStorage() {

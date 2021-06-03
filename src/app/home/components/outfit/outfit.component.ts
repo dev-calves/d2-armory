@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output, ElementRef } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { LocalStorageService } from 'src/app/core';
 
 import { IEquipment } from 'src/app/core/models/api/equipment.model';
 import { OutfitService } from './outfit.service';
@@ -21,7 +22,11 @@ export class OutfitComponent implements OnInit {
   private _outfitName: string;
   private _color: string = '';
 
-  constructor(public elementRef: ElementRef, private outfitService: OutfitService) {
+  constructor(
+    public elementRef: ElementRef, 
+    private outfitService: OutfitService,
+    private localStorageService: LocalStorageService
+    ) {
     this.formControl = new FormControl('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z0-9 _]*$') // alphanumeric
@@ -124,7 +129,7 @@ export class OutfitComponent implements OnInit {
   public close() {
     this.toHide = !this.toHide;
 
-    this.outfitService.removeCurrentEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName);
+    this.localStorageService.removeCurrentEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName);
   }
 
   /**
@@ -134,13 +139,13 @@ export class OutfitComponent implements OnInit {
     // don't store equipment to an outfit without a proper name.
     if (!this.formControl.errors) {
       // when the button is a name change, delete previous localStorage name of outfit.
-      this.outfitService.removePreviousEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName)
+      this.localStorageService.removePreviousEquipmentLocal(this.characterId, this.wardrobeName, this.outfitName);
       
       // update name of outfit.
       this.outfitName = this.formControl.value;
 
       // store outfit with a new name || store new outfit.
-      this.outfitService.saveEquipmentLocal(this.wardrobeName, this.characterId,this.outfitName, this.equipment);
+      this.localStorageService.saveEquipmentLocal(this.wardrobeName, this.characterId,this.outfitName, this.equipment);
     }
   }
 
