@@ -15,7 +15,6 @@ import {
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { ICurrentUserMembership } from 'src/app/core'
 import { WardrobeService } from './wardrobe.service';
 import { OutfitComponent } from '../../components/outfit/outfit.component';
 
@@ -32,16 +31,15 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
   private _addOutfitButton;
-  private _currentUserMembership: ICurrentUserMembership;
   private _characterId: string;
-  private _transferStorage: string;
   private _outfits: ComponentRef<OutfitComponent>[] = [];
   private _initialOutfits;
 
   constructor(
     public wardrobeService: WardrobeService,
     public elementRef: ElementRef,
-    private changeDetectorRef: ChangeDetectorRef) {
+    private changeDetectorRef: ChangeDetectorRef
+    ) {
 
     this.formControl = new FormControl('', [
       Validators.required,
@@ -64,7 +62,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.outfits, 
       this.characterId, 
       this.formControl?.value, 
-      this.transferStorage,
       this.outfitClickEvent);
       this.changeDetectorRef.detectChanges();
   }
@@ -91,16 +88,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input()
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-
-    this.wardrobeService.currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
-  }
-
-  @Input()
   public set characterId(characterId: string) {
     this._characterId = characterId;
   }
@@ -121,14 +108,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   public get initialOutfits() {
     return this._initialOutfits;
-  }
-
-  @Input()
-  public set transferStorage(transferStorage: string) {
-    this._transferStorage = transferStorage;
-  }
-  public get transferStorage() {
-    return this._transferStorage;
   }
 
   @ViewChild('outfitsContainer', { read: ViewContainerRef })
@@ -180,7 +159,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.outfits,
       this.characterId,
       this.formControl?.value,
-      this.transferStorage,
       this.outfitClickEvent);
   }
 

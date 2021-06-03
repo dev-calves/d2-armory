@@ -2,7 +2,6 @@ import { Component, OnInit, Input, EventEmitter, Output, ElementRef } from '@ang
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { ICurrentUserMembership } from 'src/app/core';
 import { IEquipment } from 'src/app/core/models/api/equipment.model';
 import { OutfitService } from './outfit.service';
 
@@ -20,9 +19,7 @@ export class OutfitComponent implements OnInit {
   private _wardrobeName: string;
   private _characterId: string;
   private _outfitName: string;
-  private _transferStorage: string;
   private _color: string = '';
-  private _currentUserMembership: ICurrentUserMembership;
 
   constructor(public elementRef: ElementRef, private outfitService: OutfitService) {
     this.formControl = new FormControl('', [
@@ -76,14 +73,6 @@ export class OutfitComponent implements OnInit {
   }
 
   @Input()
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
-  }
-
-  @Input()
   public set wardrobeName(wardrobeName: string) {
     this._wardrobeName = wardrobeName;
   }
@@ -107,14 +96,6 @@ export class OutfitComponent implements OnInit {
     return this._outfitName;
   }
 
-  @Input()
-  public set transferStorage(transferStorage: string) {
-    this._transferStorage = transferStorage;
-  }
-  public get transferStorage() {
-    return this._transferStorage;
-  }
-
   public setOutfitNameValue(value) {
     this.formControl.setValue(value);
   }
@@ -125,14 +106,14 @@ export class OutfitComponent implements OnInit {
    * sends a request to equip the items stored on this outfit.
    */
   public dawnEquips() {
-    if (this.formControl?.value && !this._ignoreSpaceKey) { // trigger the events if the outfit element has a title set.
+    // trigger the events if the outfit element has a title set.
+    if (this.formControl?.value && !this._ignoreSpaceKey) { 
       this.outfitClickEvent.emit();
 
       this.outfitService.dawnEquipment(
                 this.equipment, 
-                this.currentUserMembership, 
                 this.characterId, 
-                this.transferStorage);
+                );
     }
     this._ignoreSpaceKey = false;
   }
@@ -172,10 +153,6 @@ export class OutfitComponent implements OnInit {
     if (event.key === ' ') {
       this._ignoreSpaceKey = true;
     }
-  }
-
-  public returnView() {
-    return this.elementRef;
   }
 
   ngOnDestroy() { }

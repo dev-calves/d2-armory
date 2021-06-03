@@ -3,8 +3,8 @@
         <span style="max-width: 100%; width: 100%;" fxLayout="row" fxLayoutAlign="space-between">
             <app-home-menu-buttons (menuClick)="onMenuClick()" (homeClick)="onHomeClick()"></app-home-menu-buttons>
             <span fxLayout="row" fxLayoutAlign="center center">
-                <span style="font-size: medium;" *ngIf="displayName && showDisplayName">{{displayName}}</span>
-                <span *ngIf="loggedIn; then logOutButton; else logInButton"></span>
+                <span style="font-size: medium;" *ngIf="currentMembershipService.displayName && showDisplayName">{{currentMembershipService.displayName}}</span>
+                <span *ngIf="loggedInService.loggedIn; then logOutButton; else logInButton"></span>
             </span>
         </span>
     </mat-toolbar-row>
@@ -12,14 +12,14 @@
 
 <ng-template #logInButton>
     <button mat-icon-button disableRipple="true" aria-label="Log-in Button" matTooltip="Logs you in to your Bungie account."
-    (click)="logOnClick()" *ngIf="!loggedIn">
+    (click)="logOnClick()">
         <mat-icon>login</mat-icon>
     </button>
 </ng-template>
 
 <ng-template #logOutButton>
     <button mat-icon-button disableRipple="true" aria-label="Log-out Button" matTooltip="Logs you out of your Bungie account."
-    (click)="logOutClick()" *ngIf="loggedIn">
+    (click)="logOutClick()">
         <mat-icon>logout</mat-icon>
     </button>
 </ng-template>

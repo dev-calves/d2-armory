@@ -28,14 +28,12 @@ export class CharacterService {
 
   /**
    * creates wardrobes and stores them to be destroyed later.
-   * @param characterId character id.
-   * @param currentUserMembership user account info.
+   * @param characterComponent character component object.
    */
   public createNewWardrobeComponent(characterComponent: CharacterComponent) {
     if (characterComponent.wardrobes.length < 7) { // limit is 7 wardrobe components.
       const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
       const ref: ComponentRef<WardrobeComponent> = characterComponent.wardrobesContainer.createComponent(wardrobeFactory);
-      ref.instance.currentUserMembership = characterComponent.currentUserMembership;
       ref.instance.characterId = characterComponent.characterId;
       ref.instance.outfitClickEvent.subscribe((outfitRef: ComponentRef<OutfitComponent>) => {
         if (characterComponent.selectedOutfit) {
@@ -56,11 +54,14 @@ export class CharacterService {
     }
   }
 
+  /**
+   * creates wardrobe components for each saved wardrobe.
+   * @param characterComponent characterComponent character component object.
+   */
   public initializeWardrobes(characterComponent: CharacterComponent) { 
     for (const wardrobeName in characterComponent.initialWardrobes) {
       const wardrobeFactory = this.resolver.resolveComponentFactory(WardrobeComponent);
       const ref: ComponentRef<WardrobeComponent> = characterComponent.wardrobesContainer.createComponent(wardrobeFactory);
-      ref.instance.currentUserMembership = characterComponent.currentUserMembership;
       ref.instance.characterId = characterComponent.characterId;
       ref.instance.wardrobeName = wardrobeName;
       ref.instance.initialOutfits = characterComponent.initialWardrobes[wardrobeName];

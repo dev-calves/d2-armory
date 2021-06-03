@@ -1,22 +1,20 @@
 import {
   Component,
   OnInit,
-  AfterViewInit,
   OnDestroy,
   ViewChild,
   ViewContainerRef,
-  ChangeDetectorRef,
-  Renderer2,
   ElementRef
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
-
 import {
+  CurrentMembershipService,
+  HomeClickService,
   ICurrentUserMembership,
-  OverlaySpinnerService
+  LocalStorageService,
+  LoggedInService
 } from 'src/app/core';
 import { HomeService } from './home.service';
 import { environment } from 'src/environments/environment';
@@ -26,30 +24,24 @@ import { environment } from 'src/environments/environment';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
-  private _loggedIn = false;
-  private _transferStorage: string;
-  private _currentUserMembership: ICurrentUserMembership;
+export class HomeComponent implements OnInit, OnDestroy {
   private _charactersContainer: ViewContainerRef;
-  private _overlaySpinnerContainer: ViewContainerRef;
-  private _darkModeSlideToggle: MatSlideToggle;
   private _homePageContainer: ElementRef;
   private _queryParamsSub: Subscription;
   private _currentUserMembershipSub: Subscription;
 
   constructor(
-    private changeDetectorRef: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private overlaySpinnerService: OverlaySpinnerService,
-    private renderer: Renderer2,
     public homeService: HomeService,
+    public currentMembershipService: CurrentMembershipService,
+    private homeClickService: HomeClickService,
+    public loggedInService: LoggedInService,
+    public localStorageService: LocalStorageService
   ) { }
 
   ngOnInit() {
-    // set the storage localStorage property.
-    this.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
-
-    this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { // initialize /home?:code:state route
+    // initialize /home?:code:state route
+    this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { 
       // use these parameters received from bungie to store user authentication.
       if (params.code && params.state && params.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
         // prevent oauth requests from being made with a stale "code" after refreshing the page.
@@ -58,54 +50,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         // request access token and user data.
         this._currentUserMembershipSub = this.homeService.oauthAndUserProfile(params.code)
           .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-            this.loggedIn = true;
-            this.currentUserMembership = currentUserMembershipResponse;
+            this.loggedInService.loggedIn = true;
+            this.currentMembershipService.currentUserMembership = currentUserMembershipResponse;
           });
       } else {
         // request user data.
         this._currentUserMembershipSub = this.homeService.userProfile()
           .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-            this.loggedIn = true;
-            this.currentUserMembership = currentUserMembershipResponse;
+            this.loggedInService.loggedIn = true;
+            this.currentMembershipService.currentUserMembership = currentUserMembershipResponse;
           });
       }
     });
-  }
-
-  ngAfterViewInit() {
-    if (this.isDarkMode()) {
-      this.changeThemeMode('dark');
-      this.darkModeSlideToggle.toggle();
-    } else if (!localStorage.getItem('theme')) {
-      this.changeThemeMode('');
-    } 
-  }
-
-  public set loggedIn(loggedIn: boolean) {
-    this._loggedIn = loggedIn;
-  }
-  public get loggedIn() {
-    return this._loggedIn;
-  }
-
-  public set transferStorage(transferStorage: string) {
-    if (this._transferStorage != transferStorage) {
-      this._transferStorage = transferStorage;
-    }
-    // TODO: remove this storage prop. after implementing DB.
-    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) != this.transferStorage) {
-      localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, transferStorage);
-    }
-  }
-  public get transferStorage() {
-    return this._transferStorage;
-  }
-
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
   }
 
   @ViewChild('HomePageContainer')
@@ -120,89 +76,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   public set charactersContainer(container: ViewContainerRef) {
     this._charactersContainer = container;
 
+    // pass the container to the home click service for home navigation
+    // by detaching the character view.
+    this.homeClickService.charactersContainer = container;
+
     // pass the container to the service for component creations.
-    this.homeService.charactersContainer = this.charactersContainer;
+    this.homeService.charactersContainer = container;
   }
   public get charactersContainer() {
     return this._charactersContainer;
-  }
-
-  @ViewChild('overlaySpinnerContainer', { read: ViewContainerRef })
-  public set overlaySpinnerContainer(container: ViewContainerRef) {
-    this._overlaySpinnerContainer = container;
-
-    this.overlaySpinnerService.overlaySpinnerContainerRef = container;
-  }
-  public get overlaySpinnerContainer() {
-    return this._overlaySpinnerContainer;
-  }
-
-  @ViewChild('darkModeSlideToggle')
-  public set darkModeSlideToggle(slideToggle: MatSlideToggle) {
-    this._darkModeSlideToggle = slideToggle;
-  }
-  public get darkModeSlideToggle() {
-    return this._darkModeSlideToggle;
-  }
-
-  public changeThemeMode(theme: string) {
-    switch (theme) {
-      case 'dark':
-        this.renderer.addClass(this.homePageContainer.nativeElement, 'darkMode');
-        localStorage.setItem('theme', 'dark');
-        break;
-      case 'light':
-        this.renderer.removeClass(this.homePageContainer.nativeElement, 'darkMode');
-        localStorage.setItem('theme', 'light');
-        break;
-      default:
-        if (window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)') &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches) {
-
-          this.darkModeSlideToggle.toggle();
-          this.changeDetectorRef.detectChanges();
-
-          this.renderer.addClass(this.homePageContainer.nativeElement, 'darkMode');
-
-          localStorage.setItem('theme', 'dark');
-        } else {
-          localStorage.setItem('theme', 'light');
-        }
-        break;
-    }
-  }
-
-  public isDarkMode() {
-    return (localStorage.getItem('theme') && localStorage.getItem('theme') === 'dark');
-  }
-
-  /**
-   * updates transferStorage and localStorage.
-   * @param value 
-   */
-  public onMenuToggleClick(value: string): void {
-    this.transferStorage = value;
-  }
-
-  /**
-   * modifies transferStorage on toggle.
-   * @param slideToggle event data for the slide toggle component.
-   */
-  public onVaultToggleChange(slideToggle: MatSlideToggleChange) {
-    if (slideToggle.checked) {
-      this.transferStorage = 'vault';
-    } else {
-      this.transferStorage = 'inventory';
-    }
-  }
-
-  public onDarkModeToggleChange(slideToggle: MatSlideToggle) {
-    if (slideToggle.checked) {
-      this.changeThemeMode('dark');
-    } else {
-      this.changeThemeMode('light');
-    }
   }
 
   ngOnDestroy() {

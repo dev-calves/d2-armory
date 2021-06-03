@@ -7,31 +7,24 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-import { EquipmentService, OverlaySpinnerService } from 'src/app/core/services';
+import { IEquipment, IEquipmentCapture } from 'src/app/core/models';
+import { CurrentMembershipService, EquipmentService, OverlaySpinnerService } from 'src/app/core/services';
 import { OutfitComponent } from 'src/app/home/components/outfit/outfit.component';
-import { ICurrentUserMembership, IEquipment, IEquipmentCapture } from 'src/app/core';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WardrobeService {
-  private _currentUserMembership: ICurrentUserMembership;
   private _equipmentServiceSub: Subscription;
   private _equipmentServiceSubs: Subscription[] = [];
 
   constructor(private _snackBar: MatSnackBar,
     private overlaySpinnerService: OverlaySpinnerService,
     private equipmentService: EquipmentService,
-    private resolver: ComponentFactoryResolver) { }
-
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
-  }
+    private resolver: ComponentFactoryResolver,
+    private currentMembershipService: CurrentMembershipService
+    ) { }
 
   public initializeOutfits(
     initialOutfits,
@@ -39,7 +32,6 @@ export class WardrobeService {
     outfits: ComponentRef<OutfitComponent>[],
     characterId: string,
     wardrobeName: string,
-    transferStorage: string,
     outfitClickEvent: EventEmitter<ComponentRef<OutfitComponent>>) {
 
     for (const outfit in initialOutfits) {
@@ -48,7 +40,6 @@ export class WardrobeService {
         outfits,
         characterId,
         wardrobeName,
-        transferStorage,
         initialOutfits[outfit].outfitName,
         initialOutfits[outfit].equipment,
         outfitClickEvent);
@@ -59,11 +50,11 @@ export class WardrobeService {
   /**
    * add an outfit button if the max is not reached.
    * @param elementRef wardrobe elementRef.
+   * @param outfitsContainer outfits container.
    * @param outfits list of outfits in the wardrobe.
-   * @param currentUserMembership account info.
    * @param characterId character id.
-   * @param formControlValue name typed into form.
-   * @param transferStorage allow inventory or vault transfers.
+   * @param wardrobeName wardrobe name
+   * @param outfitClickEvent outfitClick event to be manipulated by character component.
    */
   public addOutfit(
     elementRef: ElementRef,
@@ -71,7 +62,6 @@ export class WardrobeService {
     outfits: ComponentRef<OutfitComponent>[],
     characterId: string,
     wardrobeName: string,
-    transferStorage: string,
     outfitClickEvent: EventEmitter<ComponentRef<OutfitComponent>>) {
     const outfitError: HTMLElement = elementRef.nativeElement.querySelector('mat-error');
 
@@ -86,7 +76,6 @@ export class WardrobeService {
           outfits,
           characterId,
           wardrobeName,
-          transferStorage,
           outfitClickEvent);
       } else {
         this.openSnackBar('Max outfits reached');
@@ -95,26 +84,26 @@ export class WardrobeService {
   }
 
   /**
-   * creates an outfit component.
-   * @param currentUserMembership account info.
+   * creates a new outfit component.
+   * @param outfitsContainer outfits container.
+   * @param outfits list of outfits in the wardrobe.
    * @param characterId character id.
-   * @param formControlValue form value.
-   * @param transferStorage allowable storage transfer type.
+   * @param wardrobeName wardrobe name.
+   * @param outfitClickEvent outfit click event.
    */
   public createNewOutfitComponent(
     outfitsContainer,
     outfits: ComponentRef<OutfitComponent>[],
     characterId: string,
     wardrobeName: string,
-    transferStorage: string,
     outfitClickEvent: EventEmitter<ComponentRef<OutfitComponent>>) {
     // load home page spinner.
     this.overlaySpinnerService.showOverlaySpinner();
 
     // send request to record currently equipped items.
     this._equipmentServiceSub = this.equipmentService.captureEquipment(
-      this.currentUserMembership.membershipId,
-      this.currentUserMembership.membershipType,
+      this.currentMembershipService.membershipId,
+      this.currentMembershipService.membershipType,
       characterId
     ).subscribe((captureResponse: IEquipmentCapture) => {
       const outfitFactory = this.resolver.resolveComponentFactory(OutfitComponent);
@@ -122,10 +111,8 @@ export class WardrobeService {
         outfitsContainer.createComponent(outfitFactory);
 
       ref.instance.characterId = characterId;
-      ref.instance.currentUserMembership = this.currentUserMembership;
       ref.instance.wardrobeName = wardrobeName;
       ref.instance.equipment = captureResponse.equipment;
-      ref.instance.transferStorage = transferStorage;
       ref.instance.outfitClickEvent.subscribe(() => {
         outfitClickEvent.emit(ref);
       });
@@ -147,12 +134,21 @@ export class WardrobeService {
     this._equipmentServiceSubs.push(this._equipmentServiceSub);
   }
 
+  /**
+   * creates outfits that were saved previously.
+   * @param outfitsContainer outfit container.
+   * @param outfits list of outfits in the wardrobe.
+   * @param characterId character id.
+   * @param wardrobeName wardrobe name.
+   * @param outfitName outfit name.
+   * @param outfitEquipment outfit equipment.
+   * @param outfitClickEvent outfit click event.
+   */
   public createOutfitComponent(
     outfitsContainer,
     outfits: ComponentRef<OutfitComponent>[],
     characterId: string,
     wardrobeName: string,
-    transferStorage: string,
     outfitName: string,
     outfitEquipment: IEquipment,
     outfitClickEvent: EventEmitter<ComponentRef<OutfitComponent>>) {
@@ -162,10 +158,8 @@ export class WardrobeService {
       outfitsContainer.createComponent(outfitFactory);
 
     ref.instance.characterId = characterId;
-    ref.instance.currentUserMembership = this.currentUserMembership;
     ref.instance.wardrobeName = wardrobeName;
     ref.instance.equipment = outfitEquipment;
-    ref.instance.transferStorage = transferStorage;
     ref.instance.outfitName = outfitName;
     ref.instance.outfitClickEvent.subscribe(() => {
       outfitClickEvent.emit(ref);

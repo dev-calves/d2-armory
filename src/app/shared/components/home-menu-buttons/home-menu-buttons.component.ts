@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { HomeClickService } from 'src/app/core';
 
 @Component({
   selector: 'app-home-menu-buttons',
@@ -7,14 +8,12 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class HomeMenuButtonsComponent implements OnInit {
 
-  constructor() { }
+  constructor(public homeClickService: HomeClickService) { }
 
   ngOnInit(): void {
   }
 
   @Output() menuClick: EventEmitter<any> = new EventEmitter<any>();
-
-  @Output() homeClick: EventEmitter<any> = new EventEmitter<any>();
 
   /**
    * sends menu click event to the home component.
@@ -22,12 +21,4 @@ export class HomeMenuButtonsComponent implements OnInit {
   public onMenuClick(): void {
     this.menuClick.emit();
   }
-
-  /**
-   * sends home click event to the home component.
-   */
-  public onHomeClick(): void {
-    this.homeClick.emit();
-  }
-
 }

@@ -1,134 +1,95 @@
 <div #HomePageContainer class="homePageContainer">
-    <!-- loading spinner -->
-    <div #overlaySpinnerContainer></div>
-
-    <mat-sidenav-container class="sidenav-container">
-        <!-- sidenav content -->
-        <mat-sidenav #sidenav mode="over">
-            <mat-toolbar style="min-width: 300px;" color="primary">
-                <mat-toolbar-row>
-                    <app-home-menu-buttons (menuClick)="sidenav.toggle()" (homeClick)="homeService?.onHomeClick()">
-                    </app-home-menu-buttons>
-                </mat-toolbar-row>
-            </mat-toolbar>
-            <div class="sidenav-content">
-                <div class="sidenav-row">
-                    <mat-slide-toggle color="accent" [checked]="transferStorage === 'vault'"
-                        (change)="onVaultToggleChange($event)" aria-label="Vault Transfer Slide-Toggle">
-                        <span class="sidenav-row-label">Vault Transfer</span>
-                    </mat-slide-toggle>
-                </div>
-                <div class="sidenav-row">
-                    <mat-slide-toggle #darkModeSlideToggle color="accent" aria-label="Dark Mode Slide-Toggle"
-                        (change)="onDarkModeToggleChange($event)">
-                        <span fxLayout="row" fxLayoutAlign="center center" class="sidenav-row-label">
-                            <mat-icon style="padding-right: 5px;">dark_mode</mat-icon> Dark Mode
-                        </span>
-                    </mat-slide-toggle>
-                </div>
-            </div>
-        </mat-sidenav>
-        <!-- home page content -->
-        <mat-sidenav-content>
-            <!-- header -->
-            <header>
-                <app-header [loggedIn]="loggedIn" [displayName]="currentUserMembership?.displayName"
-                    (menuClick)="sidenav.toggle()" (homeClick)="homeService.onHomeClick()"></app-header>
-            </header>
-            <mat-divider></mat-divider>
-            <section>
-                <app-character-display [loggedIn]="loggedIn" [currentUserMembership]="currentUserMembership"
-                    (miniProfileClick)="homeService.onMiniProfileClick($event, currentUserMembership, transferStorage)">
-                </app-character-display>
-            </section>
-            <!-- home content -->
-            <div class="content">
-                <div *ngIf="!charactersContainer?.get(0)">
-                    <div>
-                        <section>
-                            <div fxLayout="column" fxLayoutAlign="end center">
-                                <h1>Under Construction</h1>
-                            </div>
-
-                            <p style=" font-size: large; text-align: center; margin-top: 10px; margin-bottom: 10px">
-                                This site is under-going construction. A database is next to be implemented. <br><br>
-                                It's a hobby-site/project started during stay-at-home quarantine. <br><br>
-                                Bungie's Companion Apis are used for membership data and actions like
-                                equipping/transfering items.<br><br>
-                                These actions can occur off-line, in orbit, tower, or other social spaces.<br><br>
-                                An account with Bungie will be needed to use this feature.
-                            </p>
-                        </section>
-                        <mat-divider style="margin-top: 20px; margin-bottom: 20px;"></mat-divider>
-                        <!-- tutorial content -->
-                        <section fxLayout="column" fxLayoutAlign="center center">
-                            <h1>Tutorial of Features</h1>
-                            <span fxLayout="row" fxLayoutAlign="space-around">
-                                <div>
-                                    <!-- wardrobe tutorial -->
-                                    <mat-card class="tut-card">
-                                        <mat-card-header>
-                                            <mat-card-title>Creating a Wardrobe</mat-card-title>
-                                            <mat-card-subtitle>(Group of outfits)</mat-card-subtitle>
-                                        </mat-card-header>
-                                        <div *ngIf="isDarkMode();then darkWardrobeImg; else lightWardrobeImg"></div>
-                                        <mat-card-content>
-                                            <p style="font-size: medium;">
-                                                Wardrobes are groups of outfits that follow a theme.<br><br>
-                                                Examples are Nightfalls, PVP, "Contraverse Hold" builds, etc.<br><br>
-                                                A wardrobe will need to be created before storing outfits.
-                                            </p>
-                                        </mat-card-content>
-                                    </mat-card>
-                                    <mat-divider inset="true"></mat-divider>
-                                    <!-- outfit tutorial -->
-                                    <mat-card class="tut-card">
-                                        <mat-card-header>
-                                            <mat-card-title>Creating an Outfit</mat-card-title>
-                                            <mat-card-subtitle>(Stored set of Equipment)</mat-card-subtitle>
-                                        </mat-card-header>
-                                        <div *ngIf="isDarkMode(); then darkOutfitImg; else lightOutfitImg"></div>
-                                        <mat-card-content>
-                                            <p style="font-size: medium;">
-                                                An outfit is a recorded set of equipment.<br><br>
-                                                An outfit stores sub-class, weapons, armor, and ghost items.<br><br>
-                                                Clicking the capture button will record the currently equipped items
-                                                into an outfit.
-                                            </p>
-                                        </mat-card-content>
-                                    </mat-card>
-                                    <mat-divider inset="true"></mat-divider>
-                                    <!-- vault transfer tutorial -->
-                                    <mat-card class="tut-card">
-                                        <mat-card-header>
-                                            <mat-card-title>Vault Transfer Setting</mat-card-title>
-                                        </mat-card-header>
-                                        <div *ngIf="isDarkMode(); then darkVaultImg; else lightVaultImg"></div>
-                                        <mat-card-content>
-                                            <p style="font-size: medium;">
-                                                Normally, equipment is transfered to-and-from the character's
-                                                inventory.<br><br>
-                                                This setting will allow retrieving equipment from the vault if they are
-                                                not in the inventory.<br><br>
-                                                Items being unequipped will be sent to the vault to keep the inventory
-                                                light.
-                                            </p>
-                                        </mat-card-content>
-                                    </mat-card>
-                                </div>
-                            </span>
-                        </section>
+    <section *ngIf="loggedInService.loggedIn && currentMembershipService.currentUserMembership">
+        <app-character-display (miniProfileClick)="homeService.onMiniProfileClick($event)"></app-character-display>
+    </section>
+    <!-- home content -->
+    <div class="content">
+        <div *ngIf="!charactersContainer?.get(0)">
+            <div>
+                <section>
+                    <div fxLayout="column" fxLayoutAlign="end center">
+                        <h1>Under Construction</h1>
                     </div>
-                </div>
-                <!-- selected character tab content -->
-                <div *ngIf="loggedIn">
-                    <div #charactersContainer></div>
-                </div>
+
+                    <p style=" font-size: large; text-align: center; margin-top: 10px; margin-bottom: 10px">
+                        This site is under-going construction. A database is next to be implemented. <br><br>
+                        It's a hobby-site/project started during stay-at-home quarantine. <br><br>
+                        Bungie's Companion Apis are used for membership data and actions like
+                        equipping/transfering items.<br><br>
+                        These actions can occur off-line, in orbit, tower, or other social spaces.<br><br>
+                        An account with Bungie will be needed to use this feature.
+                    </p>
+                </section>
+                <mat-divider style="margin-top: 20px; margin-bottom: 20px;"></mat-divider>
+                <!-- tutorial content -->
+                <section fxLayout="column" fxLayoutAlign="center center">
+                    <h1>Tutorial of Features</h1>
+                    <span fxLayout="row" fxLayoutAlign="space-around">
+                        <div>
+                            <!-- wardrobe tutorial -->
+                            <mat-card class="tut-card">
+                                <mat-card-header>
+                                    <mat-card-title>Creating a Wardrobe</mat-card-title>
+                                    <mat-card-subtitle>(Group of outfits)</mat-card-subtitle>
+                                </mat-card-header>
+                                <div
+                                    *ngIf="localStorageService.isDarkMode();then darkWardrobeImg; else lightWardrobeImg">
+                                </div>
+                                <mat-card-content>
+                                    <p style="font-size: medium;">
+                                        Wardrobes are groups of outfits that follow a theme.<br><br>
+                                        Examples are Nightfalls, PVP, "Contraverse Hold" builds, etc.<br><br>
+                                        A wardrobe will need to be created before storing outfits.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                            <mat-divider inset="true"></mat-divider>
+                            <!-- outfit tutorial -->
+                            <mat-card class="tut-card">
+                                <mat-card-header>
+                                    <mat-card-title>Creating an Outfit</mat-card-title>
+                                    <mat-card-subtitle>(Stored set of Equipment)</mat-card-subtitle>
+                                </mat-card-header>
+                                <div *ngIf="localStorageService.isDarkMode(); then darkOutfitImg; else lightOutfitImg">
+                                </div>
+                                <mat-card-content>
+                                    <p style="font-size: medium;">
+                                        An outfit is a recorded set of equipment.<br><br>
+                                        An outfit stores sub-class, weapons, armor, and ghost items.<br><br>
+                                        Clicking the capture button will record the currently equipped items
+                                        into an outfit.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                            <mat-divider inset="true"></mat-divider>
+                            <!-- vault transfer tutorial -->
+                            <mat-card class="tut-card">
+                                <mat-card-header>
+                                    <mat-card-title>Vault Transfer Setting</mat-card-title>
+                                </mat-card-header>
+                                <div *ngIf="localStorageService.isDarkMode(); then darkVaultImg; else lightVaultImg">
+                                </div>
+                                <mat-card-content>
+                                    <p style="font-size: medium;">
+                                        Normally, equipment is transfered to-and-from the character's
+                                        inventory.<br><br>
+                                        This setting will allow retrieving equipment from the vault if they are
+                                        not in the inventory.<br><br>
+                                        Items being unequipped will be sent to the vault to keep the inventory
+                                        light.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </span>
+                </section>
             </div>
-            <!-- footer -->
-            <app-footer class="footer"></app-footer>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
+        </div>
+        <!-- selected character tab content -->
+        <div *ngIf="loggedInService.loggedIn">
+            <div #charactersContainer></div>
+        </div>
+    </div>
 </div>
 
 <ng-template #lightWardrobeImg>

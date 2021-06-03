@@ -9,8 +9,8 @@ import {
   ComponentRef,
   ChangeDetectorRef
 } from '@angular/core';
+import { CurrentMembershipService } from 'src/app/core';
 
-import { ICurrentUserMembership } from 'src/app/core/models/api/current-user-membership-response.model';
 import { environment } from 'src/environments/environment';
 import { OutfitComponent } from '../outfit/outfit.component';
 import { WardrobeComponent } from '../wardrobe/wardrobe.component';
@@ -24,22 +24,22 @@ import { CharacterService } from './character.service';
 export class CharacterComponent implements OnInit, AfterViewInit, OnDestroy {
   private _wardrobesContainer: ViewContainerRef;
   private _wardrobeParentContainer;
-  private _currentUserMembership: ICurrentUserMembership;
   private _characterId: string;
   private _initialWardrobes;
   private _wardrobes: ComponentRef<WardrobeComponent>[] = [];
   private _selectedOutfit: ComponentRef<OutfitComponent>;
-  private _transferStorage: string;
 
   constructor(
     public characterService: CharacterService,
-    private changeDetectorRef: ChangeDetectorRef) { }
+    private changeDetectorRef: ChangeDetectorRef,
+    public currentMembershipService: CurrentMembershipService
+    ) { }
 
   ngOnInit(): void {
     // TODO: re-work this after database is implemented.
     let storedCharacterOutfits = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
-    if (this.currentUserMembership && storedCharacterOutfits &&
+    if (storedCharacterOutfits &&
       storedCharacterOutfits[this.characterId] &&
       Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
       this._initialWardrobes = storedCharacterOutfits[this.characterId];
@@ -68,27 +68,11 @@ export class CharacterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input()
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
-  }
-
-  @Input()
   public set characterId(characterId) {
     this._characterId = characterId;
   }
   public get characterId() {
     return this._characterId;
-  }
-
-  @Input()
-  public set transferStorage(transferStorage: string) {
-    this._transferStorage = transferStorage;
-  }
-  public get transferStorage() {
-    return this._transferStorage;
   }
 
   public get wardrobes() {
@@ -112,6 +96,9 @@ export class CharacterComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._selectedOutfit;
   }
 
+  /**
+   * creates a new wardrobe component.
+   */
   public addWardrobe() {
     this.characterService.addWardrobe(this);
   }

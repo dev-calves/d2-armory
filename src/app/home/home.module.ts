@@ -10,7 +10,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule  } from '@angular/material/input';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,7 +18,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { HomeComponent } from './pages/home/home.component';
 import { WardrobeComponent } from './components/wardrobe/wardrobe.component';
@@ -43,7 +41,6 @@ import { CharacterService } from './components/character/character.service';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
-    MatSidenavModule,
     MatCardModule,
     MatIconModule,
     MatDividerModule,
@@ -51,7 +48,6 @@ import { CharacterService } from './components/character/character.service';
     MatToolbarModule,
     MatButtonToggleModule,
     MatTooltipModule,
-    MatSlideToggleModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,

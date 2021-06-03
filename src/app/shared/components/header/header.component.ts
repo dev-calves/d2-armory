@@ -1,9 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { environment } from 'src/environments/environment';
-import { EncryptService, OauthService, HighlightMiniProfileService } from 'src/app/core/services';
+import { 
+  EncryptService, 
+  OauthService, 
+  LoggedInService, 
+  CurrentMembershipService, 
+  HomeClickService
+} from 'src/app/core/services';
 import { IEncryptRequest } from 'src/app/core/models';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 
@@ -13,10 +19,8 @@ import { AuthModalComponent } from '../auth-modal/auth-modal.component';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  private _loggedIn = false;
   private _stateHex: string;
   private _bungieAuthUrl: string;
-  private _displayName: string;
   private _showDisplayName: boolean = true;
 
   private _oauthSubscribeSub: Subscription;
@@ -26,7 +30,9 @@ export class HeaderComponent implements OnInit {
     private dialog: MatDialog,
     private encryptService: EncryptService,
     private oauthService: OauthService,
-    private highlightService: HighlightMiniProfileService
+    public loggedInService: LoggedInService,
+    public currentMembershipService: CurrentMembershipService,
+    private homeClickService: HomeClickService
   ) { }
 
   ngOnInit(): void {
@@ -37,24 +43,6 @@ export class HeaderComponent implements OnInit {
   }
 
   @Output() menuClick: EventEmitter<any> = new EventEmitter<any>();
-
-  @Output() homeClick: EventEmitter<any> = new EventEmitter<any>();
-
-  @Input()
-  public set loggedIn(loggedIn: boolean) {
-    this._loggedIn = loggedIn;
-  }
-  public get loggedIn(): boolean {
-    return this._loggedIn;
-  }
-
-  @Input()
-  public set displayName(displayName: string) {
-    this._displayName = displayName;
-  }
-  public get displayName(): string {
-    return this._displayName;
-  }
 
   public set showDisplayName(showDisplayName: boolean) {
     this._showDisplayName = showDisplayName;
@@ -100,6 +88,7 @@ export class HeaderComponent implements OnInit {
    */
   public logOutClick(): void {
     this._oauthSubscribeSub = this.oauthService.deleteTokens().subscribe(response => {
+      this.currentMembershipService.currentUserMembership = null;
       if (response.message === 'tokens deleted.') {
         location.href = '/home';
       }
@@ -117,9 +106,7 @@ export class HeaderComponent implements OnInit {
    * sends click event to home component.
    */
   public onHomeClick(): void {
-    this.highlightService.removeCharacterHighlight();
-
-    this.homeClick.emit();
+    this.homeClickService.onHomeClick();
   }
 
   /**

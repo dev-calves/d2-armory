@@ -7,7 +7,11 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { CookieService } from 'ngx-cookie-service';
 
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { ErrorHandlerIntercept, CredentialsInterceptor } from './core';
 
@@ -26,7 +30,11 @@ import { environment } from '../environments/environment';
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
-    MatSnackBarModule,
+    MatSlideToggleModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatDividerModule,
+    MatToolbarModule,
     CoreModule,
     HomeModule,
     SharedModule,
