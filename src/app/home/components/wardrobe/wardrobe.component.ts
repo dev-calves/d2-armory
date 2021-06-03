@@ -1,15 +1,22 @@
 import {
-  Component, OnInit, AfterViewInit, ViewChild, ViewContainerRef,
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ViewContainerRef,
   OnDestroy,
   Input,
-  ElementRef
+  ElementRef,
+  ComponentRef,
+  ChangeDetectorRef,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { ICurrentUserMembership } from 'src/app/core'
 import { WardrobeService } from './wardrobe.service';
-
+import { OutfitComponent } from '../../components/outfit/outfit.component';
 
 @Component({
   selector: 'app-wardrobe',
@@ -24,15 +31,15 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   private _formControl: FormControl;
   private _matcher: FormErrorStateMatcher;
   private _addOutfitButton;
-  private _currentUserMembership: ICurrentUserMembership;
   private _characterId: string;
-  private _transferStorage: string;
-  private _outfits: HTMLCollection;
+  private _outfits: ComponentRef<OutfitComponent>[] = [];
   private _initialOutfits;
 
   constructor(
     public wardrobeService: WardrobeService,
-    public elementRef: ElementRef) {
+    public elementRef: ElementRef,
+    private changeDetectorRef: ChangeDetectorRef
+    ) {
 
     this.formControl = new FormControl('', [
       Validators.required,
@@ -49,10 +56,17 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.outfits = this.outfitsParentContainer.nativeElement.children;
-    
-    this.wardrobeService.outfitsContainer = this.outfitsContainer;
+    this.wardrobeService.initializeOutfits(
+      this.initialOutfits, 
+      this.outfitsContainer,
+      this.outfits, 
+      this.characterId, 
+      this.formControl?.value, 
+      this.outfitClickEvent);
+      this.changeDetectorRef.detectChanges();
   }
+
+  @Output() outfitClickEvent: EventEmitter<any> = new EventEmitter<ComponentRef<OutfitComponent>>();
 
   public set toHide(status: boolean) {
     this._toHide = status;
@@ -74,14 +88,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input()
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
-  }
-
-  @Input()
   public set characterId(characterId: string) {
     this._characterId = characterId;
   }
@@ -89,7 +95,7 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._characterId;
   }
 
-  public set outfits(outfits: HTMLCollection) {
+  public set outfits(outfits: ComponentRef<OutfitComponent>[]) {
     this._outfits = outfits;
   }
   public get outfits() {
@@ -102,14 +108,6 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   public get initialOutfits() {
     return this._initialOutfits;
-  }
-
-  @Input()
-  public set transferStorage(transferStorage: string) {
-    this._transferStorage = transferStorage;
-  }
-  public get transferStorage() {
-    return this._transferStorage;
   }
 
   @ViewChild('outfitsContainer', { read: ViewContainerRef })
@@ -155,15 +153,13 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
    * adds an outfit to the target wardrobe.
    */
   public addOutfit() {
-    this.wardrobeService.outfitsContainer = this.outfitsContainer;
-
     this.wardrobeService.addOutfit(
-      this.elementRef, 
-      this.outfits, 
-      this.currentUserMembership, 
-      this.characterId, 
-      this.formControl?.value, 
-      this.transferStorage);
+      this.elementRef,
+      this.outfitsContainer,
+      this.outfits,
+      this.characterId,
+      this.formControl?.value,
+      this.outfitClickEvent);
   }
 
   // remove wardrove from view.
@@ -176,6 +172,9 @@ export class WardrobeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.wardrobeService.destroy();
+    this.outfits.forEach((ref: ComponentRef<OutfitComponent>) => {
+      ref.destroy();
+    });
   }
 }
 

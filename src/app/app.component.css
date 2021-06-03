@@ -1,0 +1,47 @@
+header {
+    position: relative;
+    max-width: 100%;
+}
+
+html {
+    height: 100%;
+    margin: 0pt;
+}
+
+mat-sidenav-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.page-content {
+    flex: 1 0 auto;
+}
+
+.footer {
+    flex-shrink: 0;
+}
+
+.sidenav-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+.sidenav-content {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 30px;
+    margin-right: 20px;
+}
+
+.sidenav-row {
+    margin-bottom: 30px;
+    margin-right: 30px;
+}
+
+.sidenav-row-label {
+    padding-left: 15px;
+    font-size: larger;
+}

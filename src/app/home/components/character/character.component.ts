@@ -1,10 +1,19 @@
 import {
-  Component, OnInit, ViewChild, ViewContainerRef,
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ViewContainerRef,
   OnDestroy,
-  Input
+  Input,
+  ComponentRef,
+  ChangeDetectorRef
 } from '@angular/core';
+import { CurrentMembershipService } from 'src/app/core';
 
-import { ICurrentUserMembership } from 'src/app/core/models/api/current-user-membership-response.model';
+import { environment } from 'src/environments/environment';
+import { OutfitComponent } from '../outfit/outfit.component';
+import { WardrobeComponent } from '../wardrobe/wardrobe.component';
 import { CharacterService } from './character.service';
 
 @Component({
@@ -12,34 +21,40 @@ import { CharacterService } from './character.service';
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.css']
 })
-export class CharacterComponent implements OnInit, OnDestroy {
+export class CharacterComponent implements OnInit, AfterViewInit, OnDestroy {
   private _wardrobesContainer: ViewContainerRef;
   private _wardrobeParentContainer;
-  private _currentUserMembership: ICurrentUserMembership;
-  private _characterId;
-  private _wardrobes = [];
-  private _transferStorage: string;
+  private _characterId: string;
+  private _initialWardrobes;
+  private _wardrobes: ComponentRef<WardrobeComponent>[] = [];
+  private _selectedOutfit: ComponentRef<OutfitComponent>;
 
   constructor(
-    public characterService: CharacterService) { }
+    public characterService: CharacterService,
+    private changeDetectorRef: ChangeDetectorRef,
+    public currentMembershipService: CurrentMembershipService
+    ) { }
 
   ngOnInit(): void {
     // TODO: re-work this after database is implemented.
-    let storedCharacterOutfits = JSON.parse(localStorage.getItem('outfits'));
+    let storedCharacterOutfits = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
-    if (this.currentUserMembership && storedCharacterOutfits && 
-      storedCharacterOutfits[this.characterId] && 
+    if (storedCharacterOutfits &&
+      storedCharacterOutfits[this.characterId] &&
       Object.keys(storedCharacterOutfits[this.characterId]).length > 0) {
-      this.wardrobes = storedCharacterOutfits[this.characterId];
+      this._initialWardrobes = storedCharacterOutfits[this.characterId];
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.characterService.initializeWardrobes(this);
+    this.changeDetectorRef.detectChanges();
   }
 
   @ViewChild('wardrobesContainer', { read: ViewContainerRef })
   public set wardrobesContainer(element: ViewContainerRef) {
     this._wardrobesContainer = element;
-    this.characterService.wardrobesContainer = element;
   }
-
   public get wardrobesContainer() {
     return this._wardrobesContainer;
   }
@@ -47,49 +62,50 @@ export class CharacterComponent implements OnInit, OnDestroy {
   @ViewChild('wardrobesParentContainer')
   public set wardrobeParentContainer(element) {
     this._wardrobeParentContainer = element;
-    this.characterService.wardrobeParentContainer = element;
   }
-
   public get wardrobeParentContainer() {
     return this._wardrobeParentContainer;
-  }
-
-  public get currentUserMembership() {
-    return this._currentUserMembership;
-  }
-
-  @Input()
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-
-  public get characterId() {
-    return this._characterId;
   }
 
   @Input()
   public set characterId(characterId) {
     this._characterId = characterId;
   }
-
-  @Input()
-  public set transferStorage(transferStorage: string) {
-    this._transferStorage = transferStorage;
-  }
-
-  public get transferStorage() {
-    return this._transferStorage;
+  public get characterId() {
+    return this._characterId;
   }
 
   public get wardrobes() {
     return this._wardrobes;
   }
-
-  public set wardrobes(wardrobes) {
+  public set wardrobes(wardrobes: ComponentRef<WardrobeComponent>[]) {
     this._wardrobes = wardrobes;
+  }
+  
+  public set initialWardrobes(initialWardrobes) {
+    this._initialWardrobes = initialWardrobes;
+  }
+  public get initialWardrobes() {
+    return this._initialWardrobes
+  }
+
+  public set selectedOutfit(selectedOutfit: ComponentRef<OutfitComponent>) {
+    this._selectedOutfit = selectedOutfit
+  }
+  public get selectedOutfit() {
+    return this._selectedOutfit;
+  }
+
+  /**
+   * creates a new wardrobe component.
+   */
+  public addWardrobe() {
+    this.characterService.addWardrobe(this);
   }
 
   ngOnDestroy() {
-    this.characterService.destroy();
+    this.wardrobes.forEach((wardrobe: ComponentRef<WardrobeComponent>) => {
+      wardrobe.destroy();
+    })
   }
 }

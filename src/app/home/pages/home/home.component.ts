@@ -1,16 +1,21 @@
-import { 
-  Component, 
-  OnInit, 
+import {
+  Component,
+  OnInit,
   OnDestroy,
-  ViewChild, 
-  ViewContainerRef
+  ViewChild,
+  ViewContainerRef,
+  ElementRef
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { 
+import {
+  CurrentMembershipService,
+  HomeClickService,
   ICurrentUserMembership,
-  OverlaySpinnerService} from 'src/app/core';
+  LocalStorageService,
+  LoggedInService
+} from 'src/app/core';
 import { HomeService } from './home.service';
 import { environment } from 'src/environments/environment';
 
@@ -20,25 +25,23 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private _loggedIn = false;
-  private _transferStorage: string;
-  private _currentUserMembership: ICurrentUserMembership;
   private _charactersContainer: ViewContainerRef;
-  private _overlaySpinnerContainer: ViewContainerRef;
+  private _homePageContainer: ElementRef;
   private _queryParamsSub: Subscription;
   private _currentUserMembershipSub: Subscription;
 
   constructor(
+    private route: ActivatedRoute,
     public homeService: HomeService,
-    private overlaySpinnerService: OverlaySpinnerService,
-    private route: ActivatedRoute
+    public currentMembershipService: CurrentMembershipService,
+    private homeClickService: HomeClickService,
+    public loggedInService: LoggedInService,
+    public localStorageService: LocalStorageService
   ) { }
 
   ngOnInit() {
-    // set the storage localStorage property.
-    this.transferStorage = localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) || 'inventory';
-
-    this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { // initialize /home?:code:state route
+    // initialize /home?:code:state route
+    this._queryParamsSub = this.route?.queryParams?.subscribe((params: Params) => { 
       // use these parameters received from bungie to store user authentication.
       if (params.code && params.state && params.state === localStorage.getItem(environment.LOCAL_STORAGE_STATE)) {
         // prevent oauth requests from being made with a stale "code" after refreshing the page.
@@ -47,74 +50,41 @@ export class HomeComponent implements OnInit, OnDestroy {
         // request access token and user data.
         this._currentUserMembershipSub = this.homeService.oauthAndUserProfile(params.code)
           .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-            this.loggedIn = true;
-            this.currentUserMembership = currentUserMembershipResponse;
+            this.loggedInService.loggedIn = true;
+            this.currentMembershipService.currentUserMembership = currentUserMembershipResponse;
           });
       } else {
         // request user data.
         this._currentUserMembershipSub = this.homeService.userProfile()
           .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-            this.loggedIn = true;
-            this.currentUserMembership = currentUserMembershipResponse;
+            this.loggedInService.loggedIn = true;
+            this.currentMembershipService.currentUserMembership = currentUserMembershipResponse;
           });
       }
     });
   }
 
-  public set loggedIn(loggedIn: boolean) {
-    this._loggedIn = loggedIn;
+  @ViewChild('HomePageContainer')
+  public set homePageContainer(element: ElementRef) {
+    this._homePageContainer = element;
   }
-  public get loggedIn() {
-    return this._loggedIn;
-  }
-
-  public set transferStorage(transferStorage: string) {
-    if (this._transferStorage != transferStorage) {
-      this._transferStorage = transferStorage;
-    }
-    // TODO: remove this storage prop. after implementing DB.
-    if (localStorage.getItem(environment.LOCAL_STORAGE_STORAGE) != this.transferStorage) {
-      localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, transferStorage);
-    }
-  }
-  public get transferStorage() {
-    return this._transferStorage;
-  }
-
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
+  public get homePageContainer() {
+    return this._homePageContainer;
   }
 
   @ViewChild('charactersContainer', { read: ViewContainerRef })
   public set charactersContainer(container: ViewContainerRef) {
     this._charactersContainer = container;
 
+    // pass the container to the home click service for home navigation
+    // by detaching the character view.
+    this.homeClickService.charactersContainer = container;
+
     // pass the container to the service for component creations.
-    this.homeService.charactersContainer = this.charactersContainer;
+    this.homeService.charactersContainer = container;
   }
   public get charactersContainer() {
     return this._charactersContainer;
-  }
-
-  @ViewChild('overlaySpinnerContainer', { read: ViewContainerRef })
-  public set overlaySpinnerContainer(container: ViewContainerRef) {
-    this._overlaySpinnerContainer = container;
-
-    this.overlaySpinnerService.overlaySpinnerContainerRef = container;
-  }
-  public get overlaySpinnerContainer() {
-    return this._overlaySpinnerContainer;
-  }
-
-  /**
-   * updates transferStorage and localStorage.
-   * @param value 
-   */
-  public onMenuToggleClick(value: string): void {
-    this.transferStorage = value;
   }
 
   ngOnDestroy() {

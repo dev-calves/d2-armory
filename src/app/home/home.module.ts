@@ -10,7 +10,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule  } from '@angular/material/input';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -42,7 +41,6 @@ import { CharacterService } from './components/character/character.service';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
-    MatSidenavModule,
     MatCardModule,
     MatIconModule,
     MatDividerModule,

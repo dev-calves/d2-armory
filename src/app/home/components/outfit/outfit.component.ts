@@ -2,7 +2,6 @@ import { Component, OnInit, Input, EventEmitter, Output, ElementRef } from '@ang
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { ICurrentUserMembership } from 'src/app/core';
 import { IEquipment } from 'src/app/core/models/api/equipment.model';
 import { OutfitService } from './outfit.service';
 
@@ -20,8 +19,7 @@ export class OutfitComponent implements OnInit {
   private _wardrobeName: string;
   private _characterId: string;
   private _outfitName: string;
-  private _transferStorage: string;
-  private _currentUserMembership: ICurrentUserMembership;
+  private _color: string = '';
 
   constructor(public elementRef: ElementRef, private outfitService: OutfitService) {
     this.formControl = new FormControl('', [
@@ -59,20 +57,19 @@ export class OutfitComponent implements OnInit {
     return this._matcher;
   }
 
+  public set color(color: string) {
+    this._color = color;
+  }
+  public get color(){
+    return this._color;
+  }
+
   @Input()
   public set equipment(equipment: IEquipment) {
     this._equipment = equipment;
   }
   public get equipment() {
     return this._equipment;
-  }
-
-  @Input()
-  public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
-    this._currentUserMembership = currentUserMembership;
-  }
-  public get currentUserMembership() {
-    return this._currentUserMembership;
   }
 
   @Input()
@@ -99,32 +96,24 @@ export class OutfitComponent implements OnInit {
     return this._outfitName;
   }
 
-  @Input()
-  public set transferStorage(transferStorage: string) {
-    this._transferStorage = transferStorage;
-  }
-  public get transferStorage() {
-    return this._transferStorage;
-  }
-
   public setOutfitNameValue(value) {
     this.formControl.setValue(value);
   }
 
-  @Output() toggleHighlightsEvent: EventEmitter<any> = new EventEmitter<ElementRef>();
+  @Output() outfitClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   /**
    * sends a request to equip the items stored on this outfit.
    */
   public dawnEquips() {
-    if (this.formControl?.value && !this._ignoreSpaceKey) { // trigger the events if the outfit element has a title set.
-      this.toggleHighlightsEvent.emit(this.elementRef);
+    // trigger the events if the outfit element has a title set.
+    if (this.formControl?.value && !this._ignoreSpaceKey) { 
+      this.outfitClickEvent.emit();
 
       this.outfitService.dawnEquipment(
                 this.equipment, 
-                this.currentUserMembership, 
                 this.characterId, 
-                this.transferStorage);
+                );
     }
     this._ignoreSpaceKey = false;
   }

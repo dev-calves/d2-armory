@@ -34,8 +34,8 @@
                     </mat-card-header>
                     <mat-card-actions style="padding-left: 40px;">
                         <button #addOutfitButton 
-                                class="add-button mat-elevation-z6" 
-                                mat-button 
+                                class="add-button" 
+                                mat-raised-button 
                                 (click)="addOutfit()">
                             <mat-icon>add</mat-icon>
                         </button>
@@ -45,15 +45,6 @@
                     style="overflow-x: auto; max-width: 65%; padding-top: 40px; padding-bottom: 10px; padding-left: 5px;"
                     fxLayout="row">
                     <div #outfitsContainer></div>
-                    <app-outfit [equipment]="outfit?.value?.equipment" 
-                                [characterId]="characterId" 
-                                [currentUserMembership]="currentUserMembership"
-                                [wardrobeName]="wardrobeName" 
-                                [transferStorage]="transferStorage" 
-                                [outfitName]="outfit?.key" 
-                                (toggleHighlightsEvent)="wardrobeService.toggleHighlights($event)" 
-                                *ngFor="let outfit of initialOutfits | keyvalue">
-                    </app-outfit>
                 </div>
             </span>
         </div>

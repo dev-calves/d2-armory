@@ -19,7 +19,7 @@ mat-card-title {
     margin-bottom: 0;
 }
 
-.mat-button, .mat-icon-button, .mat-stroked-button {
+.mat-raised-button, .mat-icon-button, .mat-stroked-button {
     color: inherit;
     background: transparent;
     width: 300px;

@@ -9,7 +9,7 @@
         </div>
         <mat-card-actions>
             <span fxLayout="row" fxLayoutAlign="space-around">
-                <button class="mat-elevation-z6" style="font-size: 40px;" mat-button (click)="characterService.addWardrobe(characterId, currentUserMembership)">
+                <button class="" style="font-size: 40px;" mat-raised-button (click)="addWardrobe()">
                     <mat-icon [inline]="true">add</mat-icon>
                 </button>
             </span>
@@ -18,12 +18,4 @@
 </div>
 <div #wardrobesParentContainer>
     <div #wardrobesContainer></div>
-    <app-wardrobe 
-        [wardrobeName]="wardrobe.key" 
-        [initialOutfits]="wardrobe.value" 
-        [currentUserMembership]="currentUserMembership" 
-        [characterId]="characterId" 
-        [transferStorage]="transferStorage" 
-        *ngFor="let wardrobe of wardrobes | keyvalue">
-    </app-wardrobe>
 </div>

@@ -2,17 +2,24 @@
     <mat-toolbar-row>
         <span style="max-width: 100%; width: 100%;" fxLayout="row" fxLayoutAlign="space-between">
             <app-home-menu-buttons (menuClick)="onMenuClick()" (homeClick)="onHomeClick()"></app-home-menu-buttons>
-            <span fxLayout="row" fxLayoutAlign="start center">
-                <span *ngIf="displayName && showDisplayName">{{displayName}}</span>
-                <button mat-icon-button disableRipple="true" aria-label="Log-in Button"
-                    (click)="logOnClick()" *ngIf="!loggedIn">
-                    <mat-icon>login</mat-icon>
-                </button>
-                <button mat-icon-button disableRipple="true" aria-label="Log-out Button"
-                    (click)="logOutClick()" *ngIf="loggedIn">
-                    <mat-icon>logout</mat-icon>
-                </button>
+            <span fxLayout="row" fxLayoutAlign="center center">
+                <span style="font-size: medium;" *ngIf="currentMembershipService.displayName && showDisplayName">{{currentMembershipService.displayName}}</span>
+                <span *ngIf="loggedInService.loggedIn; then logOutButton; else logInButton"></span>
             </span>
         </span>
     </mat-toolbar-row>
 </mat-toolbar>
+
+<ng-template #logInButton>
+    <button mat-icon-button disableRipple="true" aria-label="Log-in Button" matTooltip="Logs you in to your Bungie account."
+    (click)="logOnClick()">
+        <mat-icon>login</mat-icon>
+    </button>
+</ng-template>
+
+<ng-template #logOutButton>
+    <button mat-icon-button disableRipple="true" aria-label="Log-out Button" matTooltip="Logs you out of your Bungie account."
+    (click)="logOutClick()">
+        <mat-icon>logout</mat-icon>
+    </button>
+</ng-template>
