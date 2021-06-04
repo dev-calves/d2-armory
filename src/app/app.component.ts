@@ -25,6 +25,7 @@ import { AppService } from './app.service';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private _appContainer: ElementRef;
+  private _vaultSlideToggle: MatSlideToggle;
   private _darkModeSlideToggle: MatSlideToggle;
   private _overlaySpinnerContainer: ViewContainerRef;
 
@@ -48,6 +49,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.changeDetectorRef, 
       this.appContainer
       );
+
+      this.appService.setLocalTransferStorage(
+        this.vaultSlideToggle
+      );
   }
 
   @ViewChild('appContainer')
@@ -56,6 +61,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   public get appContainer() {
     return this._appContainer;
+  }
+
+  @ViewChild('vaultSlideToggle')
+  public set vaultSlideToggle(slideToggle: MatSlideToggle) {
+    this._vaultSlideToggle = slideToggle;
+  }
+  public get vaultSlideToggle() {
+    return this._vaultSlideToggle;
   }
 
   @ViewChild('darkModeSlideToggle')
@@ -80,8 +93,8 @@ export class AppComponent implements OnInit, AfterViewInit {
    * modifies transferStorage on toggle.
    * @param slideToggle event data for the vault slide toggle component.
    */
-  public onVaultToggleChange(vaultSlideToggle: MatSlideToggleChange) {
-    this.appService.onVaultToggleChange(vaultSlideToggle);
+  public onVaultToggleChange(vaultSlideToggleChange: MatSlideToggleChange) {
+    this.appService.onVaultToggleChange(vaultSlideToggleChange);
   }
 
   /**
