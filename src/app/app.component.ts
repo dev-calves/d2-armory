@@ -1,57 +1,53 @@
 import {
   Component,
-  Renderer2,
   ElementRef,
   ViewChild,
   ViewContainerRef,
   ChangeDetectorRef,
   OnInit,
-  AfterViewInit,
-  OnDestroy
+  AfterViewInit
 } from '@angular/core';
-import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { CurrentMembershipService, LocalStorageService, OverlaySpinnerService, TransferStorageService } from './core';
+import { 
+  MatSlideToggle, 
+  MatSlideToggleChange 
+} from '@angular/material/slide-toggle';
+import { 
+  OverlaySpinnerService, 
+  TransferStorageService 
+} from './core';
 
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AppComponent implements OnInit, AfterViewInit {
   private _appContainer: ElementRef;
   private _darkModeSlideToggle: MatSlideToggle;
   private _overlaySpinnerContainer: ViewContainerRef;
 
   constructor(
-    private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     private overlaySpinnerService: OverlaySpinnerService,
     public transferStorageService: TransferStorageService,
-    private localStorageService: LocalStorageService,
-    private currentMembershipService: CurrentMembershipService,
-    private overlay: OverlayContainer
+    private appService: AppService
     ) {
 
   }
 
   ngOnInit() {
-    // set the storage localStorage property.
-    this.transferStorageService.transferStorage = 
-      this.localStorageService.transferStorage;
-
-    this.currentMembershipService.userProfile();
+    // set currentusermembership data of currently logged in user.
+    this.appService.serviceInitialization();
   }
 
   ngAfterViewInit() {
-    if (this.localStorageService.isDarkMode()) {
-      this.changeThemeMode('dark');
-      this.darkModeSlideToggle.toggle();
-      this.changeDetectorRef.detectChanges();
-    } else if (!this.localStorageService.theme) {
-      this.changeThemeMode('');
-    }
+    this.appService.darkModeSwitch(
+      this.darkModeSlideToggle, 
+      this.changeDetectorRef, 
+      this.appContainer
+      );
   }
 
   @ViewChild('appContainer')
@@ -80,64 +76,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._overlaySpinnerContainer;
   }
 
-  public changeThemeMode(theme: string) {
-    switch (theme) {
-      case 'dark':
-        this.renderer.addClass(this.appContainer.nativeElement, 'darkMode');
-        this.overlay.getContainerElement().classList.add('darkMode');
-
-        this.localStorageService.theme = 'dark';
-        break;
-      case 'light':
-        this.renderer.removeClass(this.appContainer.nativeElement, 'darkMode');
-        this.overlay.getContainerElement().classList.remove('darkMode');
-
-        this.localStorageService.theme = 'light';
-        break;
-      default:
-        if (window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)') &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches) {
-
-          this.darkModeSlideToggle.toggle();
-          this.changeDetectorRef.detectChanges();
-
-          this.renderer.addClass(this.appContainer.nativeElement, 'darkMode');
-          this.overlay.getContainerElement().classList.add('darkMode');
-
-          this.localStorageService.theme = 'dark';
-        } else {
-          this.localStorageService.theme = 'light';
-        }
-        break;
-    }
-  }
-
   /**
    * modifies transferStorage on toggle.
    * @param slideToggle event data for the vault slide toggle component.
    */
-  public onVaultToggleChange(slideToggle: MatSlideToggleChange) {
-    if (slideToggle.checked) {
-      this.transferStorageService.transferStorage = 'vault';
-    } else {
-      this.transferStorageService.transferStorage = 'inventory';
-    }
+  public onVaultToggleChange(vaultSlideToggle: MatSlideToggleChange) {
+    this.appService.onVaultToggleChange(vaultSlideToggle);
   }
 
   /**
    * toggles between light and dark themes.
    * @param slideToggle event data for the dark slide toggle component.
    */
-  public onDarkModeToggleChange(slideToggle: MatSlideToggle) {
-    if (slideToggle.checked) {
-      this.changeThemeMode('dark');
-    } else {
-      this.changeThemeMode('light');
-    }
-  }
-
-  ngOnDestroy() {
-    this.currentMembershipService.destroyCurrentUserMembershipSub();
+  public onDarkModeToggleChange() {
+    this.appService.onDarkModeToggleChange(
+      this.darkModeSlideToggle, 
+      this.changeDetectorRef, 
+      this.appContainer
+      );
   }
 }
