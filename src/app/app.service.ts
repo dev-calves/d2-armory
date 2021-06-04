@@ -32,6 +32,14 @@ export class AppService {
     this._renderer = this.rendererFactory.createRenderer(null, null);
   }
 
+  public setLocalTransferStorage(vaultSlideToggle: MatSlideToggle) {
+    if (this.localStorageService.transferStorage != undefined && vaultSlideToggle.checked) {
+      this.localStorageService.transferStorage = 'vault';
+    } else {
+      this.localStorageService.transferStorage = 'inventory';
+    }
+  }
+
   /**
    * initializes the transferStorageService
    * and the currentMembershipService.
@@ -115,8 +123,8 @@ export class AppService {
    * modifies transferStorage on toggle.
    * @param vaultSlideToggle event data for the vault slide toggle component.
    */
-  public onVaultToggleChange(vaultSlideToggle: MatSlideToggleChange) {
-    if (vaultSlideToggle.checked) {
+  public onVaultToggleChange(vaultSlideToggleChange: MatSlideToggleChange) {
+    if (vaultSlideToggleChange.checked) {
       this.transferStorageService.transferStorage = 'vault';
     } else {
       this.transferStorageService.transferStorage = 'inventory';

@@ -14,7 +14,7 @@
             <div class="sidenav-content">
                 <!-- vault slide toggle -->
                 <div class="sidenav-row">
-                    <mat-slide-toggle color="accent" [checked]="transferStorageService.transferStorage === 'vault'"
+                    <mat-slide-toggle #vaultSlideToggle color="accent" [checked]="transferStorageService.transferStorage === 'vault'"
                         (change)="onVaultToggleChange($event)" aria-label="Vault Transfer Slide-Toggle">
                         <span class="sidenav-row-label">Vault Transfer</span>
                     </mat-slide-toggle>

@@ -1,18 +1,18 @@
-import { 
+import {
   Injectable,
   EventEmitter
- } from '@angular/core';
+} from '@angular/core';
 
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { 
-  CurrentMembershipService, 
-  EncryptService, 
-  IEncryptRequest, 
-  IEncryptResponse, 
-  IOauthResponse, 
-  LocalStorageService, 
-  OauthService 
+import {
+  CurrentMembershipService,
+  EncryptService,
+  IEncryptRequest,
+  IEncryptResponse,
+  IOauthResponse,
+  LocalStorageService,
+  OauthService
 } from 'src/app/core';
 
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
@@ -42,12 +42,20 @@ export class HeaderService {
 
     // capture state of web page.
     if (
-      this.localStorageService.transferStorage &&
-      this.localStorageService.transferStorage === 'vault' ||
-      this.localStorageService.transferStorage === 'inventory') {
-      encryptRequest = { state: this.localStorageService.transferStorage };
+      (this.localStorageService?.transferStorage === 'vault' ||
+        this.localStorageService?.transferStorage === 'inventory') &&
+      (this.localStorageService?.theme === 'light' ||
+        this.localStorageService?.theme === 'dark')
+    ) {
+      encryptRequest =
+      {
+        state: JSON.stringify([this.localStorageService.transferStorage, this.localStorageService.theme])
+      };
     } else {
-      encryptRequest = { state: 'inventory' };
+      this.localStorageService.transferStorage = 'inventory';
+      this.localStorageService.theme = 'light';
+
+      encryptRequest = { state: "[\"inventory\", \"light\"]" };
     }
 
     // encrypt state and send user to bungie with the state.
