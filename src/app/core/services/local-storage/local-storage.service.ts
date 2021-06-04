@@ -2,17 +2,16 @@ import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
 import { IEquipment } from '../../models';
+import { CurrentMembershipService } from '../current-membership';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStorageService {
 
-  constructor() { }
-
-  public isDarkMode() {
-    return (localStorage.getItem('theme') && localStorage.getItem('theme') === 'dark');
-  }
+  constructor(
+    private currentMembershipService: CurrentMembershipService
+  ) { }
 
   public set transferStorage(storage: string) {
     localStorage.setItem(environment.LOCAL_STORAGE_STORAGE, storage);
@@ -46,13 +45,29 @@ export class LocalStorageService {
     return localStorage.getItem(environment.LOCAL_STORAGE_DISMISS_LOGON_MESSAGE);
   }
 
+  /**
+   * checks for dark theme in localstorage
+   * @returns boolean
+   */
+  public isDarkMode() {
+    return (localStorage.getItem('theme') && localStorage.getItem('theme') === 'dark');
+  }
+
+  /**
+   * returns the wardrobes stored in localstorage.
+   * @param characterId 
+   * @returns object containing wardrobes tied to a character id
+   */
   public getInitialWardrobes(characterId: string) {
     let storedCharacterOutfits = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
     if (storedCharacterOutfits &&
-      storedCharacterOutfits[characterId] &&
-      Object.keys(storedCharacterOutfits[characterId]).length > 0) {
-      return storedCharacterOutfits[characterId];
+      storedCharacterOutfits[this.currentMembershipService.displayName] &&
+      storedCharacterOutfits[this.currentMembershipService.displayName][characterId] &&
+      Object.keys(storedCharacterOutfits[this.currentMembershipService.displayName][characterId]).length > 0) {
+      return storedCharacterOutfits[this.currentMembershipService.displayName][characterId];
+    } else {
+      return {};
     }
   }
 
@@ -62,16 +77,23 @@ export class LocalStorageService {
    * @param wardrobeName name of wardrobe.
    * @param outfitName name of the outfit.
    */
-     public removeCurrentEquipmentLocal(characterId: string, wardrobeName: string, outfitName: string) {
-      // parse localStorage into JSON objects.
-      let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
-  
+  public removeCurrentEquipmentLocal(characterId: string, wardrobeName: string, outfitName: string) {
+    // parse localStorage into JSON objects.
+    let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
+
+    if (
+      storedEquipment &&
+      storedEquipment[this.currentMembershipService.displayName] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName]) {
       // remove the specific outfit.
-      delete storedEquipment[characterId][wardrobeName][outfitName];
-  
+      delete storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName];
+
       // stringify updated outfits and store into localStorage.
       localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
     }
+  }
 
   /**
    * remove old outfit name from localStorage.
@@ -83,12 +105,15 @@ export class LocalStorageService {
     // parse localStorage into JSON objects.
     let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
-    if (storedEquipment && storedEquipment[characterId] &&
-      storedEquipment[characterId][wardrobeName] &&
-      storedEquipment[characterId][wardrobeName][outfitName] &&
-      storedEquipment[characterId][wardrobeName][outfitName].outfitName === outfitName) {
+    if (
+      storedEquipment &&
+      storedEquipment[this.currentMembershipService.displayName] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName] &&
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName].outfitName === outfitName) {
       // remove previous name.
-      delete storedEquipment[characterId][wardrobeName][outfitName];
+      delete storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName];
 
       // update outfits in localStorage.
       localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
@@ -102,41 +127,48 @@ export class LocalStorageService {
    * @param outfitName outfit name.
    * @param equipment equipment to be stored.
    */
-     public saveEquipmentLocal(wardrobeName: string, characterId: string, outfitName: string, equipment: IEquipment) {
-      // new outfit.
-      const outfit = {
-        wardrobeName: wardrobeName,
-        outfitName: outfitName,
-        equipment: equipment
-      };
-  
-      let storedEquipment = {};
-  
-      // build structure for the outfits localStorage property.
-      if (localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT)) {
-        storedEquipment = Object.assign({}, JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT)));
-  
-        if (storedEquipment[characterId]) {
-          if (storedEquipment[characterId][wardrobeName]) {
-            storedEquipment[characterId][wardrobeName][outfitName] = outfit;
+  public saveEquipmentLocal(wardrobeName: string, characterId: string, outfitName: string, equipment: IEquipment) {
+    // new outfit.
+    const outfit = {
+      wardrobeName: wardrobeName,
+      outfitName: outfitName,
+      equipment: equipment
+    };
+
+    let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
+
+    // build structure for the outfits localStorage property.
+    if (storedEquipment) {
+      if (storedEquipment[this.currentMembershipService.displayName]) {
+        if (storedEquipment[this.currentMembershipService.displayName][characterId]) {
+          if (storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName]) {
+            storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName] = outfit;
           } else {
-            storedEquipment[characterId][wardrobeName] = {};
-            storedEquipment[characterId][wardrobeName][outfitName] = outfit;
+            storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName] = {};
+            storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName] = outfit;
           }
         } else {
-          storedEquipment[characterId] = {};
-          storedEquipment[characterId][wardrobeName] = {};
-          storedEquipment[characterId][wardrobeName][outfitName] = outfit;
+          storedEquipment[this.currentMembershipService.displayName][characterId] = {};
+          storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName] = {};
+          storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName] = outfit;
         }
       } else {
-        storedEquipment[characterId] = {};
-        storedEquipment[characterId][wardrobeName] = {};
-        storedEquipment[characterId][wardrobeName][outfitName] = outfit;
+        storedEquipment[this.currentMembershipService.displayName] = {};
+        storedEquipment[this.currentMembershipService.displayName][characterId] = {};
+        storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName] = {};
+        storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName] = outfit;
       }
-  
-      // store the outfits to localStorage.
-      localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
+    } else {
+      storedEquipment = {};
+      storedEquipment[this.currentMembershipService.displayName] = {};
+      storedEquipment[this.currentMembershipService.displayName][characterId] = {};
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName] = {};
+      storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName][outfitName] = outfit;
     }
+
+    // store the outfits to localStorage.
+    localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
+  }
 
   /**
    * remove wardrobe from localStorage.
@@ -148,10 +180,10 @@ export class LocalStorageService {
     let storedEquipment = JSON.parse(localStorage.getItem(environment.LOCAL_STORAGE_EQUIPMENT));
 
     // delete wardrobe along with it's outfits.
-    delete storedEquipment[characterId][wardrobeName];
+    delete storedEquipment[this.currentMembershipService.displayName][characterId][wardrobeName];
 
     // update outfits localStorage.
     localStorage.setItem(environment.LOCAL_STORAGE_EQUIPMENT, JSON.stringify(storedEquipment));
   }
-  
+
 }
