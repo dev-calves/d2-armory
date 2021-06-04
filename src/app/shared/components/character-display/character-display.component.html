@@ -1,14 +1,14 @@
 <mat-divider></mat-divider>
 <mat-toolbar color="primary">
     <mat-toolbar-row>
-        <div *ngIf="characters; then displayCharacters; else spinner"></div>
+        <div *ngIf="characters | async; then displayCharacters; else spinner"></div>
     </mat-toolbar-row>
 </mat-toolbar>
 
 <ng-template #displayCharacters>
     <div #buttonProfileContainer style="max-width: 100%; width: 100%;" fxLayout="row wrap" fxLayoutAlign="space-between center">
         <button mat-button class="mat-elevation-z6" [id]="character?.id"
-            (click)="onMiniProfileClick(character?.id)" *ngFor="let character of characters">
+            (click)="onMiniProfileClick(character?.id)" *ngFor="let character of characters | async">
             <app-mini-profile [character]="character" (miniProfileClick)="onMiniProfileClick($event)"></app-mini-profile>
         </button>
     </div>
