@@ -5,13 +5,8 @@ import {
   ComponentFactoryResolver,
   ComponentRef
 } from '@angular/core';
-import { iif, Observable } from 'rxjs';
-import { map, concatMap } from 'rxjs/operators';
 
-import { CurrentUserMembershipService } from 'src/app/core/services/apis/current-user-membership/current-user-membership.service';
-import { OauthService } from 'src/app/core/services/apis/oauth/oauth.service';
 import { CharacterComponent } from 'src/app/home/components/character/character.component';
-import { ICurrentUserMembership, IOauthResponse, IOauthRefreshDefined } from 'src/app/core';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +16,6 @@ export class HomeService {
   private _cachedComponents: Map<string, ViewRef> = new Map<string, ViewRef>();
 
   constructor(
-    private oauthService: OauthService,
-    private currentUserMembershipService: CurrentUserMembershipService,
     private resolver: ComponentFactoryResolver) { }
 
   public set charactersContainer(container: ViewContainerRef) {
@@ -59,47 +52,6 @@ export class HomeService {
         this._cachedComponents.set(characterId, this.charactersContainer.get(0));
       }
     }
-  }
-
-  /**
-   * retrieves access tokens and retrieves user data.
-   * @param code code sent by bungie to create a token.
-   * @returns user data observable.
-   */
-  public oauthAndUserProfile(code: string): Observable<ICurrentUserMembership> {
-    return this.oauthService.getAccessOauth(code).pipe(
-      // send request to retrieve tokens.
-      map((oauthAccessResponse: IOauthResponse) => {
-        return oauthAccessResponse;
-      }),
-      // after response is received...
-      concatMap((oauthAccessResponse: IOauthResponse) =>
-        // if tokens are created successfully, return the currentUserMembership observable.
-        iif(() => (oauthAccessResponse?.message?.includes('tokens recieved')),
-          this.currentUserMembershipService.getCurrentUserMembership()
-        )
-      )
-    );
-  }
-
-  /**
-   * requests to check if refresh token is available then returns user data.
-   * @returns user data observable.
-   */
-  public userProfile(): Observable<ICurrentUserMembership> {
-    return this.oauthService.refreshExist().pipe(
-      // send request for refresh token status.
-      map((refresh: IOauthRefreshDefined) => {
-        return refresh;
-      }),
-      // after response is received...
-      concatMap((refresh: IOauthRefreshDefined) =>
-        // if the refresh token exists, return currentUserMembership observable.
-        iif(() => (refresh['refresh-token-available']),
-          this.currentUserMembershipService.getCurrentUserMembership()
-        )
-      )
-    );
   }
 
   /**

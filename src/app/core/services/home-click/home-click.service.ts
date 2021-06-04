@@ -1,5 +1,6 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import { HighlightMiniProfileService } from '../highlight-mini-profile';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { HighlightMiniProfileService } from '../highlight-mini-profile';
 export class HomeClickService {
   private _charactersContainer: ViewContainerRef;
 
-  constructor(private highlightService: HighlightMiniProfileService) { }
+  constructor(private router: Router, private highlightService: HighlightMiniProfileService) { }
 
   public set charactersContainer(container: ViewContainerRef) {
     this._charactersContainer = container;
@@ -29,10 +30,12 @@ export class HomeClickService {
 
   public onHomeClick() {
     // clear character view.
-    if (this.charactersContainer) {
+    if (this.charactersContainer?.length > 0) {
       this.highlightService.removeCharacterHighlight();
 
       this.charactersContainer.detach();
+    } else {
+      this.router.navigate(['home']);
     }
   };
 }

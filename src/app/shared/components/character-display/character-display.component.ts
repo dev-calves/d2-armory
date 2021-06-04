@@ -1,16 +1,19 @@
 import {
-  Component, Output, EventEmitter,
-  ViewChild, ElementRef, OnInit, AfterViewInit, OnDestroy
+  Component, 
+  Output, 
+  EventEmitter,
+  ViewChild, 
+  ElementRef, 
+  OnInit
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import {
-  CharactersService,
   CurrentMembershipService,
-  HighlightMiniProfileService,
   ICharacter,
   LoggedInService
 } from 'src/app/core';
+import { CharacterDisplayService } from './character-display.service';
 
 
 @Component({
@@ -18,32 +21,26 @@ import {
   templateUrl: './character-display.component.html',
   styleUrls: ['./character-display.component.css']
 })
-export class CharacterDisplayComponent implements OnInit, AfterViewInit, OnDestroy {
-  private _characters: ICharacter[];
+export class CharacterDisplayComponent implements OnInit {
+  private _characters: Observable<ICharacter[]>
   private _buttonProfileContainer: ElementRef;
-  private _characterSub: Subscription;
 
   constructor(
-    private characterService: CharactersService,
-    private highlightService: HighlightMiniProfileService,
     public loggedInService: LoggedInService,
-    public currentMembershipService: CurrentMembershipService
+    public currentMembershipService: CurrentMembershipService,
+    private characterDisplayService: CharacterDisplayService
   ) { }
 
   ngOnInit() {
-    
-  }
-
-  ngAfterViewInit() {
-    this.updateCharacters();
+    this.characters = this.characterDisplayService.updateCharacters();
   }
 
   @Output() miniProfileClick: EventEmitter<any> = new EventEmitter<string>();
 
-  set characters(chars: ICharacter[]) {
-    this._characters = chars;
+  public set characters(characters: Observable<ICharacter[]>) {
+    this._characters = characters;
   }
-  get characters(): ICharacter[] {
+  public get characters() {
     return this._characters;
   }
 
@@ -56,32 +53,11 @@ export class CharacterDisplayComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   /**
-   * makes a requests for characters then initializes the characters property.
-   */
-  private updateCharacters() {
-      this._characterSub = this.characterService.getCharacters(this.currentMembershipService.membershipId,
-        this.currentMembershipService.membershipType).subscribe((characterResponse: ICharacter[]) => {
-
-          this.characters = characterResponse;
-        });
-  }
-
-  /**
    * clicked profile buttons will be highlighted and set their characterId to characterButtonSelected.
    * @param value character id
    */
-  public onMiniProfileClick(value: any) {
-    const buttons: HTMLCollection = this.buttonProfileContainer.nativeElement.children;
-
-    this.highlightService.removeCharacterHighlight();
-    this.highlightService.characterButtonSelected = Array.from(buttons).find(button => button.id === value);
-    this.highlightService.addCharacterHighlight();
-
-    this.miniProfileClick.emit(value);
-  }
-
-  ngOnDestroy() {
-    if (this._characterSub) { this._characterSub.unsubscribe(); }
+  public onMiniProfileClick(value: string) {
+    this.characterDisplayService.onMiniProfileClick(value, this.buttonProfileContainer, this.miniProfileClick);
   }
 
 }

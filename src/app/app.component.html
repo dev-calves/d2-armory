@@ -5,21 +5,24 @@
     <mat-sidenav-container class="sidenav-container">
         <!-- sidenav content -->
         <mat-sidenav #sidenav mode="over">
+            <!-- menu and home buttons -->
             <mat-toolbar style="min-width: 300px;" color="primary">
                 <mat-toolbar-row>
                     <app-home-menu-buttons (menuClick)="sidenav.toggle()"></app-home-menu-buttons>
                 </mat-toolbar-row>
             </mat-toolbar>
             <div class="sidenav-content">
+                <!-- vault slide toggle -->
                 <div class="sidenav-row">
                     <mat-slide-toggle color="accent" [checked]="transferStorageService.transferStorage === 'vault'"
                         (change)="onVaultToggleChange($event)" aria-label="Vault Transfer Slide-Toggle">
                         <span class="sidenav-row-label">Vault Transfer</span>
                     </mat-slide-toggle>
                 </div>
+                <!-- darkmode slide toggle -->
                 <div class="sidenav-row">
                     <mat-slide-toggle #darkModeSlideToggle color="accent" aria-label="Dark Mode Slide-Toggle"
-                        (change)="onDarkModeToggleChange($event)">
+                        (change)="onDarkModeToggleChange()">
                         <span fxLayout="row" fxLayoutAlign="center center" class="sidenav-row-label">
                             <mat-icon style="padding-right: 5px;">dark_mode</mat-icon> Dark Mode
                         </span>

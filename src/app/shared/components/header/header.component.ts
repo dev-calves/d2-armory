@@ -1,17 +1,17 @@
-import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { 
+  Component, 
+  OnInit, 
+  Output, 
+  EventEmitter, 
+  HostListener 
+} from '@angular/core';
 
 import { 
-  EncryptService, 
-  OauthService, 
   LoggedInService, 
   CurrentMembershipService, 
-  HomeClickService,
-  LocalStorageService
+  HomeClickService
 } from 'src/app/core/services';
-import { IEncryptRequest } from 'src/app/core/models';
-import { AuthModalComponent } from '../auth-modal/auth-modal.component';
+import { HeaderService } from './header.service';
 
 @Component({
   selector: 'app-header',
@@ -19,21 +19,13 @@ import { AuthModalComponent } from '../auth-modal/auth-modal.component';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  private _stateHex: string;
-  private _bungieAuthUrl: string;
   private _showDisplayName: boolean = true;
 
-  private _oauthSubscribeSub: Subscription;
-  private _encryptSub: Subscription;
-
   constructor(
-    private dialog: MatDialog,
-    private encryptService: EncryptService,
-    private oauthService: OauthService,
     public loggedInService: LoggedInService,
     public currentMembershipService: CurrentMembershipService,
     private homeClickService: HomeClickService,
-    private localStorageService: LocalStorageService
+    private headerService: HeaderService
   ) { }
 
   ngOnInit(): void {
@@ -56,53 +48,21 @@ export class HeaderComponent implements OnInit {
    * sends user to bungie for authentication.
    */
   public logOnClick(): void {
-    let encryptRequest: IEncryptRequest;
-
-    // capture state of web page.
-    if (
-      this.localStorageService.transferStorage &&
-      this.localStorageService.transferStorage === 'vault' ||
-      this.localStorageService.transferStorage === 'inventory') {
-      encryptRequest = { state: this.localStorageService.transferStorage };
-    } else {
-      encryptRequest = { state: 'inventory' };
-    }
-
-    // encrypt state and send user to bungie with the state.
-    this._encryptSub = this.encryptService.postEncrypt(encryptRequest).subscribe(
-      response => {
-        this._stateHex = response.hex;
-        this._bungieAuthUrl = 'https://www.bungie.net/en/oauth/authorize?client_id=' +
-          response.bungieClientId + '&response_type=code&state=' + this._stateHex;
-
-        if (
-          this.localStorageService.dismissLogonMessage === 'true') {
-          this.localStorageService.state = this._stateHex;
-          location.href = this._bungieAuthUrl;
-        } else {
-          this.openDialog(this._stateHex, this._bungieAuthUrl);
-        }
-      }
-    );
+    this.headerService.logOnClick();
   }
 
   /**
    * Log out user by deleting tokens and refreshing home page.
    */
   public logOutClick(): void {
-    this._oauthSubscribeSub = this.oauthService.deleteTokens().subscribe(response => {
-      this.currentMembershipService.currentUserMembership = null;
-      if (response.message === 'tokens deleted.') {
-        location.href = '/home';
-      }
-    });
+    this.headerService.logOutClick();
   }
 
   /**
    * sends click event to home component.
    */
   public onMenuClick(): void {
-    this.menuClick.emit();
+    this.headerService.onMenuClick(this.menuClick);
   }
 
   /**
@@ -110,21 +70,6 @@ export class HeaderComponent implements OnInit {
    */
   public onHomeClick(): void {
     this.homeClickService.onHomeClick();
-  }
-
-  /**
-   * launches dialog box that can send user to Bungie to be authenticated.
-   * @param stateHex encrypted state.
-   * @param url bungie url.
-   */
-  public openDialog(stateHex: string, url: string): void {
-    this.dialog.open(AuthModalComponent, {
-      width: '400px',
-      data: {
-        stateHex,
-        url
-      }
-    });
   }
 
   /**
@@ -141,11 +86,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this._oauthSubscribeSub) {
-      this._oauthSubscribeSub.unsubscribe();
-    }
-    if (this._encryptSub) {
-      this._encryptSub.unsubscribe();
-    }
+    this.headerService.destroyOauthEncryptSub();
   }
 }

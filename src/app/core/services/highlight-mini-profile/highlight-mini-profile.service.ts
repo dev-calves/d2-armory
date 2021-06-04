@@ -7,7 +7,7 @@ export class HighlightMiniProfileService {
   private _characterButtonSelected: Element;
   private _renderer: Renderer2;
 
-  constructor(private rendererFactory: RendererFactory2,) {
+  constructor(private rendererFactory: RendererFactory2) {
     this._renderer = this.rendererFactory.createRenderer(null, null);
   }
 

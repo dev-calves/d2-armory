@@ -24,13 +24,17 @@ export class ErrorHandlerIntercept implements HttpInterceptor {
                     errorMessage = `${errorMessage} Message: ${error?.error?.message}`;
                 } else {
                     // server-side error
-                    errorMessage = `${errorMessage} Status: ${error?.status} | Message: ${error?.message}`;
-
-                    if (error?.status === 401) {
-                        this._router.navigate(['home']);
+                    switch (error?.status) {
+                        case 503:
+                            errorMessage = `${errorMessage} Status: ${error?.status} | Message: Bungie's servers are down for maintenance. Try again at another time.`;
+                            break;
+                        case 401:
+                            this._router.navigate(['home']);
+                        default:
+                            errorMessage = `${errorMessage} Status: ${error?.status} | Message: ${error?.message}`;
+                            break;
                     }
                 }
-                console.error(errorMessage);
                 this._snackBar.open(errorMessage, 'Dismiss');
                 return throwError(errorMessage);
             }));
