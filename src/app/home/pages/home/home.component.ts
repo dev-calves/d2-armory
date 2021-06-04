@@ -12,7 +12,6 @@ import { Subscription } from 'rxjs';
 import {
   CurrentMembershipService,
   HomeClickService,
-  ICurrentUserMembership,
   LocalStorageService,
   LoggedInService
 } from 'src/app/core';
@@ -27,7 +26,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _charactersContainer: ViewContainerRef;
   private _homePageContainer: ElementRef;
   private _queryParamsSub: Subscription;
-  private _currentUserMembershipSub: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,19 +46,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.localStorageService.state = null;
 
         // request access token and user data.
-        this._currentUserMembershipSub = this.homeService.oauthAndUserProfile(params.code)
-          .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-            this.loggedInService.loggedIn = true;
-            this.currentMembershipService.currentUserMembership = currentUserMembershipResponse;
-          });
-      } else {
-        // request user data.
-        this._currentUserMembershipSub = this.homeService.userProfile()
-          .subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-            this.loggedInService.loggedIn = true;
-            this.currentMembershipService.currentUserMembership = currentUserMembershipResponse;
-          });
-      }
+        this.currentMembershipService.oauthAndUserProfile(params.code);
+        }
     });
   }
 
@@ -89,7 +76,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._queryParamsSub.unsubscribe();
-    if (this._currentUserMembershipSub) { this._currentUserMembershipSub.unsubscribe(); }
   }
 
 }

@@ -5,10 +5,12 @@ import {
   ViewChild,
   ViewContainerRef,
   ChangeDetectorRef,
-  AfterViewInit
+  OnInit,
+  AfterViewInit,
+  OnDestroy
 } from '@angular/core';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { LocalStorageService, OverlaySpinnerService, TransferStorageService } from './core';
+import { CurrentMembershipService, LocalStorageService, OverlaySpinnerService, TransferStorageService } from './core';
 
 import { OverlayContainer } from '@angular/cdk/overlay';
 
@@ -17,7 +19,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private _appContainer: ElementRef;
   private _darkModeSlideToggle: MatSlideToggle;
   private _overlaySpinnerContainer: ViewContainerRef;
@@ -28,6 +30,7 @@ export class AppComponent implements AfterViewInit {
     private overlaySpinnerService: OverlaySpinnerService,
     public transferStorageService: TransferStorageService,
     private localStorageService: LocalStorageService,
+    private currentMembershipService: CurrentMembershipService,
     private overlay: OverlayContainer
     ) {
 
@@ -37,6 +40,8 @@ export class AppComponent implements AfterViewInit {
     // set the storage localStorage property.
     this.transferStorageService.transferStorage = 
       this.localStorageService.transferStorage;
+
+    this.currentMembershipService.userProfile();
   }
 
   ngAfterViewInit() {
@@ -130,5 +135,9 @@ export class AppComponent implements AfterViewInit {
     } else {
       this.changeThemeMode('light');
     }
+  }
+
+  ngOnDestroy() {
+    this.currentMembershipService.destroyCurrentUserMembershipSub();
   }
 }

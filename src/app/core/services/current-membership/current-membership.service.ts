@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ICurrentUserMembership } from '../../models';
+
+import { iif, Subscription } from 'rxjs';
+import { map, concatMap } from 'rxjs/operators';
+
+import { ICurrentUserMembership, IOauthRefreshDefined, IOauthResponse } from '../../models';
+import { CurrentUserMembershipService, OauthService } from '../apis';
+import { LoggedInService } from '../logged-in';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +16,15 @@ export class CurrentMembershipService {
   private _membershipId: string;
   private _membershipType: string;
 
-  constructor() { }
+  private _currentUserMembershipSub: Subscription
+
+  constructor(
+    private currentUserMembershipService: CurrentUserMembershipService,
+    private oauthService: OauthService,
+    private loggedInService: LoggedInService
+  ) {
+    // this.userProfile();
+  }
 
   public set currentUserMembership(currentUserMembership: ICurrentUserMembership) {
     this._currentUserMembership = currentUserMembership;
@@ -48,6 +62,66 @@ export class CurrentMembershipService {
   }
   public get membershipType() {
     return this._membershipType;
+  }
+
+  /**
+   * retrieves access tokens and retrieves user data.
+   * @param code code sent by bungie to create a token.
+   * @returns user data observable.
+   */
+  public oauthAndUserProfile(code: string): void {
+    this._currentUserMembershipSub = this.oauthService.getAccessOauth(code).pipe(
+      // send request to retrieve tokens.
+      map((oauthAccessResponse: IOauthResponse) => {
+        return oauthAccessResponse;
+      }),
+      // after response is received...
+      concatMap((oauthAccessResponse: IOauthResponse) =>
+        // if tokens are created successfully, return the currentUserMembership observable.
+        iif(() => (oauthAccessResponse?.message?.includes('tokens recieved')),
+          this.currentUserMembershipService.getCurrentUserMembership()
+        )
+      )
+    ).subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
+      this.currentUserMembership = currentUserMembershipResponse;
+      this.displayName = currentUserMembershipResponse.displayName;
+      this.membershipId = currentUserMembershipResponse.membershipId;
+      this.membershipType = currentUserMembershipResponse.membershipType;
+
+      this.loggedInService.loggedIn = true;
+    });
+  }
+
+  /**
+   * requests to check if refresh token is available then returns user data.
+   */
+  public userProfile(): void {
+    this._currentUserMembershipSub = this.oauthService.refreshExist().pipe(
+      // send request for refresh token status.
+      map((refresh: IOauthRefreshDefined) => {
+        return refresh;
+      }),
+      // after response is received...
+      concatMap((refresh: IOauthRefreshDefined) =>
+        // if the refresh token exists, return currentUserMembership observable.
+        iif(() => (refresh['refresh-token-available']),
+          this.currentUserMembershipService.getCurrentUserMembership()
+        )
+      )
+    ).subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
+      this.currentUserMembership = currentUserMembershipResponse;
+      this.displayName = currentUserMembershipResponse.displayName;
+      this.membershipId = currentUserMembershipResponse.membershipId;
+      this.membershipType = currentUserMembershipResponse.membershipType;
+
+      this.loggedInService.loggedIn = true;
+    });
+  }
+
+  public destroyCurrentUserMembershipSub() {
+    if (this._currentUserMembershipSub) {
+      this._currentUserMembershipSub.unsubscribe();
+    }
   }
 
 }
