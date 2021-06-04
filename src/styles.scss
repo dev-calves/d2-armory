@@ -1,13 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+@use '~@angular/material' as mat;
 @import "~@angular/material/theming";
-@include mat-core();
-$primary: mat-palette($mat-blue-grey, 600, 100, 900);
-$darkPrimary: mat-palette($mat-blue-grey, 800, 100, 900);
-$accent: mat-palette($mat-orange, 300, 100, 900);
-$darkAccent: mat-palette($mat-brown, 500);
-$warn: mat-palette($mat-red, 600, 100, 900);
-$darkWarn: mat-palette($mat-red, 900, 100, 900);
-$default-theme: mat-light-theme(
+@include mat.core();
+$primary: mat.define-palette(mat.$blue-grey-palette, 600, 100, 900);
+$darkPrimary: mat.define-palette(mat.$blue-grey-palette, 800, 100, 900);
+$accent: mat.define-palette(mat.$orange-palette, 300, 100, 900);
+$darkAccent: mat.define-palette(mat.$brown-palette, 500);
+$warn: mat.define-palette(mat.$red-palette, 600, 100, 900);
+$darkWarn: mat.define-palette(mat.$red-palette, 900, 100, 900);
+$default-theme: mat.define-light-theme(
   (
     color: (
       primary: $primary,
@@ -16,7 +17,7 @@ $default-theme: mat-light-theme(
     ),
   )
 );
-$dark-theme: mat-dark-theme(
+$dark-theme: mat.define-dark-theme(
   (
     color: (
       primary: $darkPrimary,
@@ -26,10 +27,10 @@ $dark-theme: mat-dark-theme(
   )
 );
 
-@include angular-material-theme($default-theme);
+@include mat.all-component-themes($default-theme);
 
 .darkMode {
-  @include angular-material-color($dark-theme);
+  @include mat.all-component-colors($dark-theme);
 }
 
 html, body { height: 100%; }
