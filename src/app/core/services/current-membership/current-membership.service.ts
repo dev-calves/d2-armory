@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { iif, Subscription } from 'rxjs';
+import { iif, of, Subscription } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
 
 import { ICurrentUserMembership, IOauthRefreshDefined, IOauthResponse } from '../../models';
@@ -79,16 +79,19 @@ export class CurrentMembershipService {
       concatMap((oauthAccessResponse: IOauthResponse) =>
         // if tokens are created successfully, return the currentUserMembership observable.
         iif(() => (oauthAccessResponse?.message?.includes('tokens recieved')),
-          this.currentUserMembershipService.getCurrentUserMembership()
+          this.currentUserMembershipService.getCurrentUserMembership(),
+          of(null)
         )
       )
     ).subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-      this.currentUserMembership = currentUserMembershipResponse;
-      this.displayName = currentUserMembershipResponse.displayName;
-      this.membershipId = currentUserMembershipResponse.membershipId;
-      this.membershipType = currentUserMembershipResponse.membershipType;
-
-      this.loggedInService.loggedIn = true;
+      if (currentUserMembershipResponse) {
+        this.currentUserMembership = currentUserMembershipResponse;
+        this.displayName = currentUserMembershipResponse.displayName;
+        this.membershipId = currentUserMembershipResponse.membershipId;
+        this.membershipType = currentUserMembershipResponse.membershipType;
+  
+        this.loggedInService.loggedIn = true;
+      }
     });
   }
 
@@ -105,16 +108,19 @@ export class CurrentMembershipService {
       concatMap((refresh: IOauthRefreshDefined) =>
         // if the refresh token exists, return currentUserMembership observable.
         iif(() => (refresh['refresh-token-available']),
-          this.currentUserMembershipService.getCurrentUserMembership()
+          this.currentUserMembershipService.getCurrentUserMembership(),
+          of(null)
         )
       )
     ).subscribe((currentUserMembershipResponse: ICurrentUserMembership) => {
-      this.currentUserMembership = currentUserMembershipResponse;
-      this.displayName = currentUserMembershipResponse.displayName;
-      this.membershipId = currentUserMembershipResponse.membershipId;
-      this.membershipType = currentUserMembershipResponse.membershipType;
-
-      this.loggedInService.loggedIn = true;
+      if (currentUserMembershipResponse) {
+        this.currentUserMembership = currentUserMembershipResponse;
+        this.displayName = currentUserMembershipResponse.displayName;
+        this.membershipId = currentUserMembershipResponse.membershipId;
+        this.membershipType = currentUserMembershipResponse.membershipType;
+  
+        this.loggedInService.loggedIn = true;
+      }
     });
   }
 

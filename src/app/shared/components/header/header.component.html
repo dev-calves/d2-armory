@@ -3,7 +3,7 @@
         <span style="max-width: 100%; width: 100%;" fxLayout="row" fxLayoutAlign="space-between">
             <app-home-menu-buttons (menuClick)="onMenuClick()" (homeClick)="onHomeClick()"></app-home-menu-buttons>
             <span fxLayout="row" fxLayoutAlign="center center">
-                <span style="font-size: medium;" *ngIf="currentMembershipService.displayName && showDisplayName">{{currentMembershipService.displayName}}</span>
+                <span style="font-size: medium;" *ngIf="currentMembershipService?.displayName && showDisplayName">{{currentMembershipService?.displayName}}</span>
                 <span *ngIf="loggedInService.loggedIn; then logOutButton; else logInButton"></span>
             </span>
         </span>
