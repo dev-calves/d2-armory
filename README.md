@@ -1,4 +1,6 @@
 # d2-armory
+No longer hosted on Heroku.
+
 Web application for the Bungie game, Destiny 2.
 This application will allow saving and switching sets of armor combinations (outfits).
 It will store multiple outfits into a collection (wardrobe).
